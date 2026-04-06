@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { CatalogHeader } from '@/components/catalog/CatalogHeader';
 import { FeaturedSection } from '@/components/catalog/FeaturedSection';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
+import { BackgroundText } from '@/components/catalog/BackgroundText';
+import { FloatingCategoryMenu } from '@/components/catalog/FloatingCategoryMenu';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import { Settings } from 'lucide-react';
 
@@ -31,6 +33,8 @@ export default function Index() {
 
   return (
     <div className="min-h-screen grain-overlay relative">
+      <BackgroundText />
+
       <div className="relative z-10">
         <CatalogHeader
           search={search}
@@ -39,12 +43,12 @@ export default function Index() {
           onCategoryChange={setCategory}
         />
 
-        <main className="max-w-7xl mx-auto px-6 py-12">
+        <main className="max-w-7xl mx-auto px-6 py-12 pb-28">
           {!isLoading && <FeaturedSection products={featured} />}
           <ProductGrid products={filtered} loading={isLoading} />
         </main>
 
-        <footer className="border-t border-accent/8 mt-24 py-12 text-center">
+        <footer className="border-t border-accent/8 py-12 text-center mb-20">
           <p className="text-[9px] text-muted-foreground tracking-[0.25em] uppercase font-sans font-light">
             © 2026 Floricultura Flor do Campo
           </p>
@@ -54,6 +58,8 @@ export default function Index() {
           </Link>
         </footer>
       </div>
+
+      <FloatingCategoryMenu activeCategory={category} onCategoryChange={setCategory} />
     </div>
   );
 }
