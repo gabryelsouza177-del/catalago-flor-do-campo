@@ -38,7 +38,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <Flower2 className="h-10 w-10 text-primary mx-auto mb-2" />
+          <img src={logo} alt="Floricultura Flor do Campo" className="h-16 w-16 rounded-full object-cover mx-auto mb-2" />
           <CardTitle className="text-xl">Painel Administrativo</CardTitle>
           <p className="text-sm text-muted-foreground">Floricultura Flor do Campo</p>
         </CardHeader>
