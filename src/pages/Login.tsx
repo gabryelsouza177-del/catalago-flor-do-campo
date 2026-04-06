@@ -22,15 +22,8 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast({ title: 'Conta criada com sucesso!' });
-        navigate('/admin');
-      } else {
-        await signIn(email, password);
-        navigate('/admin');
-      }
+      await signIn(email, password);
+      navigate('/admin');
     } catch (err: any) {
       toast({
         title: isSignUp ? 'Erro ao cadastrar' : 'Erro ao entrar',
