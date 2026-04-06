@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { MessageCircle } from 'lucide-react';
-import { buildWhatsAppLink } from '@/lib/constants';
+import { MessageCircle, Share2 } from 'lucide-react';
+import { buildWhatsAppLink, WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Product } from '@/hooks/useProducts';
 
 interface ProductCardProps {
   product: Product;
   index?: number;
+  size?: 'large' | 'medium' | 'small';
 }
 
 function formatPrice(price: number) {
@@ -16,18 +17,27 @@ function formatPrice(price: number) {
   return rounded === price ? `R$ ${rounded}` : `R$ ${price.toFixed(2).replace('.', ',')}`;
 }
 
-export function ProductCard({ product, index = 0 }: ProductCardProps) {
+function buildShareLink(product: Product) {
+  const text = `Olha que lindo! *${product.title}* — ${formatPrice(Number(product.price))}${product.image_url ? `\n\n📷 ${product.image_url}` : ''}`;
+  return `https://wa.me/?text=${encodeURIComponent(text)}`;
+}
+
+export function ProductCard({ product, index = 0, size = 'small' }: ProductCardProps) {
   const [imageOpen, setImageOpen] = useState(false);
+
+  const sizeClass = size === 'large' ? 'bento-large' : size === 'medium' ? 'bento-medium' : '';
 
   return (
     <>
       <div
-        className={`group overflow-hidden rounded-lg gold-border glass-card animate-luxury-fade-in transition-all duration-500 hover:gold-glow ${product.sold_out ? 'opacity-50' : ''}`}
-        style={{ animationDelay: `${index * 90}ms` }}
+        className={`group overflow-hidden rounded-lg gold-border glass-card stagger-reveal transition-all duration-500 hover:gold-glow ${sizeClass} ${product.sold_out ? 'opacity-50' : ''}`}
+        style={{ animationDelay: `${index * 80}ms` }}
       >
         {/* Image */}
         <div
-          className="aspect-square overflow-hidden bg-muted/30 cursor-pointer relative rounded-t-lg"
+          className={`overflow-hidden bg-muted/30 cursor-pointer relative ${
+            size === 'large' ? 'aspect-[4/3]' : 'aspect-square'
+          }`}
           onClick={() => product.image_url && setImageOpen(true)}
         >
           {product.sold_out && (
@@ -39,7 +49,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             <img
               src={product.image_url}
               alt={product.title}
-              className="w-full h-full object-cover img-warm transition-transform duration-[1.2s] ease-out group-hover:scale-[1.05]"
+              className="w-full h-full object-cover img-warm transition-transform duration-[1.2s] ease-out group-hover:scale-[1.06]"
               loading="lazy"
             />
           ) : (
@@ -47,11 +57,25 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               <span className="text-4xl">🌸</span>
             </div>
           )}
+
+          {/* Share button overlay */}
+          <a
+            href={buildShareLink(product)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent hover:gold-glow transition-all duration-300 opacity-0 group-hover:opacity-100"
+            onClick={(e) => e.stopPropagation()}
+            title="Compartilhar"
+          >
+            <Share2 className="h-3.5 w-3.5" />
+          </a>
         </div>
 
         {/* Content */}
-        <div className="p-5 space-y-3">
-          <h3 className="font-serif italic font-medium text-accent text-[11px] tracking-[0.1em] uppercase line-clamp-1">
+        <div className={`p-5 space-y-3 ${size === 'large' ? 'p-7' : ''}`}>
+          <h3 className={`font-serif italic font-medium text-accent tracking-[0.1em] uppercase line-clamp-1 ${
+            size === 'large' ? 'text-sm' : 'text-[11px]'
+          }`}>
             {product.title}
           </h3>
           {product.description && (
@@ -60,7 +84,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </p>
           )}
           <div className="flex items-center justify-between pt-3 border-t border-accent/10">
-            <span className="text-base font-semibold text-accent font-sans tracking-wide">
+            <span className={`font-semibold text-accent font-sans tracking-wide ${
+              size === 'large' ? 'text-lg' : 'text-base'
+            }`}>
               {formatPrice(Number(product.price))}
             </span>
             {product.sold_out ? (

@@ -165,6 +165,59 @@
     animation: luxury-fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
+  /* Staggered reveal entrance */
+  @keyframes stagger-reveal {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+      filter: blur(6px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  .stagger-reveal {
+    animation: stagger-reveal 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Bento Grid */
+  .bento-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .bento-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .bento-large {
+    grid-column: span 2;
+  }
+
+  @media (min-width: 768px) {
+    .bento-large {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+    .bento-medium {
+      grid-row: span 1;
+    }
+  }
+
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
