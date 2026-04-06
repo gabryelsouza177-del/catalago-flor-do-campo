@@ -26,7 +26,7 @@ export default function Login() {
       navigate('/admin');
     } catch (err: any) {
       toast({
-        title: isSignUp ? 'Erro ao cadastrar' : 'Erro ao entrar',
+        title: 'Erro ao entrar',
         description: err.message || 'Verifique suas credenciais.',
         variant: 'destructive',
       });
