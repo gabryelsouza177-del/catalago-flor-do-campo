@@ -48,7 +48,7 @@ export function ProductCard({ product }: ProductCardProps) {
               asChild
             >
               <a
-                href={buildWhatsAppLink(product.title, Number(product.price))}
+                href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
                 target="_blank"
                 rel="noopener noreferrer"
               >
