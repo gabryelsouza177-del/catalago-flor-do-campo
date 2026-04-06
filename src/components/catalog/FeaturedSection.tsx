@@ -35,38 +35,45 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
   return (
     <>
-      <section className="mb-12">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
-          <h2 className="text-base md:text-lg font-serif italic text-accent tracking-[0.2em] uppercase">
+      <section className="mb-14">
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
+          <h2 className="text-base md:text-lg font-serif italic text-accent tracking-[0.25em] uppercase">
             Destaques
           </h2>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
         </div>
 
         <div className="relative group">
-          <div className="overflow-hidden rounded-lg gold-border bg-card/60 gold-glow">
+          <div className="overflow-hidden rounded-lg gold-border glass-card emerald-glow">
             <div className="md:flex">
               {/* Image */}
               <div
-                className="md:w-1/2 aspect-square md:aspect-auto md:min-h-[380px] overflow-hidden bg-muted relative cursor-pointer"
+                className="md:w-1/2 aspect-square md:aspect-auto md:min-h-[420px] overflow-hidden bg-muted/20 relative cursor-pointer"
                 onClick={() => {
                   setSelectedProduct(product);
                   setImageOpen(true);
                 }}
               >
-                {/* Premium badge */}
                 {product.sold_out && (
                   <Badge className="absolute top-5 right-5 z-10 bg-destructive/90 text-destructive-foreground text-[10px] tracking-[0.15em] uppercase font-sans rounded-sm backdrop-blur-sm">
                     Esgotado
                   </Badge>
                 )}
+
+                {/* Coleção Exclusiva badge */}
+                <div className="absolute top-5 left-5 z-10 h-16 w-16 rounded-full border border-accent/40 flex items-center justify-center bg-background/40 backdrop-blur-sm">
+                  <span className="text-[7px] text-accent font-sans uppercase tracking-[0.1em] text-center leading-tight font-medium">
+                    Coleção<br />Exclusiva
+                  </span>
+                </div>
+
                 {product.image_url ? (
                   <img
                     key={product.id}
                     src={product.image_url}
                     alt={product.title}
-                    className="w-full h-full object-cover animate-luxury-fade-in"
+                    className="w-full h-full object-cover animate-luxury-fade-in img-warm"
                     loading="lazy"
                   />
                 ) : (
@@ -77,8 +84,8 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
               </div>
 
               {/* Info */}
-              <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center space-y-5">
-                <h3 className="text-2xl md:text-3xl font-serif italic font-medium text-accent tracking-wide">
+              <div className="md:w-1/2 p-8 md:p-14 flex flex-col justify-center space-y-6">
+                <h3 className="text-2xl md:text-3xl font-serif italic font-medium text-accent tracking-[0.08em]">
                   {product.title}
                 </h3>
                 {product.description && (
@@ -92,7 +99,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 {!product.sold_out && (
                   <Button
                     variant="outline"
-                    className="border-accent/40 text-accent hover:bg-accent hover:text-accent-foreground gap-2 rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-400 w-fit text-xs"
+                    className="border-accent/30 text-accent hover:bg-accent hover:text-accent-foreground gap-2 rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-500 w-fit text-xs bg-transparent"
                     asChild
                   >
                     <a
@@ -114,13 +121,13 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
             <>
               <button
                 onClick={prev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/50 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={next}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/50 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -129,13 +136,13 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
           {/* Dots */}
           {products.length > 1 && (
-            <div className="flex justify-center gap-2 mt-5">
+            <div className="flex justify-center gap-2 mt-6">
               {products.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`h-1 rounded-full transition-all duration-400 ${
-                    i === current ? 'w-7 bg-accent' : 'w-1.5 bg-accent/20'
+                  className={`h-1 rounded-full transition-all duration-500 ${
+                    i === current ? 'w-8 bg-accent' : 'w-1.5 bg-accent/15'
                   }`}
                 />
               ))}
@@ -146,12 +153,12 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
       {selectedProduct?.image_url && (
         <Dialog open={imageOpen} onOpenChange={setImageOpen}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-border/50">
+          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-accent/10">
             <DialogTitle className="sr-only">{selectedProduct.title}</DialogTitle>
             <img
               src={selectedProduct.image_url}
               alt={selectedProduct.title}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              className="max-w-full max-h-[85vh] object-contain rounded-lg img-warm"
             />
           </DialogContent>
         </Dialog>

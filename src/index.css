@@ -11,50 +11,50 @@
 
 @layer base {
   :root {
-    --background: 160 15% 7%;
+    --background: 158 60% 8%;
     --foreground: 40 15% 90%;
 
-    --card: 160 12% 10%;
+    --card: 158 40% 10%;
     --card-foreground: 40 15% 90%;
 
-    --popover: 160 12% 10%;
+    --popover: 158 40% 10%;
     --popover-foreground: 40 15% 90%;
 
-    --primary: 160 30% 20%;
+    --primary: 158 40% 18%;
     --primary-foreground: 40 25% 88%;
 
     --secondary: 40 35% 18%;
     --secondary-foreground: 40 25% 82%;
 
-    --muted: 160 8% 14%;
+    --muted: 158 20% 12%;
     --muted-foreground: 40 8% 50%;
 
-    --accent: 40 55% 52%;
-    --accent-foreground: 160 15% 7%;
+    --accent: 43 76% 52%;
+    --accent-foreground: 158 60% 5%;
 
     --destructive: 0 60% 42%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 40 15% 18%;
-    --input: 160 8% 16%;
-    --ring: 40 55% 52%;
+    --border: 43 20% 16%;
+    --input: 158 15% 14%;
+    --ring: 43 76% 52%;
 
     --radius: 0.5rem;
 
-    --gold: 40 60% 52%;
-    --gold-foreground: 160 15% 7%;
-    --gold-muted: 40 25% 28%;
-    --emerald: 160 40% 24%;
+    --gold: 43 76% 52%;
+    --gold-foreground: 158 60% 5%;
+    --gold-muted: 43 30% 28%;
+    --emerald: 158 50% 20%;
     --emerald-foreground: 40 15% 90%;
 
-    --sidebar-background: 160 15% 5%;
+    --sidebar-background: 158 60% 4%;
     --sidebar-foreground: 40 15% 90%;
-    --sidebar-primary: 160 30% 20%;
+    --sidebar-primary: 158 40% 18%;
     --sidebar-primary-foreground: 40 25% 88%;
-    --sidebar-accent: 40 55% 52%;
-    --sidebar-accent-foreground: 160 15% 7%;
-    --sidebar-border: 40 15% 16%;
-    --sidebar-ring: 40 55% 52%;
+    --sidebar-accent: 43 76% 52%;
+    --sidebar-accent-foreground: 158 60% 5%;
+    --sidebar-border: 43 20% 14%;
+    --sidebar-ring: 43 76% 52%;
 
     --floral: 340 45% 62%;
     --floral-foreground: 0 0% 100%;
@@ -71,11 +71,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: 'Montserrat', sans-serif;
+    background-color: #020d0a;
     background-image: radial-gradient(
-      ellipse at 50% 50%,
-      hsla(160, 15%, 10%, 1) 0%,
-      hsla(160, 15%, 7%, 1) 50%,
-      hsla(0, 0%, 3%, 1) 100%
+      ellipse at 50% 40%,
+      #06261d 0%,
+      #041a14 40%,
+      #020d0a 75%,
+      #010604 100%
     );
     background-attachment: fixed;
   }
@@ -86,19 +88,42 @@
 }
 
 @layer utilities {
+  /* Grain / noise overlay */
+  .grain-overlay::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 256px 256px;
+  }
+
   .glass {
-    background: hsla(160, 12%, 9%, 0.75);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-bottom: 1px solid hsla(40, 55%, 52%, 0.1);
+    background: hsla(158, 30%, 6%, 0.82);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-bottom: 1px solid hsla(43, 76%, 52%, 0.08);
+  }
+
+  .glass-card {
+    background: hsla(158, 25%, 8%, 0.45);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   .gold-border {
-    border: 0.5px solid hsla(40, 55%, 52%, 0.2);
+    border: 0.5px solid hsla(43, 76%, 52%, 0.2);
   }
 
   .gold-glow {
-    box-shadow: 0 0 30px -8px hsla(40, 60%, 52%, 0.12);
+    box-shadow: 0 0 40px -10px hsla(43, 76%, 52%, 0.1);
+  }
+
+  .emerald-glow {
+    box-shadow: 0 0 50px -12px hsla(158, 50%, 20%, 0.25);
   }
 
   .gold-underline {
@@ -108,21 +133,27 @@
     content: '';
     position: absolute;
     bottom: -4px;
-    left: 0;
+    left: 50%;
     width: 100%;
     height: 1.5px;
-    background: hsl(40, 55%, 52%);
-    transform: scaleX(0);
-    transition: transform 0.3s ease;
+    background: linear-gradient(90deg, transparent, hsl(43, 76%, 52%), transparent);
+    transform: scaleX(0) translateX(-50%);
+    transform-origin: center;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .gold-underline.active::after {
-    transform: scaleX(1);
+    transform: scaleX(1) translateX(-50%);
+  }
+
+  /* Image warmth filter */
+  .img-warm {
+    filter: sepia(0.1) saturate(1.05);
   }
 
   @keyframes luxury-fade-in {
     0% {
       opacity: 0;
-      transform: translateY(12px);
+      transform: translateY(14px);
     }
     100% {
       opacity: 1;
@@ -131,7 +162,7 @@
   }
 
   .animate-luxury-fade-in {
-    animation: luxury-fade-in 0.7s ease-out both;
+    animation: luxury-fade-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 
   .scrollbar-hide::-webkit-scrollbar {
@@ -143,6 +174,6 @@
   }
 
   .linen-texture {
-    background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.015'/%3E%3C/svg%3E");
+    /* kept for backwards compat, grain-overlay replaces this */
   }
 }
