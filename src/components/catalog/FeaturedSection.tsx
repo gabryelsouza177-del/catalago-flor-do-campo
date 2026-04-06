@@ -62,11 +62,6 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 )}
 
                 {/* Coleção Exclusiva badge */}
-                <div className="absolute top-5 left-5 z-10 h-16 w-16 rounded-full border border-accent/40 flex items-center justify-center bg-background/40 backdrop-blur-sm">
-                  <span className="text-[7px] text-accent font-sans uppercase tracking-[0.1em] text-center leading-tight font-medium">
-                    Coleção<br />Exclusiva
-                  </span>
-                </div>
 
                 {product.image_url ? (
                   <img
