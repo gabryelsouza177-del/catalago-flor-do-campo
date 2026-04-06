@@ -84,6 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {product.image_url && (
         <Dialog open={imageOpen} onOpenChange={setImageOpen}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-black/90 border-0">
+            <span className="sr-only">{product.title}</span>
             <img
               src={product.image_url}
               alt={product.title}
