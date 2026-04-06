@@ -16,11 +16,21 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
+      <Card className={`group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 ${product.sold_out ? 'opacity-75' : ''}`}>
         <div
-          className="aspect-square overflow-hidden bg-muted cursor-pointer"
+          className="aspect-square overflow-hidden bg-muted cursor-pointer relative"
           onClick={() => product.image_url && setImageOpen(true)}
         >
+          {product.sold_out && (
+            <Badge className="absolute top-2 left-2 z-10 bg-destructive text-destructive-foreground text-[10px]">
+              Esgotado
+            </Badge>
+          )}
+          {!product.sold_out && (
+            <Badge className="absolute top-2 left-2 z-10 bg-[hsl(142,70%,40%)] text-white text-[10px]">
+              Disponível
+            </Badge>
+          )}
           {product.image_url ? (
             <img
               src={product.image_url}
