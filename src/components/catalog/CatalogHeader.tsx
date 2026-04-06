@@ -15,8 +15,8 @@ export function CatalogHeader({ search, onSearchChange, activeCategory, onCatego
     <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
       <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <Flower2 className="h-7 w-7 text-primary" />
+        <div className="flex items-center gap-3">
+          <img src={logo} alt="Floricultura Flor do Campo" className="h-10 w-10 rounded-full object-cover" />
           <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
             Floricultura Flor do Campo
           </h1>
