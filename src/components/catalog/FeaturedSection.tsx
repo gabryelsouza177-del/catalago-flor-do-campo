@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
@@ -9,6 +8,11 @@ import type { Product } from '@/hooks/useProducts';
 
 interface FeaturedSectionProps {
   products: Product[];
+}
+
+function formatPrice(price: number) {
+  const rounded = Math.round(price);
+  return rounded === price ? `R$ ${rounded}` : `R$ ${price.toFixed(2).replace('.', ',')}`;
 }
 
 export function FeaturedSection({ products }: FeaturedSectionProps) {
@@ -31,31 +35,32 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
   return (
     <>
-      <section className="mb-10">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
-          <h2 className="text-lg md:text-xl font-serif text-accent tracking-wide uppercase">
-            ✦ Destaques ✦
+      <section className="mb-12">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
+          <h2 className="text-base md:text-lg font-serif italic text-accent tracking-[0.2em] uppercase">
+            Destaques
           </h2>
-          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/20 to-transparent" />
         </div>
 
         <div className="relative group">
-          <Card className="overflow-hidden gold-border bg-card gold-glow">
+          <div className="overflow-hidden rounded-lg gold-border bg-card/60 gold-glow">
             <div className="md:flex">
               {/* Image */}
               <div
-                className="md:w-1/2 aspect-square md:aspect-auto md:min-h-[360px] overflow-hidden bg-muted relative cursor-pointer"
+                className="md:w-1/2 aspect-square md:aspect-auto md:min-h-[380px] overflow-hidden bg-muted relative cursor-pointer"
                 onClick={() => {
                   setSelectedProduct(product);
                   setImageOpen(true);
                 }}
               >
-                <Badge className="absolute top-4 left-4 z-10 bg-accent text-accent-foreground text-[10px] tracking-[0.2em] uppercase font-sans rounded-sm px-3 py-1">
-                  ✦ Destaque
-                </Badge>
+                {/* Premium badge */}
+                <div className="absolute top-5 left-5 z-10 h-14 w-14 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center gold-glow">
+                  <span className="text-[8px] font-sans font-bold text-accent-foreground tracking-[0.1em] uppercase leading-tight text-center">Pre<br/>mium</span>
+                </div>
                 {product.sold_out && (
-                  <Badge className="absolute top-4 right-4 z-10 bg-destructive text-destructive-foreground text-[10px] tracking-wider uppercase font-sans rounded-sm">
+                  <Badge className="absolute top-5 right-5 z-10 bg-destructive/90 text-destructive-foreground text-[10px] tracking-[0.15em] uppercase font-sans rounded-sm backdrop-blur-sm">
                     Esgotado
                   </Badge>
                 )}
@@ -75,8 +80,8 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
               </div>
 
               {/* Info */}
-              <div className="md:w-1/2 p-6 md:p-10 flex flex-col justify-center space-y-4">
-                <h3 className="text-2xl md:text-3xl font-serif font-bold text-foreground tracking-wide">
+              <div className="md:w-1/2 p-8 md:p-12 flex flex-col justify-center space-y-5">
+                <h3 className="text-2xl md:text-3xl font-serif italic font-medium text-accent tracking-wide">
                   {product.title}
                 </h3>
                 {product.description && (
@@ -84,12 +89,13 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                     {product.description}
                   </p>
                 )}
-                <p className="text-2xl font-bold text-accent font-sans">
-                  R$ {Number(product.price).toFixed(2).replace('.', ',')}
+                <p className="text-2xl font-semibold text-accent font-sans tracking-wide">
+                  {formatPrice(Number(product.price))}
                 </p>
                 {!product.sold_out && (
                   <Button
-                    className="bg-accent/10 hover:bg-accent/20 text-accent border border-accent/30 gap-2 rounded-sm font-sans uppercase tracking-wider transition-all duration-300 w-fit"
+                    variant="outline"
+                    className="border-accent/40 text-accent hover:bg-accent hover:text-accent-foreground gap-2 rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-400 w-fit text-xs"
                     asChild
                   >
                     <a
@@ -104,20 +110,20 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 )}
               </div>
             </div>
-          </Card>
+          </div>
 
           {/* Navigation arrows */}
           {products.length > 1 && (
             <>
               <button
                 onClick={prev}
-                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/70 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
+                className="absolute left-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
               <button
                 onClick={next}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/70 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent transition-colors opacity-0 group-hover:opacity-100"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -126,13 +132,13 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
           {/* Dots */}
           {products.length > 1 && (
-            <div className="flex justify-center gap-2 mt-4">
+            <div className="flex justify-center gap-2 mt-5">
               {products.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    i === current ? 'w-6 bg-accent' : 'w-1.5 bg-accent/25'
+                  className={`h-1 rounded-full transition-all duration-400 ${
+                    i === current ? 'w-7 bg-accent' : 'w-1.5 bg-accent/20'
                   }`}
                 />
               ))}
@@ -143,12 +149,12 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
       {selectedProduct?.image_url && (
         <Dialog open={imageOpen} onOpenChange={setImageOpen}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-border">
+          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-border/50">
             <DialogTitle className="sr-only">{selectedProduct.title}</DialogTitle>
             <img
               src={selectedProduct.image_url}
               alt={selectedProduct.title}
-              className="max-w-full max-h-[85vh] object-contain rounded"
+              className="max-w-full max-h-[85vh] object-contain rounded-lg"
             />
           </DialogContent>
         </Dialog>
