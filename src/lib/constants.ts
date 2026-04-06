@@ -6,6 +6,7 @@ export const CATEGORIES = [
   'Coroas',
   'Presentes',
   'Plantas',
+  'Promoções',
 ] as const;
 
 export const WHATSAPP_NUMBER = '92991115403';
