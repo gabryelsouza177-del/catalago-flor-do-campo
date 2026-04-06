@@ -8,11 +8,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CATEGORIES } from '@/lib/constants';
 
@@ -34,6 +35,7 @@ export default function Admin() {
   const [category, setCategory] = useState('Buquês');
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isFeatured, setIsFeatured] = useState(false);
 
   useRealtimeProducts();
 
@@ -51,6 +53,7 @@ export default function Admin() {
     setImageFile(null);
     setPreviewUrl(null);
     setEditing(null);
+    setIsFeatured(false);
   };
 
   const openEdit = (product: Product) => {
@@ -61,6 +64,7 @@ export default function Admin() {
     setCategory(product.category);
     setPreviewUrl(product.image_url);
     setImageFile(null);
+    setIsFeatured(product.is_featured);
     setDialogOpen(true);
   };
 
@@ -72,7 +76,6 @@ export default function Admin() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Convert to JPEG if not already jpg/png/webp
       const convertToJpeg = (srcFile: File): Promise<File> => {
         return new Promise((resolve, reject) => {
           const img = new Image();
@@ -140,6 +143,7 @@ export default function Admin() {
         price: parseFloat(price),
         category,
         image_url: imageUrl,
+        is_featured: isFeatured,
         updated_at: new Date().toISOString(),
       };
 
@@ -192,6 +196,19 @@ export default function Admin() {
     }
   };
 
+  const toggleFeatured = async (product: Product) => {
+    const { error } = await supabase
+      .from('products')
+      .update({ is_featured: !product.is_featured })
+      .eq('id', product.id);
+    if (error) {
+      toast({ title: 'Erro ao atualizar', variant: 'destructive' });
+    } else {
+      toast({ title: product.is_featured ? 'Removido dos destaques' : 'Adicionado aos destaques' });
+      refetch();
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -220,7 +237,7 @@ export default function Admin() {
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-3 gap-4">
           <Card>
             <CardContent className="p-4 flex items-center gap-3">
               <Package className="h-8 w-8 text-primary" />
@@ -236,6 +253,15 @@ export default function Admin() {
               <div>
                 <p className="text-2xl font-bold">{products?.filter(p => p.active).length || 0}</p>
                 <p className="text-xs text-muted-foreground">Ativos</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4 flex items-center gap-3">
+              <Star className="h-8 w-8 text-accent" />
+              <div>
+                <p className="text-2xl font-bold">{products?.filter(p => p.is_featured).length || 0}</p>
+                <p className="text-xs text-muted-foreground">Destaques</p>
               </div>
             </CardContent>
           </Card>
@@ -277,6 +303,13 @@ export default function Admin() {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="flex items-center justify-between py-2 px-1">
+                <div className="flex items-center gap-2">
+                  <Star className="h-4 w-4 text-accent" />
+                  <Label className="cursor-pointer">Exibir em Destaque</Label>
+                </div>
+                <Switch checked={isFeatured} onCheckedChange={setIsFeatured} />
+              </div>
               <div className="space-y-2">
                 <Label>Imagem</Label>
                 <div className="border-2 border-dashed border-border rounded-lg p-4 text-center">
@@ -313,7 +346,12 @@ export default function Admin() {
             {products?.map((product) => (
               <Card key={product.id} className={!product.active ? 'opacity-50' : ''}>
                 <CardContent className="p-3 flex items-center gap-3">
-                  <div className="h-16 w-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+                  <div className="h-16 w-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
+                    {product.is_featured && (
+                      <div className="absolute top-0.5 right-0.5 z-10">
+                        <Star className="h-3.5 w-3.5 text-accent fill-accent" />
+                      </div>
+                    )}
                     {product.image_url ? (
                       <img src={product.image_url} alt={product.title} className="w-full h-full object-cover" />
                     ) : (
@@ -323,16 +361,24 @@ export default function Admin() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-medium text-sm truncate">{product.title}</p>
-                      <Badge variant={product.sold_out ? 'destructive' : 'default'} className={`text-[10px] ${!product.sold_out ? 'bg-[hsl(142,70%,40%)]' : ''}`}>
+                      <Badge variant={product.sold_out ? 'destructive' : 'default'} className={`text-[10px] ${!product.sold_out ? 'bg-emerald' : ''}`}>
                         {product.sold_out ? 'Esgotado' : 'Disponível'}
                       </Badge>
+                      {product.is_featured && (
+                        <Badge className="text-[10px] bg-accent text-accent-foreground">
+                          Destaque
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-xs text-muted-foreground">{product.category}</p>
                     <p className="text-sm font-bold text-primary">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
                   </div>
                   <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => toggleFeatured(product)} title={product.is_featured ? 'Remover destaque' : 'Destacar'}>
+                      <Star className={`h-4 w-4 ${product.is_featured ? 'text-accent fill-accent' : 'text-muted-foreground'}`} />
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
-                      {product.sold_out ? <ToggleLeft className="h-4 w-4 text-muted-foreground" /> : <ToggleRight className="h-4 w-4 text-[hsl(142,70%,40%)]" />}
+                      {product.sold_out ? <ToggleLeft className="h-4 w-4 text-muted-foreground" /> : <ToggleRight className="h-4 w-4 text-emerald" />}
                     </Button>
                     <Button variant="ghost" size="icon" onClick={() => openEdit(product)}>
                       <Pencil className="h-4 w-4" />
