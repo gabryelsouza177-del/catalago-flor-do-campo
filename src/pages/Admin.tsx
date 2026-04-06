@@ -153,13 +153,13 @@ export default function Admin() {
           .update(payload)
           .eq('id', editing.id);
         if (error) throw error;
-        toast({ title: 'Produto atualizado!' });
+        toast({ title: '✨ Produto atualizado com sucesso!', className: 'border-accent bg-accent/10 text-accent' });
       } else {
         const { error } = await supabase
           .from('products')
           .insert({ ...payload, active: true });
         if (error) throw error;
-        toast({ title: 'Produto adicionado!' });
+        toast({ title: '✨ Produto adicionado com sucesso!', className: 'border-accent bg-accent/10 text-accent' });
       }
 
       setDialogOpen(false);
