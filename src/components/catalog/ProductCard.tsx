@@ -35,11 +35,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               Esgotado
             </Badge>
           )}
-          {!product.sold_out && product.is_featured && (
-            <div className="absolute top-3 right-3 z-10 h-10 w-10 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center">
-              <span className="text-[7px] font-sans font-bold text-accent-foreground tracking-wider uppercase leading-none text-center">Pre<br/>mium</span>
-            </div>
-          )}
           {product.image_url ? (
             <img
               src={product.image_url}

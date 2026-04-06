@@ -56,9 +56,6 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 }}
               >
                 {/* Premium badge */}
-                <div className="absolute top-5 left-5 z-10 h-14 w-14 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center gold-glow">
-                  <span className="text-[8px] font-sans font-bold text-accent-foreground tracking-[0.1em] uppercase leading-tight text-center">Pre<br/>mium</span>
-                </div>
                 {product.sold_out && (
                   <Badge className="absolute top-5 right-5 z-10 bg-destructive/90 text-destructive-foreground text-[10px] tracking-[0.15em] uppercase font-sans rounded-sm backdrop-blur-sm">
                     Esgotado
