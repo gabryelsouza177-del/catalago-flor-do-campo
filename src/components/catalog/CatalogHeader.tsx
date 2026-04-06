@@ -12,37 +12,44 @@ interface CatalogHeaderProps {
 
 export function CatalogHeader({ search, onSearchChange, activeCategory, onCategoryChange }: CatalogHeaderProps) {
   return (
-    <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border">
-      <div className="max-w-7xl mx-auto px-4 py-4 space-y-3">
+    <header className="sticky top-0 z-30 glass border-b border-border">
+      <div className="max-w-7xl mx-auto px-6 py-5 space-y-5">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <img src={logo} alt="Floricultura Flor do Campo" className="h-10 w-10 rounded-full object-cover" />
-          <h1 className="text-xl md:text-2xl font-bold text-primary tracking-tight">
-            Floricultura Flor do Campo
-          </h1>
+        <div className="flex items-center gap-4">
+          <div className="gold-border rounded-full p-0.5 gold-glow">
+            <img src={logo} alt="Floricultura Flor do Campo" className="h-12 w-12 rounded-full object-cover" />
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-accent tracking-tight font-serif">
+              Flor do Campo
+            </h1>
+            <p className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground font-sans font-light">
+              Floricultura &amp; Presentes
+            </p>
+          </div>
         </div>
 
         {/* Search */}
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-accent/60" />
           <Input
             placeholder="Buscar produtos..."
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="pl-10"
+            className="pl-11 bg-muted/50 border-border focus:border-accent/40 focus:ring-accent/20 text-foreground placeholder:text-muted-foreground/60 h-11"
           />
         </div>
 
         {/* Categories */}
-        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+        <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => onCategoryChange(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 rounded text-xs font-medium whitespace-nowrap transition-all duration-300 tracking-wide uppercase font-sans ${
                 activeCategory === cat
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-accent'
+                  ? 'bg-accent text-accent-foreground gold-glow'
+                  : 'gold-border text-muted-foreground hover:text-accent hover:border-accent/40'
               }`}
             >
               {cat}
