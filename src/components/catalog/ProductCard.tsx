@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { MessageCircle } from 'lucide-react';
 import { buildWhatsAppLink } from '@/lib/constants';
 import type { Product } from '@/hooks/useProducts';
@@ -84,6 +84,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {product.image_url && (
         <Dialog open={imageOpen} onOpenChange={setImageOpen}>
           <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-black/90 border-0">
+            <DialogTitle className="sr-only">{product.title}</DialogTitle>
             <img
               src={product.image_url}
               alt={product.title}
