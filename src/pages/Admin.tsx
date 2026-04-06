@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
@@ -153,13 +153,13 @@ export default function Admin() {
           .update(payload)
           .eq('id', editing.id);
         if (error) throw error;
-        toast({ title: 'Produto atualizado!' });
+        toast({ title: '✨ Produto atualizado com sucesso!', className: 'border-accent bg-accent/10 text-accent' });
       } else {
         const { error } = await supabase
           .from('products')
           .insert({ ...payload, active: true });
         if (error) throw error;
-        toast({ title: 'Produto adicionado!' });
+        toast({ title: '✨ Produto adicionado com sucesso!', className: 'border-accent bg-accent/10 text-accent' });
       }
 
       setDialogOpen(false);
@@ -275,7 +275,7 @@ export default function Admin() {
               Novo Produto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto pb-8" onOpenAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>{editing ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
             </DialogHeader>
@@ -294,14 +294,15 @@ export default function Admin() {
               </div>
               <div className="space-y-2">
                 <Label>Categoria</Label>
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent position="popper" className="z-[9999]">
-                    {PRODUCT_CATEGORIES.map((c) => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="flex h-12 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 appearance-auto"
+                >
+                  {PRODUCT_CATEGORIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
               </div>
               <div className="flex items-center justify-between py-2 px-1">
                 <div className="flex items-center gap-2">
@@ -326,7 +327,7 @@ export default function Admin() {
                   />
                 </div>
               </div>
-              <Button onClick={handleSave} className="w-full" disabled={saving}>
+              <Button onClick={handleSave} className="w-full min-h-[48px] text-base" disabled={saving}>
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar Alterações' : 'Adicionar Produto'}
               </Button>
@@ -345,7 +346,7 @@ export default function Admin() {
           <div className="space-y-3">
             {products?.map((product) => (
               <Card key={product.id} className={!product.active ? 'opacity-50' : ''}>
-                <CardContent className="p-3 flex items-center gap-3">
+                <CardContent className="p-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                   <div className="h-16 w-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
                     {product.is_featured && (
                       <div className="absolute top-0.5 right-0.5 z-10">
@@ -373,18 +374,18 @@ export default function Admin() {
                     <p className="text-xs text-muted-foreground">{product.category}</p>
                     <p className="text-sm font-bold text-primary">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
                   </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => toggleFeatured(product)} title={product.is_featured ? 'Remover destaque' : 'Destacar'}>
-                      <Star className={`h-4 w-4 ${product.is_featured ? 'text-accent fill-accent' : 'text-muted-foreground'}`} />
+                  <div className="flex gap-1 flex-shrink-0">
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => toggleFeatured(product)} title={product.is_featured ? 'Remover destaque' : 'Destacar'}>
+                      <Star className={`h-5 w-5 ${product.is_featured ? 'text-accent fill-accent' : 'text-muted-foreground'}`} />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
-                      {product.sold_out ? <ToggleLeft className="h-4 w-4 text-muted-foreground" /> : <ToggleRight className="h-4 w-4 text-emerald" />}
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
+                      {product.sold_out ? <ToggleLeft className="h-5 w-5 text-muted-foreground" /> : <ToggleRight className="h-5 w-5 text-emerald" />}
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(product)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => openEdit(product)}>
+                      <Pencil className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => handleDelete(product.id)}>
+                      <Trash2 className="h-5 w-5 text-destructive" />
                     </Button>
                   </div>
                 </CardContent>
