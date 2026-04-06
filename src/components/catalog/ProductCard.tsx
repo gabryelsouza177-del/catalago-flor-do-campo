@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { MessageCircle } from 'lucide-react';
@@ -15,11 +16,21 @@ export function ProductCard({ product }: ProductCardProps) {
 
   return (
     <>
-      <Card className="group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300">
+      <Card className={`group overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 ${product.sold_out ? 'opacity-75' : ''}`}>
         <div
-          className="aspect-square overflow-hidden bg-muted cursor-pointer"
+          className="aspect-square overflow-hidden bg-muted cursor-pointer relative"
           onClick={() => product.image_url && setImageOpen(true)}
         >
+          {product.sold_out && (
+            <Badge className="absolute top-2 left-2 z-10 bg-destructive text-destructive-foreground text-[10px]">
+              Esgotado
+            </Badge>
+          )}
+          {!product.sold_out && (
+            <Badge className="absolute top-2 left-2 z-10 bg-[hsl(142,70%,40%)] text-white text-[10px]">
+              Disponível
+            </Badge>
+          )}
           {product.image_url ? (
             <img
               src={product.image_url}
@@ -42,20 +53,30 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-lg font-bold text-primary">
               R$ {Number(product.price).toFixed(2).replace('.', ',')}
             </span>
-            <Button
-              size="sm"
-              className="bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white gap-1.5 text-xs"
-              asChild
-            >
-              <a
-                href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
-                target="_blank"
-                rel="noopener noreferrer"
+            {product.sold_out ? (
+              <Button
+                size="sm"
+                className="bg-muted text-muted-foreground gap-1.5 text-xs cursor-not-allowed"
+                disabled
               >
-                <MessageCircle className="h-3.5 w-3.5" />
-                WhatsApp
-              </a>
-            </Button>
+                Esgotado
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white gap-1.5 text-xs"
+                asChild
+              >
+                <a
+                  href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  WhatsApp
+                </a>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

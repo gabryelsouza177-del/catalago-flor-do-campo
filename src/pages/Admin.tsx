@@ -12,7 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package } from 'lucide-react';
+import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { CATEGORIES } from '@/lib/constants';
 
 const PRODUCT_CATEGORIES = CATEGORIES.filter((c) => c !== 'Todos');
@@ -178,6 +179,19 @@ export default function Admin() {
     }
   };
 
+  const toggleSoldOut = async (product: Product) => {
+    const { error } = await supabase
+      .from('products')
+      .update({ sold_out: !product.sold_out })
+      .eq('id', product.id);
+    if (error) {
+      toast({ title: 'Erro ao atualizar', variant: 'destructive' });
+    } else {
+      toast({ title: product.sold_out ? 'Produto marcado como disponível' : 'Produto marcado como esgotado' });
+      refetch();
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -307,11 +321,19 @@ export default function Admin() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm truncate">{product.title}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-sm truncate">{product.title}</p>
+                      <Badge variant={product.sold_out ? 'destructive' : 'default'} className={`text-[10px] ${!product.sold_out ? 'bg-[hsl(142,70%,40%)]' : ''}`}>
+                        {product.sold_out ? 'Esgotado' : 'Disponível'}
+                      </Badge>
+                    </div>
                     <p className="text-xs text-muted-foreground">{product.category}</p>
                     <p className="text-sm font-bold text-primary">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
                   </div>
                   <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
+                      {product.sold_out ? <ToggleLeft className="h-4 w-4 text-muted-foreground" /> : <ToggleRight className="h-4 w-4 text-[hsl(142,70%,40%)]" />}
+                    </Button>
                     <Button variant="ghost" size="icon" onClick={() => openEdit(product)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
