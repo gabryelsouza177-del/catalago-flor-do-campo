@@ -326,7 +326,7 @@ export default function Admin() {
                   />
                 </div>
               </div>
-              <Button onClick={handleSave} className="w-full" disabled={saving}>
+              <Button onClick={handleSave} className="w-full min-h-[48px] text-base" disabled={saving}>
                 {saving && <Loader2 className="h-4 w-4 animate-spin" />}
                 {editing ? 'Salvar Alterações' : 'Adicionar Produto'}
               </Button>
