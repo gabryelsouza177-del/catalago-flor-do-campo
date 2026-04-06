@@ -179,6 +179,19 @@ export default function Admin() {
     }
   };
 
+  const toggleSoldOut = async (product: Product) => {
+    const { error } = await supabase
+      .from('products')
+      .update({ sold_out: !product.sold_out })
+      .eq('id', product.id);
+    if (error) {
+      toast({ title: 'Erro ao atualizar', variant: 'destructive' });
+    } else {
+      toast({ title: product.sold_out ? 'Produto marcado como disponível' : 'Produto marcado como esgotado' });
+      refetch();
+    }
+  };
+
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
