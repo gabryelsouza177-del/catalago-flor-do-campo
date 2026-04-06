@@ -71,17 +71,48 @@ export default function Admin() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
+      // Convert to JPEG if not already jpg/png/webp
+      const convertToJpeg = (srcFile: File): Promise<File> => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return reject(new Error('Canvas not supported'));
+            ctx.drawImage(img, 0, 0);
+            canvas.toBlob(
+              (blob) => {
+                if (!blob) return reject(new Error('Conversion failed'));
+                resolve(new File([blob], 'image.jpg', { type: 'image/jpeg' }));
+              },
+              'image/jpeg',
+              0.85
+            );
+          };
+          img.onerror = () => reject(new Error('Failed to load image'));
+          img.src = URL.createObjectURL(srcFile);
+        });
+      };
+
+      const isWebSafe = ['image/jpeg', 'image/png', 'image/webp'].includes(file.type);
+      const processFile = isWebSafe ? Promise.resolve(file) : convertToJpeg(file);
+      processFile.then((processed) => {
+        setImageFile(processed);
+        setPreviewUrl(URL.createObjectURL(processed));
+      }).catch(() => {
+        toast({ title: 'Formato de imagem não suportado', variant: 'destructive' });
+      });
     }
   };
 
   const uploadImage = async (file: File): Promise<string> => {
-    const ext = file.name.split('.').pop();
+    const ext = file.type === 'image/png' ? 'png' : file.type === 'image/webp' ? 'webp' : 'jpg';
     const fileName = `${crypto.randomUUID()}.${ext}`;
     const { error } = await supabase.storage
       .from('product-images')
-      .upload(fileName, file);
+      .upload(fileName, file, { contentType: file.type });
     if (error) throw error;
     const { data } = supabase.storage
       .from('product-images')
