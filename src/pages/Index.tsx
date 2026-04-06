@@ -32,15 +32,17 @@ export default function Index() {
         onCategoryChange={setCategory}
       />
 
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-7xl mx-auto px-6 py-8">
         <ProductGrid products={filtered} loading={isLoading} />
       </main>
 
-      <footer className="border-t border-border mt-12 py-6 text-center text-xs text-muted-foreground">
-        <p>© 2026 Floricultura Flor do Campo · Todos os direitos reservados</p>
-        <Link to="/admin" className="inline-flex items-center gap-1 mt-2 hover:text-primary transition-colors">
+      <footer className="border-t border-border mt-16 py-8 text-center">
+        <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase font-sans">
+          © 2026 Floricultura Flor do Campo · Todos os direitos reservados
+        </p>
+        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-xs text-accent/50 hover:text-accent transition-colors duration-300 uppercase tracking-wider font-sans">
           <Settings className="h-3 w-3" />
-          Painel Admin
+          Painel
         </Link>
       </footer>
     </div>
