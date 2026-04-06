@@ -346,7 +346,7 @@ export default function Admin() {
           <div className="space-y-3">
             {products?.map((product) => (
               <Card key={product.id} className={!product.active ? 'opacity-50' : ''}>
-                <CardContent className="p-3 flex items-center gap-3">
+                <CardContent className="p-3 flex flex-col sm:flex-row items-start sm:items-center gap-3">
                   <div className="h-16 w-16 rounded-lg overflow-hidden bg-muted flex-shrink-0 relative">
                     {product.is_featured && (
                       <div className="absolute top-0.5 right-0.5 z-10">
