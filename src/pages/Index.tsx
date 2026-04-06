@@ -30,7 +30,7 @@ export default function Index() {
   }, [products, search, category]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen linen-texture">
       <CatalogHeader
         search={search}
         onSearchChange={setSearch}
@@ -38,16 +38,16 @@ export default function Index() {
         onCategoryChange={setCategory}
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-6 py-10">
         {!isLoading && <FeaturedSection products={featured} />}
         <ProductGrid products={filtered} loading={isLoading} />
       </main>
 
-      <footer className="border-t border-border mt-16 py-8 text-center">
-        <p className="text-xs text-muted-foreground tracking-[0.15em] uppercase font-sans">
-          © 2026 Floricultura Flor do Campo · Todos os direitos reservados
+      <footer className="border-t border-border/30 mt-20 py-10 text-center">
+        <p className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase font-sans font-light">
+          © 2026 Floricultura Flor do Campo
         </p>
-        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-xs text-accent/50 hover:text-accent transition-colors duration-300 uppercase tracking-wider font-sans">
+        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-[10px] text-accent/30 hover:text-accent/60 transition-colors duration-300 uppercase tracking-[0.2em] font-sans">
           <Settings className="h-3 w-3" />
           Painel
         </Link>
