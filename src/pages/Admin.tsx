@@ -374,18 +374,18 @@ export default function Admin() {
                     <p className="text-xs text-muted-foreground">{product.category}</p>
                     <p className="text-sm font-bold text-primary">R$ {Number(product.price).toFixed(2).replace('.', ',')}</p>
                   </div>
-                  <div className="flex gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => toggleFeatured(product)} title={product.is_featured ? 'Remover destaque' : 'Destacar'}>
-                      <Star className={`h-4 w-4 ${product.is_featured ? 'text-accent fill-accent' : 'text-muted-foreground'}`} />
+                  <div className="flex gap-1 flex-shrink-0">
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => toggleFeatured(product)} title={product.is_featured ? 'Remover destaque' : 'Destacar'}>
+                      <Star className={`h-5 w-5 ${product.is_featured ? 'text-accent fill-accent' : 'text-muted-foreground'}`} />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
-                      {product.sold_out ? <ToggleLeft className="h-4 w-4 text-muted-foreground" /> : <ToggleRight className="h-4 w-4 text-emerald" />}
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => toggleSoldOut(product)} title={product.sold_out ? 'Marcar disponível' : 'Marcar esgotado'}>
+                      {product.sold_out ? <ToggleLeft className="h-5 w-5 text-muted-foreground" /> : <ToggleRight className="h-5 w-5 text-emerald" />}
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => openEdit(product)}>
-                      <Pencil className="h-4 w-4" />
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => openEdit(product)}>
+                      <Pencil className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => handleDelete(product.id)}>
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                    <Button variant="ghost" size="icon" className="min-h-[44px] min-w-[44px]" onClick={() => handleDelete(product.id)}>
+                      <Trash2 className="h-5 w-5 text-destructive" />
                     </Button>
                   </div>
                 </CardContent>
