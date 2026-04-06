@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
 import { MessageCircle, Share2 } from 'lucide-react';
 import { buildWhatsAppLink, WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Product } from '@/hooks/useProducts';
@@ -9,7 +8,6 @@ import type { Product } from '@/hooks/useProducts';
 interface ProductCardProps {
   product: Product;
   index?: number;
-  size?: 'large' | 'medium' | 'small';
 }
 
 function formatPrice(price: number) {
@@ -22,26 +20,22 @@ function buildShareLink(product: Product) {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
-export function ProductCard({ product, index = 0, size = 'small' }: ProductCardProps) {
+export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imageOpen, setImageOpen] = useState(false);
-
-  const sizeClass = size === 'large' ? 'bento-large' : size === 'medium' ? 'bento-medium' : '';
 
   return (
     <>
       <div
-        className={`group overflow-hidden rounded-lg gold-border glass-card stagger-reveal transition-all duration-500 hover:gold-glow ${sizeClass} ${product.sold_out ? 'opacity-50' : ''}`}
-        style={{ animationDelay: `${index * 80}ms` }}
+        className={`group overflow-hidden rounded-sm bg-card/40 border-t border-accent/15 transition-colors duration-200 hover:bg-card/60 ${product.sold_out ? 'opacity-50' : ''}`}
+        style={{ animationDelay: `${index * 40}ms` }}
       >
         {/* Image */}
         <div
-          className={`overflow-hidden bg-muted/30 cursor-pointer relative ${
-            size === 'large' ? 'aspect-[4/3]' : 'aspect-square'
-          }`}
+          className="overflow-hidden bg-muted/20 cursor-pointer relative aspect-square"
           onClick={() => product.image_url && setImageOpen(true)}
         >
           {product.sold_out && (
-            <Badge className="absolute top-3 left-3 z-10 bg-destructive/90 text-destructive-foreground text-[9px] tracking-[0.15em] uppercase font-sans rounded-sm backdrop-blur-sm">
+            <Badge className="absolute top-2 left-2 z-10 bg-destructive/90 text-destructive-foreground text-[8px] tracking-[0.15em] uppercase font-sans rounded-sm">
               Esgotado
             </Badge>
           )}
@@ -49,7 +43,7 @@ export function ProductCard({ product, index = 0, size = 'small' }: ProductCardP
             <img
               src={product.image_url}
               alt={product.title}
-              className="w-full h-full object-cover img-warm transition-transform duration-[1.2s] ease-out group-hover:scale-[1.06]"
+              className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
               loading="lazy"
             />
           ) : (
@@ -58,57 +52,47 @@ export function ProductCard({ product, index = 0, size = 'small' }: ProductCardP
             </div>
           )}
 
-          {/* Share button overlay */}
+          {/* Share button */}
           <a
             href={buildShareLink(product)}
             target="_blank"
             rel="noopener noreferrer"
-            className="absolute top-3 right-3 z-10 h-8 w-8 rounded-full glass flex items-center justify-center text-accent/60 hover:text-accent hover:gold-glow transition-all duration-300 opacity-0 group-hover:opacity-100"
+            className="absolute top-2 right-2 z-10 h-7 w-7 rounded-full bg-background/60 flex items-center justify-center text-accent/50 hover:text-accent transition-colors duration-200 opacity-0 group-hover:opacity-100"
             onClick={(e) => e.stopPropagation()}
             title="Compartilhar"
           >
-            <Share2 className="h-3.5 w-3.5" />
+            <Share2 className="h-3 w-3" />
           </a>
         </div>
 
         {/* Content */}
-        <div className={`p-5 space-y-3 ${size === 'large' ? 'p-7' : ''}`}>
-          <h3 className={`font-serif italic font-medium text-accent tracking-[0.1em] uppercase line-clamp-1 ${
-            size === 'large' ? 'text-sm' : 'text-[11px]'
-          }`}>
+        <div className="p-4 space-y-2">
+          <h3 className="font-sans font-medium text-foreground tracking-[0.12em] uppercase text-[10px] md:text-[11px] line-clamp-1">
             {product.title}
           </h3>
           {product.description && (
-            <p className="text-[11px] text-muted-foreground line-clamp-2 font-light leading-relaxed">
+            <p className="text-[10px] text-muted-foreground line-clamp-2 font-light leading-relaxed">
               {product.description}
             </p>
           )}
-          <div className="flex items-center justify-between pt-3 border-t border-accent/10">
-            <span className={`font-semibold text-accent font-sans tracking-wide ${
-              size === 'large' ? 'text-lg' : 'text-base'
-            }`}>
+          <div className="flex items-center justify-between pt-2 border-t border-accent/8">
+            <span className="font-serif italic text-accent text-sm md:text-base tracking-wide">
               {formatPrice(Number(product.price))}
             </span>
             {product.sold_out ? (
-              <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-sans">
+              <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-sans">
                 Indisponível
               </span>
             ) : (
-              <Button
-                size="sm"
-                variant="outline"
-                className="border-accent/30 text-accent hover:bg-accent hover:text-accent-foreground gap-1.5 text-[10px] rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-500 h-8 px-3 bg-transparent"
-                asChild
+              <a
+                href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-colors duration-200"
               >
-                <a
-                  href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <MessageCircle className="h-3 w-3" />
-                  Pedir
-                </a>
-              </Button>
+                <MessageCircle className="h-3 w-3" />
+                Pedir
+              </a>
             )}
           </div>
         </div>
@@ -121,7 +105,7 @@ export function ProductCard({ product, index = 0, size = 'small' }: ProductCardP
             <img
               src={product.image_url}
               alt={product.title}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg img-warm"
+              className="max-w-full max-h-[85vh] object-contain rounded-sm"
             />
           </DialogContent>
         </Dialog>

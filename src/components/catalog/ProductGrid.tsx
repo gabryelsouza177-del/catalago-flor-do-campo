@@ -6,25 +6,14 @@ interface ProductGridProps {
   loading: boolean;
 }
 
-function getBentoSize(product: Product, index: number): 'large' | 'medium' | 'small' {
-  // Featured or expensive products get larger cards
-  if (product.is_featured || Number(product.price) >= 200) return 'large';
-  // Every 5th item gets medium
-  if (index % 5 === 2) return 'medium';
-  return 'small';
-}
-
 export function ProductGrid({ products, loading }: ProductGridProps) {
   if (loading) {
     return (
-      <div className="bento-grid">
-        {Array.from({ length: 6 }).map((_, i) => (
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6">
+        {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className={`bg-muted/20 gold-border rounded-lg animate-pulse ${
-              i === 0 ? 'bento-large' : i === 2 ? 'bento-medium' : ''
-            }`}
-            style={{ minHeight: i === 0 ? 380 : 260 }}
+            className="bg-muted/10 border-t border-accent/15 rounded-sm animate-pulse aspect-[3/4]"
           />
         ))}
       </div>
@@ -41,14 +30,9 @@ export function ProductGrid({ products, loading }: ProductGridProps) {
   }
 
   return (
-    <div className="bento-grid">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6">
       {products.map((product, i) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          index={i}
-          size={getBentoSize(product, i)}
-        />
+        <ProductCard key={product.id} product={product} index={i} />
       ))}
     </div>
   );
