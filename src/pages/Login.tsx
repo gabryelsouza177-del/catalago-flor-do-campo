@@ -14,7 +14,6 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -23,18 +22,11 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        toast({ title: 'Conta criada com sucesso!' });
-        navigate('/admin');
-      } else {
-        await signIn(email, password);
-        navigate('/admin');
-      }
+      await signIn(email, password);
+      navigate('/admin');
     } catch (err: any) {
       toast({
-        title: isSignUp ? 'Erro ao cadastrar' : 'Erro ao entrar',
+        title: 'Erro ao entrar',
         description: err.message || 'Verifique suas credenciais.',
         variant: 'destructive',
       });
@@ -76,15 +68,8 @@ export default function Login() {
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {isSignUp ? 'Criar Conta' : 'Entrar'}
+              Entrar
             </Button>
-            <button
-              type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
-            >
-              {isSignUp ? 'Já tem conta? Entrar' : 'Primeiro acesso? Criar conta'}
-            </button>
           </form>
         </CardContent>
       </Card>
