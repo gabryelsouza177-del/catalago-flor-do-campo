@@ -1,9 +1,8 @@
 export const CATEGORIES = [
   'Todos',
   'Buquês',
-  'Orquídeas',
-  'Arranjos',
   'Coroas',
+  'Arranjos',
   'Presentes',
   'Plantas',
   'Promoções',
