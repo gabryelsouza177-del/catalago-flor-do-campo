@@ -249,7 +249,7 @@ export default function Admin() {
               Novo Produto
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto" onOpenAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>{editing ? 'Editar Produto' : 'Novo Produto'}</DialogTitle>
             </DialogHeader>
@@ -270,7 +270,7 @@ export default function Admin() {
                 <Label>Categoria</Label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" className="z-[9999]">
                     {PRODUCT_CATEGORIES.map((c) => (
                       <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
