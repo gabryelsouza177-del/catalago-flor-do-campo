@@ -1,6 +1,7 @@
 import { Input } from '@/components/ui/input';
-import { Search, Flower2 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { CATEGORIES } from '@/lib/constants';
+import logo from '@/assets/logo.jpg';
 
 interface CatalogHeaderProps {
   search: string;
