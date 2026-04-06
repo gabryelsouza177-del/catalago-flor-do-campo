@@ -270,7 +270,7 @@ export default function Admin() {
                 <Label>Categoria</Label>
                 <Select value={category} onValueChange={setCategory}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper" className="z-[9999]">
                     {PRODUCT_CATEGORIES.map((c) => (
                       <SelectItem key={c} value={c}>{c}</SelectItem>
                     ))}
