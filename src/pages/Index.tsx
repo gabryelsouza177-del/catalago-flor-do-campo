@@ -30,28 +30,30 @@ export default function Index() {
   }, [products, search, category]);
 
   return (
-    <div className="min-h-screen linen-texture">
-      <CatalogHeader
-        search={search}
-        onSearchChange={setSearch}
-        activeCategory={category}
-        onCategoryChange={setCategory}
-      />
+    <div className="min-h-screen grain-overlay relative">
+      <div className="relative z-10">
+        <CatalogHeader
+          search={search}
+          onSearchChange={setSearch}
+          activeCategory={category}
+          onCategoryChange={setCategory}
+        />
 
-      <main className="max-w-7xl mx-auto px-6 py-10">
-        {!isLoading && <FeaturedSection products={featured} />}
-        <ProductGrid products={filtered} loading={isLoading} />
-      </main>
+        <main className="max-w-7xl mx-auto px-6 py-12">
+          {!isLoading && <FeaturedSection products={featured} />}
+          <ProductGrid products={filtered} loading={isLoading} />
+        </main>
 
-      <footer className="border-t border-border/30 mt-20 py-10 text-center">
-        <p className="text-[10px] text-muted-foreground tracking-[0.2em] uppercase font-sans font-light">
-          © 2026 Floricultura Flor do Campo
-        </p>
-        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-[10px] text-accent/30 hover:text-accent/60 transition-colors duration-300 uppercase tracking-[0.2em] font-sans">
-          <Settings className="h-3 w-3" />
-          Painel
-        </Link>
-      </footer>
+        <footer className="border-t border-accent/8 mt-24 py-12 text-center">
+          <p className="text-[9px] text-muted-foreground tracking-[0.25em] uppercase font-sans font-light">
+            © 2026 Floricultura Flor do Campo
+          </p>
+          <Link to="/admin" className="inline-flex items-center gap-1.5 mt-4 text-[9px] text-accent/20 hover:text-accent/50 transition-colors duration-400 uppercase tracking-[0.25em] font-sans">
+            <Settings className="h-3 w-3" />
+            Painel
+          </Link>
+        </footer>
+      </div>
     </div>
   );
 }

@@ -22,12 +22,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   return (
     <>
       <div
-        className={`group overflow-hidden rounded-lg gold-border bg-card/60 animate-luxury-fade-in ${product.sold_out ? 'opacity-55' : ''}`}
-        style={{ animationDelay: `${index * 80}ms` }}
+        className={`group overflow-hidden rounded-lg gold-border glass-card animate-luxury-fade-in transition-all duration-500 hover:gold-glow ${product.sold_out ? 'opacity-50' : ''}`}
+        style={{ animationDelay: `${index * 90}ms` }}
       >
         {/* Image */}
         <div
-          className="aspect-square overflow-hidden bg-muted cursor-pointer relative rounded-t-lg"
+          className="aspect-square overflow-hidden bg-muted/30 cursor-pointer relative rounded-t-lg"
           onClick={() => product.image_url && setImageOpen(true)}
         >
           {product.sold_out && (
@@ -39,7 +39,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             <img
               src={product.image_url}
               alt={product.title}
-              className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.06]"
+              className="w-full h-full object-cover img-warm transition-transform duration-[1.2s] ease-out group-hover:scale-[1.05]"
               loading="lazy"
             />
           ) : (
@@ -51,7 +51,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
         {/* Content */}
         <div className="p-5 space-y-3">
-          <h3 className="font-serif italic font-medium text-accent text-sm tracking-wide line-clamp-1">
+          <h3 className="font-serif italic font-medium text-accent text-[11px] tracking-[0.1em] uppercase line-clamp-1">
             {product.title}
           </h3>
           {product.description && (
@@ -59,7 +59,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               {product.description}
             </p>
           )}
-          <div className="flex items-center justify-between pt-3 border-t border-border/50">
+          <div className="flex items-center justify-between pt-3 border-t border-accent/10">
             <span className="text-base font-semibold text-accent font-sans tracking-wide">
               {formatPrice(Number(product.price))}
             </span>
@@ -71,7 +71,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               <Button
                 size="sm"
                 variant="outline"
-                className="border-accent/40 text-accent hover:bg-accent hover:text-accent-foreground gap-1.5 text-[10px] rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-400 h-8 px-3"
+                className="border-accent/30 text-accent hover:bg-accent hover:text-accent-foreground gap-1.5 text-[10px] rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-500 h-8 px-3 bg-transparent"
                 asChild
               >
                 <a
@@ -90,12 +90,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
 
       {product.image_url && (
         <Dialog open={imageOpen} onOpenChange={setImageOpen}>
-          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-border/50">
+          <DialogContent className="max-w-[95vw] max-h-[95vh] p-2 sm:p-4 flex items-center justify-center bg-background/95 backdrop-blur-xl border border-accent/10">
             <DialogTitle className="sr-only">{product.title}</DialogTitle>
             <img
               src={product.image_url}
               alt={product.title}
-              className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              className="max-w-full max-h-[85vh] object-contain rounded-lg img-warm"
             />
           </DialogContent>
         </Dialog>
