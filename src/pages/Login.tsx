@@ -14,6 +14,7 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isSignUp, setIsSignUp] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -22,11 +23,18 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signIn(email, password);
-      navigate('/admin');
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+        toast({ title: 'Conta criada com sucesso!' });
+        navigate('/admin');
+      } else {
+        await signIn(email, password);
+        navigate('/admin');
+      }
     } catch (err: any) {
       toast({
-        title: 'Erro ao entrar',
+        title: isSignUp ? 'Erro ao cadastrar' : 'Erro ao entrar',
         description: err.message || 'Verifique suas credenciais.',
         variant: 'destructive',
       });
