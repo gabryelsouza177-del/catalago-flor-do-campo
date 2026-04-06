@@ -8,7 +8,16 @@ export const CATEGORIES = [
   'Plantas',
 ] as const;
 
-export const WHATSAPP_NUMBER = '5592991115403';
+export const WHATSAPP_NUMBER = '92991115403';
+
+function normalizeWhatsAppNumber(number: string) {
+  const digits = number.replace(/\D/g, '');
+
+  if (digits.startsWith('55')) return digits;
+  if (digits.length === 11) return `55${digits}`;
+
+  return digits;
+}
 
 export function buildWhatsAppLink(productName: string, price: number, imageUrl?: string | null) {
   let text = `Olá! Tenho interesse no produto: *${productName}* (R$ ${price.toFixed(2).replace('.', ',')}).`;
@@ -17,5 +26,5 @@ export function buildWhatsAppLink(productName: string, price: number, imageUrl?:
   }
   text += `\n\nPoderia me enviar mais informações?`;
   const message = encodeURIComponent(text);
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+  return `https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${message}`;
 }
