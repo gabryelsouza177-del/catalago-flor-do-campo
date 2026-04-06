@@ -8,7 +8,7 @@ export const CATEGORIES = [
   'Plantas',
 ] as const;
 
-export const WHATSAPP_NUMBER = '5592999999999'; // Replace with actual number
+export const WHATSAPP_NUMBER = '5592991115403';
 
 export function buildWhatsAppLink(productName: string, price: number) {
   const message = encodeURIComponent(
