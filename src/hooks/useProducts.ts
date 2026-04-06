@@ -12,6 +12,7 @@ export interface Product {
   category: string;
   active: boolean;
   sold_out: boolean;
+  is_featured: boolean;
   created_at: string;
   updated_at: string;
 }
