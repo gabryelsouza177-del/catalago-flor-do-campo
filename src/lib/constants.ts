@@ -19,8 +19,11 @@ function normalizeWhatsAppNumber(number: string) {
   return digits;
 }
 
-export function buildWhatsAppLink(productName: string, price: number, imageUrl?: string | null) {
+export function buildWhatsAppLink(productName: string, price: number, imageUrl?: string | null, description?: string | null) {
   let text = `Olá! Tenho interesse no produto: *${productName}* (R$ ${price.toFixed(2).replace('.', ',')}).`;
+  if (description) {
+    text += `\n\n📝 Descrição: ${description}`;
+  }
   if (imageUrl) {
     text += `\n\n📷 Foto do produto: ${imageUrl}`;
   }

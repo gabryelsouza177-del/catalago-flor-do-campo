@@ -98,7 +98,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                     asChild
                   >
                     <a
-                      href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
+                      href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
