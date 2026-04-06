@@ -53,20 +53,30 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-lg font-bold text-primary">
               R$ {Number(product.price).toFixed(2).replace('.', ',')}
             </span>
-            <Button
-              size="sm"
-              className="bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white gap-1.5 text-xs"
-              asChild
-            >
-              <a
-                href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
-                target="_blank"
-                rel="noopener noreferrer"
+            {product.sold_out ? (
+              <Button
+                size="sm"
+                className="bg-muted text-muted-foreground gap-1.5 text-xs cursor-not-allowed"
+                disabled
               >
-                <MessageCircle className="h-3.5 w-3.5" />
-                WhatsApp
-              </a>
-            </Button>
+                Esgotado
+              </Button>
+            ) : (
+              <Button
+                size="sm"
+                className="bg-[hsl(142,70%,40%)] hover:bg-[hsl(142,70%,35%)] text-white gap-1.5 text-xs"
+                asChild
+              >
+                <a
+                  href={buildWhatsAppLink(product.title, Number(product.price), product.image_url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  WhatsApp
+                </a>
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>
