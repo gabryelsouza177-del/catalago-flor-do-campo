@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { CatalogHeader } from '@/components/catalog/CatalogHeader';
+import { FeaturedSection } from '@/components/catalog/FeaturedSection';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import { Settings } from 'lucide-react';
@@ -11,6 +12,11 @@ export default function Index() {
   const { data: products, isLoading } = useProducts();
 
   useRealtimeProducts();
+
+  const featured = useMemo(() => {
+    if (!products) return [];
+    return products.filter((p) => p.active && !p.sold_out && p.is_featured);
+  }, [products]);
 
   const filtered = useMemo(() => {
     if (!products) return [];
@@ -33,6 +39,7 @@ export default function Index() {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {!isLoading && <FeaturedSection products={featured} />}
         <ProductGrid products={filtered} loading={isLoading} />
       </main>
 
