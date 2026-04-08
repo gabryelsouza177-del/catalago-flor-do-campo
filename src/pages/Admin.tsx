@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import type { Product } from '@/hooks/useProducts';
