@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star } from 'lucide-react';
+import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star, BarChart3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CATEGORIES } from '@/lib/constants';
 
