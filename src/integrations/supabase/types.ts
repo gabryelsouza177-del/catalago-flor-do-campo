@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          description: string
+          expense_date: string
+          id: string
+        }
+        Insert: {
+          amount?: number
+          category?: string
+          created_at?: string
+          description: string
+          expense_date?: string
+          id?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          description?: string
+          expense_date?: string
+          id?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
@@ -55,6 +82,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      sales: {
+        Row: {
+          cost_price: number
+          created_at: string
+          id: string
+          product_id: string | null
+          product_title: string
+          quantity: number
+          sale_date: string
+          sale_price: number
+        }
+        Insert: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          product_title: string
+          quantity?: number
+          sale_date?: string
+          sale_price?: number
+        }
+        Update: {
+          cost_price?: number
+          created_at?: string
+          id?: string
+          product_id?: string | null
+          product_title?: string
+          quantity?: number
+          sale_date?: string
+          sale_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sales_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

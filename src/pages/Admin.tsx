@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import type { Product } from '@/hooks/useProducts';
@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star } from 'lucide-react';
+import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star, BarChart3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CATEGORIES } from '@/lib/constants';
 
@@ -232,6 +232,12 @@ export default function Admin() {
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline ml-1">Sair</span>
           </Button>
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary/80">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Financeiro</span>
+            </Button>
+          </Link>
         </div>
       </header>
 
