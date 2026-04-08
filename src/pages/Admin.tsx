@@ -232,6 +232,12 @@ export default function Admin() {
             <LogOut className="h-4 w-4" />
             <span className="hidden sm:inline ml-1">Sair</span>
           </Button>
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary/80">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline ml-1">Financeiro</span>
+            </Button>
+          </Link>
         </div>
       </header>
 
