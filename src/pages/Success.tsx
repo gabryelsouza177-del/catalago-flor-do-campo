@@ -16,47 +16,43 @@ export default function Success() {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<any>(null);
-  const sessionId = searchParams.get('session_id');
+  const orderId = searchParams.get('order_id');
+  const paymentStatus = searchParams.get('status');
   const clearCart = useCart((state) => state.clearCart);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!sessionId) {
+    if (!orderId) {
       navigate('/');
       return;
     }
 
     const verifyPayment = async () => {
-      // In a real app, you'd verify the session with Stripe via an edge function
-      // For now, we'll assume if they reach here with a session_id, it's success
-      // and update the order status.
-      
       const { data: order, error } = await supabase
         .from('orders')
         .select('*')
-        .eq('stripe_session_id', sessionId) // This might be null if not updated yet
+        .eq('id', orderId)
         .single();
 
-      // If we don't find it by session_id, try to update the most recent pending order
-      // (Simplified for this demo, better to use webhook)
-      if (!order) {
-        const { data: recentOrder } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('payment_status', 'pending')
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
-        
-        if (recentOrder) {
+      if (order) {
+        // If we have a status from MP and it's approved
+        if (paymentStatus === 'approved' || !paymentStatus) {
           await supabase
             .from('orders')
-            .update({ payment_status: 'paid', stripe_session_id: sessionId })
-            .eq('id', recentOrder.id);
-          setOrder(recentOrder);
+            .update({ payment_status: 'paid' })
+            .eq('id', orderId);
+          
+          // Refresh order data
+          const { data: updatedOrder } = await supabase
+            .from('orders')
+            .select('*')
+            .eq('id', orderId)
+            .single();
+            
+          setOrder(updatedOrder);
+        } else {
+          setOrder(order);
         }
-      } else {
-        setOrder(order);
       }
       
       clearCart();
@@ -64,7 +60,7 @@ export default function Success() {
     };
 
     verifyPayment();
-  }, [sessionId, clearCart, navigate]);
+  }, [orderId, paymentStatus, clearCart, navigate]);
 
   const sendWhatsApp = () => {
     if (!order) return;
