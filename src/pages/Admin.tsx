@@ -36,6 +36,7 @@ export default function Admin() {
     long_distance_rate: 0,
     price_per_km: 2.50,
     min_delivery_fee: 12.00,
+    max_delivery_fee: 40.00,
     eligible_categories: ['Buquês'],
     fixed_delivery_fee: 20.00
   });
