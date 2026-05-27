@@ -16,7 +16,7 @@ export function FloatingCart() {
     }
   }, [itemCount]);
 
-  if (!isVisible || itemCount === 0) return null;
+  if (!isVisible || itemCount === 0 || !isOpen) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 animate-in fade-in slide-in-from-bottom-4 duration-500">
