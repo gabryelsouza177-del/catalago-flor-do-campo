@@ -1,6 +1,10 @@
-#lovable-badge {
+#lovable-badge,
+a[href*="lovable.dev"],
+aside:has(a[href*="lovable.dev"]) {
   display: none !important;
-  z-index: -1000 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 
 @tailwind base;
