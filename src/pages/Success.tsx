@@ -74,9 +74,11 @@ export default function Success() {
       `*Destinatário:* ${order.recipient_name}\n` +
       `*Data de Entrega:* ${new Date(order.delivery_date).toLocaleDateString('pt-BR')}\n` +
       `*Período:* ${order.delivery_period}\n` +
-      `*Região:* ${order.delivery_region}\n\n` +
-      `*Itens:* \n${itemsList}\n\n` +
+      `*Endereço:* ${order.delivery_address || order.delivery_region}\n` +
+      (order.delivery_distance ? `*Distância:* ${Number(order.delivery_distance).toFixed(1)} km\n` : '') +
+      `\n*Itens:* \n${itemsList}\n\n` +
       `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` +
+      `*Taxa de Entrega:* R$ ${Number(order.delivery_fee).toFixed(2).replace('.', ',')}\n` +
       `*Valor Total:* R$ ${Number(order.total_amount).toFixed(2).replace('.', ',')}`;
 
     window.open(`https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`, '_blank');
