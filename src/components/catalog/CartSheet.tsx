@@ -23,6 +23,7 @@ const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95"; // Strict urban Manaus bbox
 
 export function CartSheet({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
+  const { isOpen } = useSiteSettings();
   const { data: logistics } = useLogistics();
   const { toast } = useToast();
   
