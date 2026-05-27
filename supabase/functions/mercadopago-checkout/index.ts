@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -57,6 +58,17 @@ serve(async (req) => {
 
     if (!response.ok) {
       throw new Error(preference.message || "Error creating preference");
+    }
+
+    // Update order with preference ID
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (supabaseUrl && supabaseKey) {
+      const supabase = createClient(supabaseUrl, supabaseKey);
+      await supabase
+        .from('orders')
+        .update({ mercadopago_preference_id: preference.id })
+        .eq('id', orderId);
     }
 
     return new Response(JSON.stringify({ url: preference.init_point }), {
