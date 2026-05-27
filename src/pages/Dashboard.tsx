@@ -114,15 +114,15 @@ export default function Dashboard() {
     refetchExpenses();
   };
 
-  if (loading) {
+  const isDataLoading = salesLoading || expensesLoading;
+
+  if (isDataLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
   }
-
-  const loading = salesLoading || expensesLoading;
 
   return (
     <div className="min-h-screen bg-background">
