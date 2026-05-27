@@ -88,6 +88,7 @@ export default function Admin() {
           long_distance_rate: logistics.long_distance_rate,
           price_per_km: logistics.price_per_km,
           min_delivery_fee: logistics.min_delivery_fee,
+          max_delivery_fee: logistics.max_delivery_fee,
           eligible_categories: logistics.eligible_categories,
           fixed_delivery_fee: logistics.fixed_delivery_fee,
           updated_at: new Date().toISOString()
