@@ -120,10 +120,15 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 </a>
                 <Button
                   onClick={handleAddToCart}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-all duration-300 h-auto border-0 ${isAnimating ? 'scale-90 opacity-80' : ''}`}
+                  className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-all duration-300 h-auto border-0 ${isAnimating ? 'emerald-glow-strong scale-95' : ''}`}
                 >
                   <ShoppingCart className={`h-3 w-3 ${isAnimating ? 'animate-bounce' : ''}`} />
                   Carrinho
+                  {isAnimating && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="h-4 w-4 bg-accent rounded-full animate-fly" />
+                    </div>
+                  )}
                 </Button>
               </div>
             )}
