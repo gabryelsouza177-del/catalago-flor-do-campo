@@ -66,11 +66,19 @@ export default function Success() {
     if (!order) return;
 
     const itemsList = (order.items as any[]).map(i => `${i.quantity}x ${i.title}`).join('\n');
+    const isWreath = (order.items as any[]).some(i => i.category === 'Coroas');
+    
+    const wreathInfo = isWreath ? 
+      `*Homenageado:* ${order.wreath_honoree_name}\n` +
+      `*Dizeres da Faixa:* ${order.wreath_ribbon_message}\n` +
+      `*Horário da Cerimônia:* ${order.wreath_ceremony_time}\n` : '';
+
     const text = `✨ *Novo Pedido Confirmado!* ✨\n\n` +
-      `*Destinatário:* ${order.recipient_name}\n` +
+      `*Comprador/Contato:* ${order.recipient_name}\n` +
+      (isWreath ? `*Local:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n` : `*Endereço:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n`) +
       `*Data de Entrega:* ${new Date(order.delivery_date).toLocaleDateString('pt-BR')}\n` +
       `*Período:* ${order.delivery_period}\n` +
-      `*Endereço:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n` +
+      wreathInfo +
       (order.delivery_distance ? `*Distância:* ${Number(order.delivery_distance).toFixed(1)} km\n` : '') +
       `\n*Itens:* \n${itemsList}\n\n` +
       `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` +

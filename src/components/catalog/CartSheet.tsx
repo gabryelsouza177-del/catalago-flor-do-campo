@@ -40,6 +40,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
+  
+  // Wreath specific fields
+  const [wreathRibbonMessage, setWreathRibbonMessage] = useState('');
+  const [wreathHonoreeName, setWreathHonoreeName] = useState('');
+  const [wreathLocation, setWreathLocation] = useState('');
+  const [wreathCeremonyTime, setWreathCeremonyTime] = useState('');
+
+  const isWreathOrder = useMemo(() => 
+    items.some(item => item.category === 'Coroas'),
+    [items]
+  );
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
@@ -135,10 +146,14 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress || !houseNumber) {
+    const isFormValid = isWreathOrder 
+      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathLocation && wreathCeremonyTime)
+      : (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber);
+
+    if (!isFormValid) {
       toast({
         title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os dados de entrega.",
+        description: "Por favor, preencha todos os dados obrigatórios.",
         variant: "destructive"
       });
       return;
@@ -161,7 +176,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           delivery_fee: deliveryFee,
           total_amount: total,
           items: items as any, // Cast to any to avoid Json type mismatch
-          payment_status: 'pending'
+          payment_status: 'pending',
+          wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
+          wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
+          wreath_location: isWreathOrder ? (selectedStreet || deliveryAddress) : null,
+          wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null
         })
         .select()
         .single();
@@ -252,8 +271,44 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
             <div className="space-y-4 pt-6 border-t border-accent/10">
               <h3 className="text-[9px] font-sans font-bold uppercase tracking-[0.25em] text-accent/60">Dados de Entrega</h3>
               
+              {isWreathOrder && (
+                <div className="space-y-4 p-3 bg-accent/5 rounded-sm border border-accent/10 animate-in fade-in slide-in-from-top-2">
+                  <h4 className="text-[8px] font-sans font-bold uppercase tracking-[0.2em] text-accent/80 mb-2">Informações da Coroa</h4>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Homenageado *</Label>
+                    <Input 
+                      value={wreathHonoreeName} 
+                      onChange={(e) => setWreathHonoreeName(e.target.value)} 
+                      placeholder="Ex: João da Silva"
+                      className="bg-background border-accent/10 text-xs h-9" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Dizeres da Faixa *</Label>
+                    <Textarea 
+                      value={wreathRibbonMessage} 
+                      onChange={(e) => setWreathRibbonMessage(e.target.value)} 
+                      placeholder="Ex: Saudades eternas da família..."
+                      className="bg-background border-accent/10 text-xs min-h-[60px]" 
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário da Cerimônia *</Label>
+                    <Input 
+                      type="time"
+                      value={wreathCeremonyTime} 
+                      onChange={(e) => setWreathCeremonyTime(e.target.value)} 
+                      className="bg-background border-accent/10 text-xs h-9 w-full" 
+                    />
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Destinatário *</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Comprador/Contato *</Label>
                 <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} className="bg-muted/10 border-accent/10 text-xs h-9" />
               </div>
 
@@ -301,7 +356,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
               </div>
 
               <div className="space-y-2 relative">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Rua e Bairro (Buscar no Mapa) *</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                  {isWreathOrder ? "Local do Velório / Funerária (Buscar no Mapa) *" : "Rua e Bairro (Buscar no Mapa) *"}
+                </Label>
                 <div className="relative">
                   <Input 
                     value={deliveryAddress} 
