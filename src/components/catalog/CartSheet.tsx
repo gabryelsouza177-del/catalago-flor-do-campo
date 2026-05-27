@@ -15,10 +15,10 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin, AlertCircle } from 'lucide-react';
+import { Search, MapPin, AlertCircle, Hash } from 'lucide-react';
 
 const ORIGIN = { lat: -3.1287, lon: -60.0215 };
-const MANAUS_BBOX = "-60.15,-3.20,-59.85,-2.90"; // Approximate bounding box for Manaus
+const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95"; // Strict urban Manaus bbox
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
@@ -35,6 +35,9 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [distance, setDistance] = useState<number | null>(null);
   const [calculatingDistance, setCalculatingDistance] = useState(false);
   const [calculationError, setCalculationError] = useState(false);
+  const [hasHouseNumber, setHasHouseNumber] = useState(true);
+  const [manualHouseNumber, setManualHouseNumber] = useState('');
+  const [showManualNumberInput, setShowManualNumberInput] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
@@ -42,12 +45,10 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const searchAddress = async (query: string) => {
     if (query.length < 3) return;
     try {
-      // Using Photon API for better search results in Manaus
       const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${ORIGIN.lat}&lon=${ORIGIN.lon}&bbox=${MANAUS_BBOX}&limit=5`;
       const response = await fetch(url);
       const data = await response.json();
       
-      // Map Photon features to a simpler format
       const suggestions = data.features.map((f: any) => ({
         id: f.properties.osm_id || Math.random(),
         display_name: [
@@ -57,6 +58,9 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           f.properties.district,
           f.properties.city
         ].filter(Boolean).join(', '),
+        street: f.properties.street || f.properties.name,
+        housenumber: f.properties.housenumber,
+        district: f.properties.district,
         lat: f.geometry.coordinates[1],
         lon: f.geometry.coordinates[0]
       }));
@@ -67,9 +71,14 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const calculateDistance = async (lat: number, lon: number) => {
+  const calculateDistance = async (lat: number, lon: number, addressWithNum?: string) => {
     setCalculatingDistance(true);
     setCalculationError(false);
+    
+    // If a manual number was provided, we might want to try and geocode again for more precision
+    // But OSRM just needs the coords we already have.
+    // If we have a house number, we use the specific coords from geocoding.
+    
     try {
       const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN.lon},${ORIGIN.lat};${lon},${lat}?overview=false`);
       const data = await response.json();
@@ -77,12 +86,11 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       if (data.routes && data.routes[0]) {
         const distKm = data.routes[0].distance / 1000;
         
-        // Debugging / Visual Warnings
         if (distKm < 0.1 || distKm > 50) {
-          console.warn(`[Logística] Distância suspeita detectada: ${distKm.toFixed(2)}km. Coordenadas destino: ${lat}, ${lon}`);
+          console.warn(`[Logística] Distância suspeita: ${distKm.toFixed(2)}km`);
           toast({ 
             title: "Aviso de Localização", 
-            description: "A distância calculada parece incomum. Por favor, verifique se o endereço selecionado está correto.",
+            description: "Verifique se o endereço selecionado está correto.",
             variant: "destructive" 
           });
         }
@@ -94,13 +102,38 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error('Error calculating distance:', err);
       setCalculationError(true);
-      toast({ 
-        title: "Erro no cálculo de frete", 
-        description: "Não conseguimos calcular a distância automaticamente. Usando taxa padrão.",
-        variant: "destructive" 
-      });
     } finally {
       setCalculatingDistance(false);
+    }
+  };
+
+  const handleManualNumberSubmit = async () => {
+    if (!manualHouseNumber || !selectedCoords) return;
+    
+    // Try to refine location with the manual house number
+    const refinedQuery = `${deliveryAddress}, ${manualHouseNumber}, Manaus`;
+    setDeliveryAddress(`${deliveryAddress}, nº ${manualHouseNumber}`);
+    setHasHouseNumber(true);
+    setShowManualNumberInput(false);
+    
+    // Re-calculate with current coords (street level) or try to find exact house
+    try {
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(refinedQuery)}&bbox=${MANAUS_BBOX}&limit=1`;
+      const response = await fetch(url);
+      const data = await response.json();
+      
+      if (data.features && data.features.length > 0) {
+        const f = data.features[0];
+        const lat = f.geometry.coordinates[1];
+        const lon = f.geometry.coordinates[0];
+        setSelectedCoords({ lat, lon });
+        calculateDistance(lat, lon);
+      } else {
+        // Fallback to existing coords if exact house not found
+        calculateDistance(selectedCoords.lat, selectedCoords.lon);
+      }
+    } catch (err) {
+      calculateDistance(selectedCoords.lat, selectedCoords.lon);
     }
   };
 
@@ -300,6 +333,10 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                     onChange={(e) => {
                       setDeliveryAddress(e.target.value);
                       searchAddress(e.target.value);
+                      setDistance(null);
+                      setCalculationError(false);
+                      setHasHouseNumber(true);
+                      setShowManualNumberInput(false);
                     }} 
                     placeholder="Rua, número, bairro..."
                     className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
@@ -314,20 +351,72 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                         key={s.id}
                         className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
                         onClick={() => {
+                          const hasNum = !!s.housenumber;
                           setDeliveryAddress(s.display_name);
                           setAddressSuggestions([]);
+                          setHasHouseNumber(hasNum);
+                          
                           const lat = parseFloat(s.lat);
                           const lon = parseFloat(s.lon);
                           setSelectedCoords({ lat, lon });
-                          calculateDistance(lat, lon);
+                          
+                          if (hasNum) {
+                            calculateDistance(lat, lon);
+                          }
                         }}
                       >
                         <div className="flex items-start gap-2">
-                          <MapPin className="h-3 w-3 mt-0.5 text-accent/40" />
-                          <span>{s.display_name}</span>
+                          <MapPin className={cn("h-3 w-3 mt-0.5", s.housenumber ? "text-emerald" : "text-accent/40")} />
+                          <div className="flex flex-col">
+                            <span className="font-medium">{s.display_name}</span>
+                            {!s.housenumber && (
+                              <span className="text-[8px] text-amber-600 uppercase tracking-tighter">Número não identificado</span>
+                            )}
+                          </div>
                         </div>
                       </button>
                     ))}
+                  </div>
+                )}
+
+                {!hasHouseNumber && !showManualNumberInput && (
+                  <div className="mt-2 p-2 bg-amber-50 rounded-sm border border-amber-200 flex flex-col gap-2">
+                    <p className="text-[9px] text-amber-700 uppercase tracking-widest leading-relaxed">
+                      Por favor, selecione o endereço com o número exato para calcular o frete corretamente.
+                    </p>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="h-6 text-[8px] uppercase tracking-widest text-amber-800 hover:bg-amber-100 p-0 justify-start w-fit"
+                      onClick={() => setShowManualNumberInput(true)}
+                    >
+                      Não encontrei meu número
+                    </Button>
+                  </div>
+                )}
+
+                {showManualNumberInput && (
+                  <div className="mt-2 p-3 bg-muted/20 rounded-sm border border-accent/10 space-y-2 animate-in fade-in zoom-in-95">
+                    <Label className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Número da Residência</Label>
+                    <div className="flex gap-2">
+                      <div className="relative flex-1">
+                        <Input 
+                          type="text"
+                          placeholder="Ex: 1446"
+                          value={manualHouseNumber}
+                          onChange={(e) => setManualHouseNumber(e.target.value)}
+                          className="bg-background border-accent/20 h-8 text-[10px]"
+                        />
+                        <Hash className="absolute right-2 top-2 h-3 w-3 text-accent/30" />
+                      </div>
+                      <Button 
+                        size="sm" 
+                        className="h-8 bg-accent text-[9px] uppercase tracking-widest px-4"
+                        onClick={handleManualNumberSubmit}
+                      >
+                        Confirmar
+                      </Button>
+                    </div>
                   </div>
                 )}
                 
