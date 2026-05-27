@@ -5,6 +5,13 @@ import { useCart } from '@/hooks/useCart';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
+function normalizeWhatsAppNumber(number: string) {
+  const digits = number.replace(/\D/g, '');
+  if (digits.startsWith('55')) return digits;
+  if (digits.length === 11) return `55${digits}`;
+  return digits;
+}
+
 export default function Success() {
   const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -72,7 +79,7 @@ export default function Success() {
       `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` +
       `*Valor Total:* R$ ${Number(order.total_amount).toFixed(2).replace('.', ',')}`;
 
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank');
+    window.open(`https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   if (loading) {
