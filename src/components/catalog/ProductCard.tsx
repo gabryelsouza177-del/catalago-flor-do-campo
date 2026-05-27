@@ -33,6 +33,14 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAddToCart = () => {
+    if (!isOpen) {
+      toast({
+        title: "Loja Fechada",
+        description: "Não estamos aceitando pedidos no momento.",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsAnimating(true);
     addItem(product);
     
