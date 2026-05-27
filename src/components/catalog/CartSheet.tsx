@@ -89,7 +89,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryNeighborhood) {
+    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os dados de entrega.",
@@ -107,7 +107,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           recipient_name: recipientName,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
-          delivery_region: deliveryNeighborhood, // We save the neighborhood name here
+          delivery_address: deliveryAddress,
+          delivery_distance: distance,
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
