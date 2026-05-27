@@ -74,7 +74,7 @@ export default function Success() {
       `*Destinatário:* ${order.recipient_name}\n` +
       `*Data de Entrega:* ${new Date(order.delivery_date).toLocaleDateString('pt-BR')}\n` +
       `*Período:* ${order.delivery_period}\n` +
-      `*Endereço:* ${order.delivery_address || order.delivery_region}${order.delivery_complement ? `, ${order.delivery_complement}` : ''}\n` +
+      `*Endereço:* ${order.delivery_address}${order.house_number ? `, nº ${order.house_number}` : ''}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n` +
       (order.delivery_distance ? `*Distância:* ${Number(order.delivery_distance).toFixed(1)} km\n` : '') +
       `\n*Itens:* \n${itemsList}\n\n` +
       `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` +

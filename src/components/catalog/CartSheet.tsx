@@ -35,9 +35,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [distance, setDistance] = useState<number | null>(null);
   const [calculatingDistance, setCalculatingDistance] = useState(false);
   const [calculationError, setCalculationError] = useState(false);
-  const [hasHouseNumber, setHasHouseNumber] = useState(true);
-  const [manualHouseNumber, setManualHouseNumber] = useState('');
-  const [showManualNumberInput, setShowManualNumberInput] = useState(false);
+  const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
 
@@ -53,14 +51,11 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       const suggestions = data.features.map((f: any) => ({
         id: f.properties.osm_id || Math.random(),
         display_name: [
-          f.properties.name,
-          f.properties.housenumber,
-          f.properties.street,
+          f.properties.street || f.properties.name,
           f.properties.district,
           f.properties.city
         ].filter(Boolean).join(', '),
         street: f.properties.street || f.properties.name,
-        housenumber: f.properties.housenumber,
         district: f.properties.district,
         lat: f.geometry.coordinates[1],
         lon: f.geometry.coordinates[0]
@@ -108,35 +103,6 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleManualNumberSubmit = async () => {
-    if (!manualHouseNumber || !selectedCoords) return;
-    
-    // Try to refine location with the manual house number
-    const refinedQuery = `${deliveryAddress}, ${manualHouseNumber}, Manaus`;
-    setDeliveryAddress(`${deliveryAddress}, nº ${manualHouseNumber}`);
-    setHasHouseNumber(true);
-    setShowManualNumberInput(false);
-    
-    // Re-calculate with current coords (street level) or try to find exact house
-    try {
-      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(refinedQuery)}&bbox=${MANAUS_BBOX}&limit=1`;
-      const response = await fetch(url);
-      const data = await response.json();
-      
-      if (data.features && data.features.length > 0) {
-        const f = data.features[0];
-        const lat = f.geometry.coordinates[1];
-        const lon = f.geometry.coordinates[0];
-        setSelectedCoords({ lat, lon });
-        calculateDistance(lat, lon);
-      } else {
-        // Fallback to existing coords if exact house not found
-        calculateDistance(selectedCoords.lat, selectedCoords.lon);
-      }
-    } catch (err) {
-      calculateDistance(selectedCoords.lat, selectedCoords.lon);
-    }
-  };
 
   const deliveryFee = useMemo(() => {
     if (!logistics) return 0;
@@ -167,7 +133,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress) {
+    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress || !houseNumber) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os dados de entrega.",
@@ -186,6 +152,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
           delivery_address: deliveryAddress,
+          house_number: houseNumber,
           delivery_complement: addressComplement,
           delivery_distance: distance,
           gift_message: giftMessage,
@@ -332,7 +299,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
               </div>
 
               <div className="space-y-2 relative">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Endereço de Entrega (Manaus) *</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Rua e Bairro (Buscar no Mapa) *</Label>
                 <div className="relative">
                   <Input 
                     value={deliveryAddress} 
@@ -341,10 +308,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                       searchAddress(e.target.value);
                       setDistance(null);
                       setCalculationError(false);
-                      setHasHouseNumber(true);
-                      setShowManualNumberInput(false);
                     }} 
-                    placeholder="Rua, número, bairro..."
+                    placeholder="Digite o nome da rua..."
                     className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
                   />
                   <Search className="absolute right-2 top-2.5 h-4 w-4 text-accent/40" />
@@ -357,27 +322,19 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                         key={s.id}
                         className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
                         onClick={() => {
-                          const hasNum = !!s.housenumber;
                           setDeliveryAddress(s.display_name);
                           setAddressSuggestions([]);
-                          setHasHouseNumber(hasNum);
                           
                           const lat = parseFloat(s.lat);
                           const lon = parseFloat(s.lon);
                           setSelectedCoords({ lat, lon });
-                          
-                          if (hasNum) {
-                            calculateDistance(lat, lon);
-                          }
+                          calculateDistance(lat, lon);
                         }}
                       >
                         <div className="flex items-start gap-2">
-                          <MapPin className={cn("h-3 w-3 mt-0.5", s.housenumber ? "text-emerald" : "text-accent/40")} />
+                          <MapPin className="h-3 w-3 mt-0.5 text-accent/40" />
                           <div className="flex flex-col">
                             <span className="font-medium">{s.display_name}</span>
-                            {!s.housenumber && (
-                              <span className="text-[8px] text-amber-600 uppercase tracking-tighter">Número não identificado</span>
-                            )}
                           </div>
                         </div>
                       </button>
@@ -385,46 +342,30 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   </div>
                 )}
 
-                {!hasHouseNumber && !showManualNumberInput && (
-                  <div className="mt-2 p-2 bg-amber-50 rounded-sm border border-amber-200 flex flex-col gap-2">
-                    <p className="text-[9px] text-amber-700 uppercase tracking-widest leading-relaxed">
-                      Por favor, selecione o endereço com o número exato para calcular o frete corretamente.
-                    </p>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="h-6 text-[8px] uppercase tracking-widest text-amber-800 hover:bg-amber-100 p-0 justify-start w-fit"
-                      onClick={() => setShowManualNumberInput(true)}
-                    >
-                      Não encontrei meu número
-                    </Button>
-                  </div>
-                )}
-
-                {showManualNumberInput && (
-                  <div className="mt-2 p-3 bg-muted/20 rounded-sm border border-accent/10 space-y-2 animate-in fade-in zoom-in-95">
-                    <Label className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground">Número da Residência</Label>
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Input 
-                          type="text"
-                          placeholder="Ex: 1446"
-                          value={manualHouseNumber}
-                          onChange={(e) => setManualHouseNumber(e.target.value)}
-                          className="bg-background border-accent/20 h-8 text-[10px]"
-                        />
-                        <Hash className="absolute right-2 top-2 h-3 w-3 text-accent/30" />
-                      </div>
-                      <Button 
-                        size="sm" 
-                        className="h-8 bg-accent text-[9px] uppercase tracking-widest px-4"
-                        onClick={handleManualNumberSubmit}
-                      >
-                        Confirmar
-                      </Button>
+                <div className="grid grid-cols-2 gap-4 mt-2">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número da Residência *</Label>
+                    <div className="relative">
+                      <Input 
+                        value={houseNumber} 
+                        onChange={(e) => setHouseNumber(e.target.value)} 
+                        placeholder="Ex: 1446"
+                        className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
+                      />
+                      <Hash className="absolute right-2 top-2.5 h-3 w-3 text-accent/40" />
                     </div>
                   </div>
-                )}
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Complemento</Label>
+                    <Input 
+                      value={addressComplement} 
+                      onChange={(e) => setAddressComplement(e.target.value)} 
+                      placeholder="Apto, Sala, etc"
+                      className="bg-muted/10 border-accent/10 text-xs h-9" 
+                    />
+                  </div>
+                </div>
                 
                 {calculationError && (
                   <div className="mt-2 p-2 bg-destructive/10 rounded-sm border border-destructive/20 flex flex-col gap-2">
@@ -450,15 +391,6 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número / Complemento</Label>
-                <Input 
-                  value={addressComplement} 
-                  onChange={(e) => setAddressComplement(e.target.value)} 
-                  placeholder="Ex: Apto 302, Bloco B ou Casa 10"
-                  className="bg-muted/10 border-accent/10 text-xs h-9" 
-                />
-              </div>
 
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
