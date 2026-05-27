@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import Success from "./pages/Success";
+import MyOrder from "./pages/MyOrder";
 import NotFound from "./pages/NotFound";
 import { FloatingCart } from "./components/catalog/FloatingCart";
 import { AddToCartModal } from "./components/catalog/AddToCartModal";
@@ -43,6 +44,7 @@ const App = () => (
             } 
           />
           <Route path="/success" element={<Success />} />
+          <Route path="/meu-pedido/:id" element={<MyOrder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
