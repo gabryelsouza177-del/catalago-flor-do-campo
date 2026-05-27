@@ -168,8 +168,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
 
       if (orderError) throw orderError;
 
-      // 2. Create Stripe Checkout Session
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      // 2. Create Mercado Pago Checkout Preference
+      const { data, error } = await supabase.functions.invoke('mercadopago-checkout', {
         body: {
           orderId: order.id,
           items: items.map(i => ({
