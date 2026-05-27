@@ -1,0 +1,2 @@
+ALTER TABLE public.orders ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Pagamento Pendente';
+COMMENT ON COLUMN public.orders.status IS 'Delivery status: Pagamento Pendente, Pedido Confirmado, Preparando seu Arranjo, Saiu para Entrega, Entregue';

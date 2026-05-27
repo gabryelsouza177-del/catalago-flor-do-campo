@@ -118,6 +118,7 @@ export type Database = {
           mercadopago_preference_id: string | null
           payment_status: string | null
           recipient_name: string
+          status: string | null
           stripe_session_id: string | null
           total_amount: number
           wreath_ceremony_time: string | null
@@ -144,6 +145,7 @@ export type Database = {
           mercadopago_preference_id?: string | null
           payment_status?: string | null
           recipient_name: string
+          status?: string | null
           stripe_session_id?: string | null
           total_amount: number
           wreath_ceremony_time?: string | null
@@ -170,6 +172,7 @@ export type Database = {
           mercadopago_preference_id?: string | null
           payment_status?: string | null
           recipient_name?: string
+          status?: string | null
           stripe_session_id?: string | null
           total_amount?: number
           wreath_ceremony_time?: string | null
