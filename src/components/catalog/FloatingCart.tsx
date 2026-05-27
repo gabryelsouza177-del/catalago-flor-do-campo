@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 export function FloatingCart() {
   const items = useCart((state) => state.items);
   const [isVisible, setIsVisible] = useState(false);
+  const { isOpen } = useSiteSettings();
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
