@@ -12,6 +12,10 @@ export function AddToCartModal() {
   const [showCart, setShowCart] = useState(false);
 
   const handleFinishOrder = () => {
+    if (!isOpen) {
+      setModalOpen(false);
+      return;
+    }
     setModalOpen(false);
     // We want to open the CartSheet after closing the modal
     setTimeout(() => {
