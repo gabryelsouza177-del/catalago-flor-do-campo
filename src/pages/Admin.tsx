@@ -80,6 +80,8 @@ export default function Admin() {
     } finally {
       setSavingLogistics(false);
     }
+  };
+
 
   const resetForm = () => {
     setTitle('');
