@@ -29,7 +29,11 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [recipientName, setRecipientName] = useState('');
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
-  const [deliveryNeighborhood, setDeliveryNeighborhood] = useState<string>('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [selectedCoords, setSelectedCoords] = useState<{lat: number, lon: number} | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+  const [calculatingDistance, setCalculatingDistance] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
