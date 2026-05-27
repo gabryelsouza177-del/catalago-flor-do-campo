@@ -52,6 +52,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     [items]
   );
 
+  const isGiftOrder = useMemo(() => 
+    items.some(item => item.category === 'Buquê' || item.category === 'Arranjo'),
+    [items]
+  );
+
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
   const searchAddress = async (query: string) => {
