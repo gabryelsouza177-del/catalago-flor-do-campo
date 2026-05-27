@@ -25,6 +25,7 @@ const PRODUCT_CATEGORIES = CATEGORIES.filter((c) => c !== 'Todos');
 export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isOpen, toggleStoreStatus } = useSiteSettings();
   const { data: products, isLoading, refetch } = useProducts();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
