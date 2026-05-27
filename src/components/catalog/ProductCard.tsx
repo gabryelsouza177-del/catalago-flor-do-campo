@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { MessageCircle, Share2, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { buildWhatsAppLink, WHATSAPP_NUMBER } from '@/lib/constants';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import type { Product } from '@/hooks/useProducts';
 
 interface ProductCardProps {
