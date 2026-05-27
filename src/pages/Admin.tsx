@@ -52,6 +52,7 @@ export default function Admin() {
     const { data, error } = await supabase.from('logistics_settings').select('*').single();
     if (data) {
       setLogistics({
+        id: data.id,
         local_rate: Number(data.local_rate),
         intermediate_rate: Number(data.intermediate_rate),
         long_distance_rate: Number(data.long_distance_rate)
@@ -70,7 +71,16 @@ export default function Admin() {
           long_distance_rate: logistics.long_distance_rate,
           updated_at: new Date().toISOString()
         })
-        .not('id', 'is', null); // Update the only existing row
+        .eq('id', logistics.id);
+
+      if (error) throw error;
+      toast({ title: '✨ Taxas de logística atualizadas!' });
+    } catch (err: any) {
+      toast({ title: 'Erro ao salvar logística', description: err.message, variant: 'destructive' });
+    } finally {
+      setSavingLogistics(false);
+    }
+  };
 
       if (error) throw error;
       toast({ title: '✨ Taxas de logística atualizadas!' });
