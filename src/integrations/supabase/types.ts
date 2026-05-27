@@ -91,6 +91,7 @@ export type Database = {
           delivery_fee: number
           delivery_period: string
           delivery_region: string | null
+          delivery_time: string | null
           gift_message: string | null
           house_number: string | null
           id: string
@@ -115,6 +116,7 @@ export type Database = {
           delivery_fee: number
           delivery_period: string
           delivery_region?: string | null
+          delivery_time?: string | null
           gift_message?: string | null
           house_number?: string | null
           id?: string
@@ -139,6 +141,7 @@ export type Database = {
           delivery_fee?: number
           delivery_period?: string
           delivery_region?: string | null
+          delivery_time?: string | null
           gift_message?: string | null
           house_number?: string | null
           id?: string

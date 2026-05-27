@@ -29,6 +29,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [recipientName, setRecipientName] = useState('');
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
+  const [deliveryTime, setDeliveryTime] = useState<string>('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
   const [selectedStreet, setSelectedStreet] = useState('');
@@ -151,14 +152,25 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
+    const isTimeValid = () => {
+      if (isWreathOrder) return !!deliveryTime;
+      if (!deliveryTime) return false;
+      const [hours] = deliveryTime.split(':').map(Number);
+      return hours >= 8 && hours < 17;
+    };
+
     const isFormValid = isWreathOrder 
-      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
-      : (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber);
+      ? (recipientName && deliveryDate && deliveryTime && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
+      : (recipientName && deliveryDate && isTimeValid() && deliveryAddress && houseNumber);
 
     if (!isFormValid) {
+      const errorMsg = !isTimeValid() && deliveryTime 
+        ? "Horário de entrega deve ser entre 08:00 e 17:00 para presentes."
+        : "Por favor, preencha todos os dados obrigatórios.";
+        
       toast({
-        title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os dados obrigatórios.",
+        title: "Dados incompletos",
+        description: errorMsg,
         variant: "destructive"
       });
       return;
@@ -172,7 +184,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         .insert({
           recipient_name: recipientName,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
-          delivery_period: deliveryPeriod,
+          delivery_period: deliveryPeriod || (isWreathOrder ? '24h' : 'Comercial'),
+          delivery_time: deliveryTime,
           delivery_address: selectedStreet ? `${selectedStreet}, ${houseNumber}${selectedDistrict ? `, ${selectedDistrict}` : ''}` : `${deliveryAddress}, ${houseNumber}`,
           house_number: houseNumber,
           delivery_complement: addressComplement,
@@ -180,7 +193,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
-          items: items as any, // Cast to any to avoid Json type mismatch
+          items: items as any, // Cast any to avoid Json type mismatch
           payment_status: 'pending',
           wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
           wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
@@ -346,17 +359,20 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Período *</Label>
-                  <Select value={deliveryPeriod} onValueChange={setDeliveryPeriod}>
-                    <SelectTrigger className="bg-muted/10 border-accent/10 h-9 text-xs">
-                      <SelectValue placeholder="Escolher" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Manhã">Manhã</SelectItem>
-                      <SelectItem value="Tarde">Tarde</SelectItem>
-                      <SelectItem value="Noite">Noite</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário de Entrega *</Label>
+                  <Input 
+                    type="time"
+                    value={deliveryTime} 
+                    onChange={(e) => setDeliveryTime(e.target.value)} 
+                    className="bg-muted/10 border-accent/10 h-9 text-xs"
+                    min={!isWreathOrder ? "08:00" : undefined}
+                    max={!isWreathOrder ? "17:00" : undefined}
+                  />
+                  <p className="text-[8px] uppercase tracking-wider text-accent/60 font-medium">
+                    {isWreathOrder 
+                      ? "• Entrega prioritária 24h para homenagens" 
+                      : "• Entregas realizadas em horário comercial (08h às 17h)"}
+                  </p>
                 </div>
               </div>
 
