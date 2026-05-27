@@ -42,6 +42,7 @@ export const useCart = create<CartStore>()(
                 price: Number(product.price),
                 image_url: product.image_url,
                 quantity: 1,
+                category: product.category,
               },
             ],
           });
