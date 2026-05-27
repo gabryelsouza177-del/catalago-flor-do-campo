@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import type { Product } from '@/hooks/useProducts';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +14,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star, BarChart3, Truck, Save, MapPin, Settings2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -24,6 +26,7 @@ const PRODUCT_CATEGORIES = CATEGORIES.filter((c) => c !== 'Todos');
 export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
+  const { isOpen, toggleStoreStatus } = useSiteSettings();
   const { data: products, isLoading, refetch } = useProducts();
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -302,6 +305,47 @@ export default function Admin() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* Store Status Control */}
+        <Card className={cn(
+          "border-2 transition-all duration-300",
+          isOpen ? "border-emerald/20 bg-emerald/5" : "border-destructive/20 bg-destructive/5"
+        )}>
+          <CardContent className="p-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                "h-12 w-12 rounded-full flex items-center justify-center animate-pulse",
+                isOpen ? "bg-emerald/20 text-emerald" : "bg-destructive/20 text-destructive"
+              )}>
+                <Settings2 className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-lg font-sans font-bold uppercase tracking-wider">
+                  Status da Loja Online
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {isOpen ? "A loja está aberta e aceitando pedidos." : "A loja está fechada. Pedidos desativados."}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className={cn(
+                "text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full",
+                isOpen ? "bg-emerald text-accent" : "bg-destructive text-white"
+              )}>
+                {isOpen ? "Aberta" : "Fechada"}
+              </span>
+              <Switch 
+                checked={isOpen} 
+                onCheckedChange={toggleStoreStatus}
+                className={cn(
+                  "data-[state=checked]:bg-emerald",
+                  !isOpen && "bg-destructive"
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           <Card>

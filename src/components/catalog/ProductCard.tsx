@@ -6,6 +6,7 @@ import { useToast } from '@/hooks/use-toast';
 import { MessageCircle, Share2, ShoppingCart } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 import { buildWhatsAppLink, WHATSAPP_NUMBER } from '@/lib/constants';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import type { Product } from '@/hooks/useProducts';
 
 interface ProductCardProps {
@@ -28,9 +29,18 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const addItem = useCart((state) => state.addItem);
   const setModalOpen = useCart((state) => state.setModalOpen);
   const { toast } = useToast();
+  const { isOpen } = useSiteSettings();
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAddToCart = () => {
+    if (!isOpen) {
+      toast({
+        title: "Loja Fechada",
+        description: "Não estamos aceitando pedidos no momento.",
+        variant: "destructive"
+      });
+      return;
+    }
     setIsAnimating(true);
     addItem(product);
     

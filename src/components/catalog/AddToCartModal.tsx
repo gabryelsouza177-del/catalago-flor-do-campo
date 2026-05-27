@@ -1,15 +1,21 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { CartSheet } from "./CartSheet";
 
 export function AddToCartModal() {
   const { isModalOpen, setModalOpen } = useCart();
+  const { isOpen } = useSiteSettings();
   const [showCart, setShowCart] = useState(false);
 
   const handleFinishOrder = () => {
+    if (!isOpen) {
+      setModalOpen(false);
+      return;
+    }
     setModalOpen(false);
     // We want to open the CartSheet after closing the modal
     setTimeout(() => {

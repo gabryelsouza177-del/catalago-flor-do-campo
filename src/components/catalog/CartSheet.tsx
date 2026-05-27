@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { useCart } from '@/hooks/useCart';
 import { useLogistics } from '@/hooks/useLogistics';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Minus, CalendarIcon, Loader2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
@@ -22,6 +23,7 @@ const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95"; // Strict urban Manaus bbox
 
 export function CartSheet({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
+  const { isOpen } = useSiteSettings();
   const { data: logistics } = useLogistics();
   const { toast } = useToast();
   
@@ -152,6 +154,14 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
+    if (!isOpen) {
+      toast({
+        title: "Loja Fechada",
+        description: "Agradecemos a compreensão, mas não estamos aceitando pedidos no momento.",
+        variant: "destructive"
+      });
+      return;
+    }
     const isTimeValid = () => {
       if (isWreathOrder) return !!deliveryTime;
       if (!deliveryTime) return false;

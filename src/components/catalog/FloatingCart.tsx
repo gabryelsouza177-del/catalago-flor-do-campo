@@ -1,11 +1,13 @@
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { CartSheet } from "./CartSheet";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useState, useEffect } from "react";
 
 export function FloatingCart() {
   const items = useCart((state) => state.items);
   const [isVisible, setIsVisible] = useState(false);
+  const { isOpen } = useSiteSettings();
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
@@ -14,7 +16,7 @@ export function FloatingCart() {
     }
   }, [itemCount]);
 
-  if (!isVisible || itemCount === 0) return null;
+  if (!isVisible || itemCount === 0 || !isOpen) return null;
 
   return (
     <div className="fixed bottom-6 right-6 z-40 animate-in fade-in slide-in-from-bottom-4 duration-500">

@@ -4,12 +4,14 @@ import { CatalogHeader } from '@/components/catalog/CatalogHeader';
 import { FeaturedSection } from '@/components/catalog/FeaturedSection';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
-import { Settings } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { Settings, Info } from 'lucide-react';
 
 export default function Index() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Todos');
   const { data: products, isLoading } = useProducts();
+  const { isOpen } = useSiteSettings();
 
   useRealtimeProducts();
 
@@ -31,6 +33,16 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
+      {!isOpen && (
+        <div className="bg-destructive text-white py-3 px-4 text-center sticky top-0 z-[60] shadow-lg animate-in slide-in-from-top duration-500">
+          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
+            <Info className="h-4 w-4" />
+            <p className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em]">
+              Nossa loja está temporariamente fechada para manutenção ou logística. Agradecemos a compreensão!
+            </p>
+          </div>
+        </div>
+      )}
       <CatalogHeader
         search={search}
         onSearchChange={setSearch}
