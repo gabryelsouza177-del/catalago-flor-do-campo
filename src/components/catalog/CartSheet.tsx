@@ -16,6 +16,9 @@ import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { NEIGHBORHOODS } from '@/lib/constants';
+import { Search, MapPin } from 'lucide-react';
+
+const ORIGIN = { lat: -3.1281737, lon: -60.0191310 };
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
