@@ -31,6 +31,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [selectedStreet, setSelectedStreet] = useState('');
+  const [selectedDistrict, setSelectedDistrict] = useState('');
   const [selectedCoords, setSelectedCoords] = useState<{lat: number, lon: number} | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [calculatingDistance, setCalculatingDistance] = useState(false);
@@ -151,7 +153,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           recipient_name: recipientName,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
-          delivery_address: deliveryAddress,
+          delivery_address: selectedStreet ? `${selectedStreet}, ${houseNumber}${selectedDistrict ? `, ${selectedDistrict}` : ''}` : `${deliveryAddress}, ${houseNumber}`,
           house_number: houseNumber,
           delivery_complement: addressComplement,
           delivery_distance: distance,
@@ -308,6 +310,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                       searchAddress(e.target.value);
                       setDistance(null);
                       setCalculationError(false);
+                      setSelectedStreet('');
+                      setSelectedDistrict('');
                     }} 
                     placeholder="Digite o nome da rua..."
                     className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
@@ -323,6 +327,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                         className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
                         onClick={() => {
                           setDeliveryAddress(s.display_name);
+                          setSelectedStreet(s.street || '');
+                          setSelectedDistrict(s.district || '');
                           setAddressSuggestions([]);
                           
                           const lat = parseFloat(s.lat);
