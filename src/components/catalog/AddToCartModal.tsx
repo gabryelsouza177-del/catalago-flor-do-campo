@@ -1,8 +1,8 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/hooks/useCart";
 import { CheckCircle2, ShoppingBag, ArrowRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { CartSheet } from "./CartSheet";
 
 export function AddToCartModal() {
@@ -27,7 +27,7 @@ export function AddToCartModal() {
             </div>
             <DialogTitle className="text-xl font-sans font-bold uppercase tracking-widest text-accent text-center">
               Item adicionado!
-            </div>
+            </DialogTitle>
             <DialogDescription className="text-center text-muted-foreground font-light">
               Seu produto foi adicionado ao carrinho com sucesso.
             </DialogDescription>
@@ -54,7 +54,6 @@ export function AddToCartModal() {
         </DialogContent>
       </Dialog>
 
-      {/* Hidden CartSheet trigger that we can activate programmatically */}
       <CartSheet open={showCart} onOpenChange={setShowCart}>
         <div className="hidden" />
       </CartSheet>
