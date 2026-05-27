@@ -9,6 +9,8 @@ import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import Success from "./pages/Success";
 import NotFound from "./pages/NotFound";
+import { FloatingCart } from "./components/catalog/FloatingCart";
+import { AddToCartModal } from "./components/catalog/AddToCartModal";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +20,8 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <FloatingCart />
+        <AddToCartModal />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
