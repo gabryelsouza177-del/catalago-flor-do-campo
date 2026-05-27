@@ -80,16 +80,6 @@ export default function Admin() {
     } finally {
       setSavingLogistics(false);
     }
-  };
-
-      if (error) throw error;
-      toast({ title: '✨ Taxas de logística atualizadas!' });
-    } catch (err: any) {
-      toast({ title: 'Erro ao salvar logística', description: err.message, variant: 'destructive' });
-    } finally {
-      setSavingLogistics(false);
-    }
-  };
 
   const resetForm = () => {
     setTitle('');
