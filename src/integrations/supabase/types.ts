@@ -107,6 +107,7 @@ export type Database = {
           delivery_date: string
           delivery_distance: number | null
           delivery_fee: number
+          delivery_method: string | null
           delivery_period: string
           delivery_region: string | null
           delivery_time: string | null
@@ -132,6 +133,7 @@ export type Database = {
           delivery_date: string
           delivery_distance?: number | null
           delivery_fee: number
+          delivery_method?: string | null
           delivery_period: string
           delivery_region?: string | null
           delivery_time?: string | null
@@ -157,6 +159,7 @@ export type Database = {
           delivery_date?: string
           delivery_distance?: number | null
           delivery_fee?: number
+          delivery_method?: string | null
           delivery_period?: string
           delivery_region?: string | null
           delivery_time?: string | null
