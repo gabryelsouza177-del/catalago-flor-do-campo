@@ -26,10 +26,20 @@ function buildShareLink(product: Product) {
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imageOpen, setImageOpen] = useState(false);
   const addItem = useCart((state) => state.addItem);
+  const setModalOpen = useCart((state) => state.setModalOpen);
   const { toast } = useToast();
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAddToCart = () => {
+    setIsAnimating(true);
     addItem(product);
+    
+    // Show modal after a short delay for animation
+    setTimeout(() => {
+      setModalOpen(true);
+      setIsAnimating(false);
+    }, 600);
+    
     toast({
       title: "Adicionado ao carrinho",
       description: `${product.title} foi adicionado.`,
@@ -110,10 +120,15 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 </a>
                 <Button
                   onClick={handleAddToCart}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-colors duration-200 h-auto border-0"
+                  className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-all duration-300 h-auto border-0 ${isAnimating ? 'emerald-glow-strong scale-95' : ''}`}
                 >
-                  <ShoppingCart className="h-3 w-3" />
+                  <ShoppingCart className={`h-3 w-3 ${isAnimating ? 'animate-bounce' : ''}`} />
                   Carrinho
+                  {isAnimating && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="h-4 w-4 bg-accent rounded-full animate-fly" />
+                    </div>
+                  )}
                 </Button>
               </div>
             )}

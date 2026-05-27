@@ -20,7 +20,7 @@ import { Search, MapPin, AlertCircle, Hash } from 'lucide-react';
 const ORIGIN = { lat: -3.1287, lon: -60.0215 };
 const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95"; // Strict urban Manaus bbox
 
-export function CartSheet({ children }: { children: React.ReactNode }) {
+export function CartSheet({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
   const { data: logistics } = useLogistics();
   const { toast } = useToast();
@@ -198,7 +198,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="w-full sm:max-w-md bg-background border-l border-accent/10 overflow-y-auto">
         <SheetHeader className="pb-6 border-b border-accent/10">
