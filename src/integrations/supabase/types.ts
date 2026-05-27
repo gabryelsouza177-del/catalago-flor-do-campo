@@ -95,6 +95,7 @@ export type Database = {
           house_number: string | null
           id: string
           items: Json
+          mercadopago_preference_id: string | null
           payment_status: string | null
           recipient_name: string
           stripe_session_id: string | null
@@ -114,6 +115,7 @@ export type Database = {
           house_number?: string | null
           id?: string
           items: Json
+          mercadopago_preference_id?: string | null
           payment_status?: string | null
           recipient_name: string
           stripe_session_id?: string | null
@@ -133,6 +135,7 @@ export type Database = {
           house_number?: string | null
           id?: string
           items?: Json
+          mercadopago_preference_id?: string | null
           payment_status?: string | null
           recipient_name?: string
           stripe_session_id?: string | null
