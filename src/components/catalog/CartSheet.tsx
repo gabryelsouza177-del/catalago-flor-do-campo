@@ -53,7 +53,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   );
 
   const isGiftOrder = useMemo(() => 
-    items.some(item => item.category === 'Buquê' || item.category === 'Arranjo'),
+    items.some(item => item.category === 'Buquês' || item.category === 'Buquê' || item.category === 'Arranjo'),
     [items]
   );
 
