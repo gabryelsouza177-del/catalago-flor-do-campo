@@ -10,7 +10,7 @@ export function useSiteSettings() {
     fetchSettings();
 
     const channel = supabase
-      .channel('site_settings_changes')
+      .channel(`site_settings_changes_${Math.random().toString(36).slice(2)}`)
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'site_settings' },
