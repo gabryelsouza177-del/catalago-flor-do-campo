@@ -304,6 +304,47 @@ export default function Admin() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+        {/* Store Status Control */}
+        <Card className={cn(
+          "border-2 transition-all duration-300",
+          isOpen ? "border-emerald/20 bg-emerald/5" : "border-destructive/20 bg-destructive/5"
+        )}>
+          <CardContent className="p-6 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={cn(
+                "h-12 w-12 rounded-full flex items-center justify-center animate-pulse",
+                isOpen ? "bg-emerald/20 text-emerald" : "bg-destructive/20 text-destructive"
+              )}>
+                <Settings2 className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="text-lg font-sans font-bold uppercase tracking-wider">
+                  Status da Loja Online
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {isOpen ? "A loja está aberta e aceitando pedidos." : "A loja está fechada. Pedidos desativados."}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <span className={cn(
+                "text-xs font-bold uppercase tracking-widest px-3 py-1 rounded-full",
+                isOpen ? "bg-emerald text-accent" : "bg-destructive text-white"
+              )}>
+                {isOpen ? "Aberta" : "Fechada"}
+              </span>
+              <Switch 
+                checked={isOpen} 
+                onCheckedChange={toggleStoreStatus}
+                className={cn(
+                  "data-[state=checked]:bg-emerald",
+                  !isOpen && "bg-destructive"
+                )}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Stats */}
         <div className="grid grid-cols-3 gap-4">
           <Card>
