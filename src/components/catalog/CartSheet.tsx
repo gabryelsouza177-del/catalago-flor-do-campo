@@ -252,20 +252,41 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Bairro de Entrega *</Label>
-                <Select value={deliveryNeighborhood} onValueChange={setDeliveryNeighborhood}>
-                  <SelectTrigger className="bg-muted/10 border-accent/10 h-9 text-xs">
-                    <SelectValue placeholder="Selecione o bairro" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {NEIGHBORHOODS.map((n) => (
-                      <SelectItem key={n.name} value={n.name}>
-                        {n.name}
-                      </SelectItem>
+              <div className="space-y-2 relative">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Endereço de Entrega (Manaus) *</Label>
+                <div className="relative">
+                  <Input 
+                    value={deliveryAddress} 
+                    onChange={(e) => {
+                      setDeliveryAddress(e.target.value);
+                      searchAddress(e.target.value);
+                    }} 
+                    placeholder="Rua, número, bairro..."
+                    className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
+                  />
+                  <Search className="absolute right-2 top-2.5 h-4 w-4 text-accent/40" />
+                </div>
+                
+                {addressSuggestions.length > 0 && (
+                  <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
+                    {addressSuggestions.map((s: any) => (
+                      <button
+                        key={s.place_id}
+                        className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
+                        onClick={() => {
+                          setDeliveryAddress(s.display_name);
+                          setAddressSuggestions([]);
+                          const lat = parseFloat(s.lat);
+                          const lon = parseFloat(s.lon);
+                          setSelectedCoords({ lat, lon });
+                          calculateDistance(lat, lon);
+                        }}
+                      >
+                        {s.display_name}
+                      </button>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -286,9 +307,17 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   <span>Subtotal</span>
                   <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
                 </div>
+                {distance !== null && (
+                  <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground animate-in fade-in slide-in-from-top-1">
+                    <span>Distância</span>
+                    <span>{distance.toFixed(1)} km</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span>Entrega {selectedNeighborhood && `(${selectedNeighborhood.name})`}</span>
-                  <span>R$ {deliveryFee.toFixed(2).replace('.', ',')}</span>
+                  <span>Entrega</span>
+                  <span className={calculatingDistance ? "animate-pulse" : ""}>
+                    {calculatingDistance ? "Calculando..." : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}
+                  </span>
                 </div>
                 <div className="flex justify-between pt-2 text-sm font-sans font-bold uppercase tracking-widest text-accent">
                   <span>Total</span>
