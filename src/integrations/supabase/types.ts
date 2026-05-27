@@ -100,6 +100,10 @@ export type Database = {
           recipient_name: string
           stripe_session_id: string | null
           total_amount: number
+          wreath_ceremony_time: string | null
+          wreath_honoree_name: string | null
+          wreath_location: string | null
+          wreath_ribbon_message: string | null
         }
         Insert: {
           created_at?: string | null
@@ -120,6 +124,10 @@ export type Database = {
           recipient_name: string
           stripe_session_id?: string | null
           total_amount: number
+          wreath_ceremony_time?: string | null
+          wreath_honoree_name?: string | null
+          wreath_location?: string | null
+          wreath_ribbon_message?: string | null
         }
         Update: {
           created_at?: string | null
@@ -140,6 +148,10 @@ export type Database = {
           recipient_name?: string
           stripe_session_id?: string | null
           total_amount?: number
+          wreath_ceremony_time?: string | null
+          wreath_honoree_name?: string | null
+          wreath_location?: string | null
+          wreath_ribbon_message?: string | null
         }
         Relationships: []
       }
