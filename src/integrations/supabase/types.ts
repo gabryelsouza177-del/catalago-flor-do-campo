@@ -41,6 +41,78 @@ export type Database = {
         }
         Relationships: []
       }
+      logistics_settings: {
+        Row: {
+          id: string
+          intermediate_rate: number | null
+          local_rate: number | null
+          long_distance_rate: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          intermediate_rate?: number | null
+          local_rate?: number | null
+          long_distance_rate?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          intermediate_rate?: number | null
+          local_rate?: number | null
+          long_distance_rate?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      orders: {
+        Row: {
+          created_at: string | null
+          customer_name: string | null
+          delivery_date: string
+          delivery_fee: number
+          delivery_period: string
+          delivery_region: string
+          gift_message: string | null
+          id: string
+          items: Json
+          payment_status: string | null
+          recipient_name: string
+          stripe_session_id: string | null
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string | null
+          customer_name?: string | null
+          delivery_date: string
+          delivery_fee: number
+          delivery_period: string
+          delivery_region: string
+          gift_message?: string | null
+          id?: string
+          items: Json
+          payment_status?: string | null
+          recipient_name: string
+          stripe_session_id?: string | null
+          total_amount: number
+        }
+        Update: {
+          created_at?: string | null
+          customer_name?: string | null
+          delivery_date?: string
+          delivery_fee?: number
+          delivery_period?: string
+          delivery_region?: string
+          gift_message?: string | null
+          id?: string
+          items?: Json
+          payment_status?: string | null
+          recipient_name?: string
+          stripe_session_id?: string | null
+          total_amount?: number
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
