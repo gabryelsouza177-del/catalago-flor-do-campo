@@ -114,9 +114,9 @@ export default function Dashboard() {
     refetchExpenses();
   };
 
-  const isDataLoading = salesLoading || expensesLoading;
+  const loading = salesLoading || expensesLoading;
 
-  if (isDataLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-accent" />
