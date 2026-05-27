@@ -11,6 +11,7 @@ export default function Index() {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('Todos');
   const { data: products, isLoading } = useProducts();
+  const { isOpen } = useSiteSettings();
 
   useRealtimeProducts();
 
