@@ -92,6 +92,7 @@ export type Database = {
           delivery_period: string
           delivery_region: string | null
           gift_message: string | null
+          house_number: string | null
           id: string
           items: Json
           payment_status: string | null
@@ -110,6 +111,7 @@ export type Database = {
           delivery_period: string
           delivery_region?: string | null
           gift_message?: string | null
+          house_number?: string | null
           id?: string
           items: Json
           payment_status?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           delivery_period?: string
           delivery_region?: string | null
           gift_message?: string | null
+          house_number?: string | null
           id?: string
           items?: Json
           payment_status?: string | null
