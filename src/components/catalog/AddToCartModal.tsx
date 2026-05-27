@@ -8,6 +8,7 @@ import { CartSheet } from "./CartSheet";
 
 export function AddToCartModal() {
   const { isModalOpen, setModalOpen } = useCart();
+  const { isOpen } = useSiteSettings();
   const [showCart, setShowCart] = useState(false);
 
   const handleFinishOrder = () => {
