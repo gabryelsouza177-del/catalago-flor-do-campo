@@ -179,7 +179,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           payment_status: 'pending',
           wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
           wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
-          wreath_location: isWreathOrder ? wreathLocation : null,
+          wreath_location: isWreathOrder ? (selectedStreet || deliveryAddress) : null,
           wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null
         })
         .select()
