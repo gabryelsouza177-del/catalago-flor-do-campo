@@ -249,8 +249,12 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="w-full sm:max-w-md bg-background border-l border-accent/10 overflow-y-auto">
         <SheetHeader className="pb-6 border-b border-accent/10">
-          <SheetTitle className="text-accent tracking-[0.2em] uppercase text-sm font-sans">Seu Carrinho</SheetTitle>
-          <SheetDescription className="sr-only">Visualize seus itens e finalize o pedido</SheetDescription>
+          <SheetTitle className="text-accent tracking-[0.2em] uppercase text-sm font-sans">
+            {isOpen ? 'Seu Carrinho' : 'Loja Fechada'}
+          </SheetTitle>
+          <SheetDescription className={cn("text-[10px] uppercase tracking-wider", !isOpen && "text-destructive font-bold")}>
+            {isOpen ? 'Visualize seus itens e finalize o pedido' : 'Não estamos aceitando pedidos no momento.'}
+          </SheetDescription>
         </SheetHeader>
 
         {items.length === 0 ? (

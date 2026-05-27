@@ -4,6 +4,7 @@ import { CATEGORIES } from '@/lib/constants';
 import logo from '@/assets/logo.jpg';
 import { useCart } from '@/hooks/useCart';
 import { CartSheet } from './CartSheet';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 interface CatalogHeaderProps {
   search: string;
@@ -14,6 +15,7 @@ interface CatalogHeaderProps {
 
 export function CatalogHeader({ search, onSearchChange, activeCategory, onCategoryChange }: CatalogHeaderProps) {
   const items = useCart((state) => state.items);
+  const { isOpen } = useSiteSettings();
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
@@ -45,16 +47,22 @@ export function CatalogHeader({ search, onSearchChange, activeCategory, onCatego
             />
           </div>
 
-          <CartSheet>
-            <button className="relative p-2 text-accent/60 hover:text-accent transition-colors duration-200">
+          {!isOpen ? (
+            <div className="p-2 text-accent/20 cursor-not-allowed" title="Loja temporariamente fechada">
               <ShoppingBag className="h-5 w-5" />
-              {itemCount > 0 && (
-                <span className="absolute top-0 right-0 h-4 w-4 bg-emerald text-[9px] text-accent font-bold flex items-center justify-center rounded-full border border-background">
-                  {itemCount}
-                </span>
-              )}
-            </button>
-          </CartSheet>
+            </div>
+          ) : (
+            <CartSheet>
+              <button className="relative p-2 text-accent/60 hover:text-accent transition-colors duration-200">
+                <ShoppingBag className="h-5 w-5" />
+                {itemCount > 0 && (
+                  <span className="absolute top-0 right-0 h-4 w-4 bg-emerald text-[9px] text-accent font-bold flex items-center justify-center rounded-full border border-background">
+                    {itemCount}
+                  </span>
+                )}
+              </button>
+            </CartSheet>
+          )}
         </div>
 
         {/* Category nav */}

@@ -13,6 +13,17 @@ serve(async (req) => {
 
   try {
     const { orderId, items, deliveryFee } = await req.json();
+    
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Check if store is open
+    const { data: settings } = await supabase.from('site_settings').select('store_is_open').single();
+    if (settings && !settings.store_is_open) {
+      throw new Error("A loja está fechada no momento. Pedidos não podem ser processados.");
+    }
+
     const accessToken = Deno.env.get("MERCADO_PAGO_ACCESS_TOKEN");
 
     if (!accessToken) {
@@ -61,15 +72,10 @@ serve(async (req) => {
     }
 
     // Update order with preference ID
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    if (supabaseUrl && supabaseKey) {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      await supabase
-        .from('orders')
-        .update({ mercadopago_preference_id: preference.id })
-        .eq('id', orderId);
-    }
+    await supabase
+      .from('orders')
+      .update({ mercadopago_preference_id: preference.id })
+      .eq('id', orderId);
 
     return new Response(JSON.stringify({ url: preference.init_point }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
