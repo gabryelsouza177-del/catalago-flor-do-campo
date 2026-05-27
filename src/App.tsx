@@ -7,7 +7,7 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
-import Success from "./pages/Success";
+import OrderConfirmation from "./pages/OrderConfirmation";
 import MyOrder from "./pages/MyOrder";
 import NotFound from "./pages/NotFound";
 import { FloatingCart } from "./components/catalog/FloatingCart";
@@ -43,7 +43,7 @@ const App = () => (
               </ProtectedRoute>
             } 
           />
-          <Route path="/success" element={<Success />} />
+          <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
           <Route path="/meu-pedido/:id" element={<MyOrder />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

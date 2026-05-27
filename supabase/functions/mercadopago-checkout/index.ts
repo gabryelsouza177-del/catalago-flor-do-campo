@@ -56,7 +56,7 @@ serve(async (req) => {
       body: JSON.stringify({
         items: mpItems,
         back_urls: {
-          success: `${req.headers.get("origin")}/success?order_id=${orderId}`,
+          success: `${req.headers.get("origin")}/pedido-confirmado?order_id=${orderId}`,
           failure: `${req.headers.get("origin")}`,
           pending: `${req.headers.get("origin")}`,
         },

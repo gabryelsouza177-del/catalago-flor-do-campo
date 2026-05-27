@@ -29,6 +29,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   
   const [loading, setLoading] = useState(false);
   const [recipientName, setRecipientName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
   const [deliveryTime, setDeliveryTime] = useState<string>('');
@@ -172,10 +173,10 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = deliveryMethod === 'pickup'
-      ? (recipientName && deliveryDate && isTimeValid() && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime) : true))
+      ? (recipientName && customerPhone && deliveryDate && isTimeValid() && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime) : true))
       : (isWreathOrder 
-        ? (recipientName && deliveryDate && deliveryTime && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
-        : (recipientName && deliveryDate && isTimeValid() && deliveryAddress && houseNumber));
+        ? (recipientName && customerPhone && deliveryDate && deliveryTime && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
+        : (recipientName && customerPhone && deliveryDate && isTimeValid() && deliveryAddress && houseNumber));
 
     if (!isFormValid) {
       const errorMsg = !isTimeValid() && deliveryTime 
@@ -197,6 +198,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         .from('orders')
         .insert({
           recipient_name: recipientName,
+          customer_phone: customerPhone,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod || (isWreathOrder ? '24h' : 'Comercial'),
           delivery_time: deliveryTime,
@@ -378,6 +380,16 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Comprador/Contato *</Label>
                 <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} className="bg-muted/10 border-accent/10 text-xs h-9" />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Seu WhatsApp (Obrigatório) *</Label>
+                <Input 
+                  value={customerPhone} 
+                  onChange={(e) => setCustomerPhone(e.target.value)} 
+                  placeholder="(92) 99999-9999"
+                  className="bg-muted/10 border-accent/10 text-xs h-9" 
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
