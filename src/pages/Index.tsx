@@ -4,7 +4,8 @@ import { CatalogHeader } from '@/components/catalog/CatalogHeader';
 import { FeaturedSection } from '@/components/catalog/FeaturedSection';
 import { ProductGrid } from '@/components/catalog/ProductGrid';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
-import { Settings } from 'lucide-react';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
+import { Settings, Info } from 'lucide-react';
 
 export default function Index() {
   const [search, setSearch] = useState('');
