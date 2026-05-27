@@ -57,11 +57,8 @@ export default function Admin() {
   useRealtimeProducts();
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/login');
-    }
     fetchLogistics();
-  }, [user, authLoading, navigate]);
+  }, []);
 
   const fetchLogistics = async () => {
     const { data, error } = await supabase.from('logistics_settings').select('*').single();
@@ -272,15 +269,13 @@ export default function Admin() {
     }
   };
 
-  if (authLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
-
-  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background">

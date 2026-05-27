@@ -52,8 +52,8 @@ export default function Dashboard() {
   const [expDate, setExpDate] = useState(new Date().toISOString().split('T')[0]);
 
   useEffect(() => {
-    if (!authLoading && !user) navigate('/login');
-  }, [user, authLoading, navigate]);
+    // Analytics or metrics fetching could go here
+  }, []);
 
   const handleAddSale = async () => {
     if (!saleTitle || !salePrice) {
@@ -114,15 +114,15 @@ export default function Dashboard() {
     refetchExpenses();
   };
 
-  if (authLoading || !user) {
+  const loading = salesLoading || expensesLoading;
+
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-accent" />
       </div>
     );
   }
-
-  const loading = salesLoading || expensesLoading;
 
   return (
     <div className="min-h-screen bg-background">

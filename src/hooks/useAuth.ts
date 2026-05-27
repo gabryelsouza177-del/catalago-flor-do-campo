@@ -6,19 +6,47 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+
+  const checkAdminStatus = async (email: string | undefined) => {
+    if (!email) {
+      setIsAdmin(false);
+      return;
+    }
+    try {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('email')
+        .eq('email', email)
+        .maybeSingle();
+      
+      setIsAdmin(!!data);
+    } catch (err) {
+      console.error('Error checking admin status:', err);
+      setIsAdmin(false);
+    }
+  };
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      async (_event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        if (session?.user?.email) {
+          await checkAdminStatus(session.user.email);
+        } else {
+          setIsAdmin(false);
+        }
         setLoading(false);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      if (session?.user?.email) {
+        await checkAdminStatus(session.user.email);
+      }
       setLoading(false);
     });
 
@@ -35,5 +63,5 @@ export function useAuth() {
     if (error) throw error;
   };
 
-  return { user, session, loading, signIn, signOut };
+  return { user, session, loading, isAdmin, signIn, signOut };
 }
