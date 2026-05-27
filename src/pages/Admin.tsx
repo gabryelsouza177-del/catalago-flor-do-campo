@@ -13,7 +13,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
-import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star, BarChart3 } from 'lucide-react';
+import { Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, Package, ToggleLeft, ToggleRight, Star, BarChart3, Truck, Save } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { CATEGORIES } from '@/lib/constants';
 
@@ -27,6 +27,8 @@ export default function Admin() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
+  const [logistics, setLogistics] = useState({ local_rate: 0, intermediate_rate: 0, long_distance_rate: 0 });
+  const [savingLogistics, setSavingLogistics] = useState(false);
 
   // Form state
   const [title, setTitle] = useState('');
@@ -43,7 +45,41 @@ export default function Admin() {
     if (!authLoading && !user) {
       navigate('/login');
     }
+    fetchLogistics();
   }, [user, authLoading, navigate]);
+
+  const fetchLogistics = async () => {
+    const { data, error } = await supabase.from('logistics_settings').select('*').single();
+    if (data) {
+      setLogistics({
+        local_rate: Number(data.local_rate),
+        intermediate_rate: Number(data.intermediate_rate),
+        long_distance_rate: Number(data.long_distance_rate)
+      });
+    }
+  };
+
+  const saveLogistics = async () => {
+    setSavingLogistics(true);
+    try {
+      const { error } = await supabase
+        .from('logistics_settings')
+        .update({
+          local_rate: logistics.local_rate,
+          intermediate_rate: logistics.intermediate_rate,
+          long_distance_rate: logistics.long_distance_rate,
+          updated_at: new Date().toISOString()
+        })
+        .not('id', 'is', null); // Update the only existing row
+
+      if (error) throw error;
+      toast({ title: '✨ Taxas de logística atualizadas!' });
+    } catch (err: any) {
+      toast({ title: 'Erro ao salvar logística', description: err.message, variant: 'destructive' });
+    } finally {
+      setSavingLogistics(false);
+    }
+  };
 
   const resetForm = () => {
     setTitle('');
@@ -272,6 +308,54 @@ export default function Admin() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Logistics Settings */}
+        <Card className="border-accent/10">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-6 text-accent">
+              <Truck className="h-5 w-5" />
+              <h2 className="text-sm font-sans uppercase tracking-[0.2em] font-medium">Configurações de Logística</h2>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa de Entrega Local (R$)</Label>
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  value={logistics.local_rate} 
+                  onChange={(e) => setLogistics(prev => ({ ...prev, local_rate: parseFloat(e.target.value) || 0 }))}
+                  className="bg-card/30 border-accent/10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Intermediária (R$)</Label>
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  value={logistics.intermediate_rate} 
+                  onChange={(e) => setLogistics(prev => ({ ...prev, intermediate_rate: parseFloat(e.target.value) || 0 }))}
+                  className="bg-card/30 border-accent/10"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Grande Distância (R$)</Label>
+                <Input 
+                  type="number" 
+                  step="0.01" 
+                  value={logistics.long_distance_rate} 
+                  onChange={(e) => setLogistics(prev => ({ ...prev, long_distance_rate: parseFloat(e.target.value) || 0 }))}
+                  className="bg-card/30 border-accent/10"
+                />
+              </div>
+            </div>
+
+            <Button onClick={saveLogistics} disabled={savingLogistics} className="w-full md:w-auto min-w-[200px]">
+              {savingLogistics ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+              Salvar Taxas
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Add button */}
         <Dialog open={dialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) resetForm(); }}>
