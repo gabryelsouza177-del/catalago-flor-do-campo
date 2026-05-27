@@ -29,6 +29,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const addItem = useCart((state) => state.addItem);
   const setModalOpen = useCart((state) => state.setModalOpen);
   const { toast } = useToast();
+  const { isOpen } = useSiteSettings();
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleAddToCart = () => {
