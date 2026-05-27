@@ -8,6 +8,7 @@ export interface LogisticsSettings {
   long_distance_rate: number;
   price_per_km: number;
   min_delivery_fee: number;
+  max_delivery_fee: number;
   eligible_categories: string[];
   fixed_delivery_fee: number;
 }
