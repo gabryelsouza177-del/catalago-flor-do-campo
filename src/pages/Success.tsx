@@ -74,14 +74,14 @@ export default function Success() {
       `*Horário da Cerimônia:* ${order.wreath_ceremony_time}\n` : '';
 
     const text = `✨ *Novo Pedido Confirmado!* ✨\n\n` +
+      wreathInfo +
       `*Comprador/Contato:* ${order.recipient_name}\n` +
       (isWreath ? `*Local:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n` : `*Endereço:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n`) +
       `*Data de Entrega:* ${new Date(order.delivery_date).toLocaleDateString('pt-BR')}\n` +
       `*Período:* ${order.delivery_period}\n` +
-      wreathInfo +
       (order.delivery_distance ? `*Distância:* ${Number(order.delivery_distance).toFixed(1)} km\n` : '') +
       `\n*Itens:* \n${itemsList}\n\n` +
-      `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` +
+      (!isWreath ? `*Mensagem do Cartão:* \n"${order.gift_message || 'Sem mensagem'}"\n\n` : '') +
       `*Taxa de Entrega:* R$ ${Number(order.delivery_fee).toFixed(2).replace('.', ',')}\n` +
       `*Valor Total:* R$ ${Number(order.total_amount).toFixed(2).replace('.', ',')}`;
 

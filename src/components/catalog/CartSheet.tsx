@@ -52,6 +52,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     [items]
   );
 
+  const isGiftOrder = useMemo(() => 
+    items.some(item => item.category === 'Buquês' || item.category === 'Buquê' || item.category === 'Arranjo'),
+    [items]
+  );
+
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
   const searchAddress = async (query: string) => {
@@ -147,7 +152,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
   const handleCheckout = async () => {
     const isFormValid = isWreathOrder 
-      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathLocation && wreathCeremonyTime)
+      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
       : (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber);
 
     if (!isFormValid) {
@@ -454,15 +459,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
-                <Textarea 
-                  value={giftMessage} 
-                  onChange={(e) => setGiftMessage(e.target.value)} 
-                  className="bg-muted/10 border-accent/10 text-xs min-h-[80px]"
-                  placeholder="Escreva sua mensagem aqui..."
-                />
-              </div>
+              {isGiftOrder && !isWreathOrder && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
+                  <Textarea 
+                    value={giftMessage} 
+                    onChange={(e) => setGiftMessage(e.target.value)} 
+                    className="bg-muted/10 border-accent/10 text-xs min-h-[80px]"
+                    placeholder="Escreva sua mensagem aqui..."
+                  />
+                </div>
+              )}
             </div>
 
             {/* Footer / Total */}
