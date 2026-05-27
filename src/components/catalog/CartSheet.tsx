@@ -63,7 +63,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
-          items: items,
+          items: items as any, // Cast to any to avoid Json type mismatch
           payment_status: 'pending'
         })
         .select()

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { MessageCircle, Share2 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
+import { MessageCircle, Share2, ShoppingCart } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
 import { buildWhatsAppLink, WHATSAPP_NUMBER } from '@/lib/constants';
 import type { Product } from '@/hooks/useProducts';
 
@@ -22,6 +25,17 @@ function buildShareLink(product: Product) {
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
   const [imageOpen, setImageOpen] = useState(false);
+  const addItem = useCart((state) => state.addItem);
+  const { toast } = useToast();
+
+  const handleAddToCart = () => {
+    addItem(product);
+    toast({
+      title: "Adicionado ao carrinho",
+      description: `${product.title} foi adicionado.`,
+      className: "bg-emerald text-accent border-accent/20"
+    });
+  };
 
   return (
     <>
@@ -84,15 +98,24 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 Indisponível
               </span>
             ) : (
-              <a
-                href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-colors duration-200"
-              >
-                <MessageCircle className="h-3 w-3" />
-                Pedir
-              </a>
+              <div className="flex gap-2">
+                <a
+                  href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-accent/5 text-accent/60 text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-accent/10 transition-colors duration-200"
+                >
+                  <MessageCircle className="h-3 w-3" />
+                  Dúvida
+                </a>
+                <Button
+                  onClick={handleAddToCart}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-emerald/60 text-accent text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-colors duration-200 h-auto border-0"
+                >
+                  <ShoppingCart className="h-3 w-3" />
+                  Carrinho
+                </Button>
+              </div>
             )}
           </div>
         </div>
