@@ -1,6 +1,7 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetDescription } from '@/components/ui/sheet';
 import { useCart } from '@/hooks/useCart';
 import { useLogistics } from '@/hooks/useLogistics';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Minus, CalendarIcon, Loader2 } from 'lucide-react';
 import { useState, useMemo } from 'react';
