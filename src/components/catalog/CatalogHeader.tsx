@@ -4,6 +4,7 @@ import { CATEGORIES } from '@/lib/constants';
 import logo from '@/assets/logo.jpg';
 import { useCart } from '@/hooks/useCart';
 import { CartSheet } from './CartSheet';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 
 interface CatalogHeaderProps {
   search: string;
@@ -14,6 +15,7 @@ interface CatalogHeaderProps {
 
 export function CatalogHeader({ search, onSearchChange, activeCategory, onCategoryChange }: CatalogHeaderProps) {
   const items = useCart((state) => state.items);
+  const { isOpen } = useSiteSettings();
   const itemCount = items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
