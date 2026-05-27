@@ -7,8 +7,9 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
-import OrderConfirmation from "./pages/OrderConfirmation";
+import Sucesso from "./pages/Sucesso";
 import MyOrder from "./pages/MyOrder";
+import MyOrdersList from "./pages/MyOrdersList";
 import NotFound from "./pages/NotFound";
 import { FloatingCart } from "./components/catalog/FloatingCart";
 import { AddToCartModal } from "./components/catalog/AddToCartModal";
@@ -43,8 +44,10 @@ const App = () => (
               </ProtectedRoute>
             } 
           />
-          <Route path="/pedido-confirmado" element={<OrderConfirmation />} />
+          <Route path="/sucesso" element={<Sucesso />} />
+          <Route path="/pedido-confirmado" element={<Sucesso />} />
           <Route path="/meu-pedido/:id" element={<MyOrder />} />
+          <Route path="/meus-pedidos" element={<MyOrdersList />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
