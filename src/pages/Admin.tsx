@@ -70,6 +70,7 @@ export default function Admin() {
         long_distance_rate: Number(data.long_distance_rate),
         price_per_km: Number(data.price_per_km),
         min_delivery_fee: Number(data.min_delivery_fee),
+        max_delivery_fee: Number(data.max_delivery_fee || 40.00),
         eligible_categories: data.eligible_categories || [],
         fixed_delivery_fee: Number(data.fixed_delivery_fee)
       });
