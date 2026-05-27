@@ -148,7 +148,11 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
     if (hasEligibleProduct) {
       if (distance !== null) {
         const calculatedFee = distance * Number(logistics.price_per_km);
-        return Math.max(calculatedFee, Number(logistics.min_delivery_fee));
+        const cappedFee = Math.min(
+          Math.max(calculatedFee, Number(logistics.min_delivery_fee)),
+          Number(logistics.max_delivery_fee)
+        );
+        return cappedFee;
       }
       // If distance is not yet calculated but address is being searched, we don't have a fee yet
       if (calculationError) {
