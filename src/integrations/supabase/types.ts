@@ -85,6 +85,7 @@ export type Database = {
           created_at: string | null
           customer_name: string | null
           delivery_address: string | null
+          delivery_complement: string | null
           delivery_date: string
           delivery_distance: number | null
           delivery_fee: number
@@ -102,6 +103,7 @@ export type Database = {
           created_at?: string | null
           customer_name?: string | null
           delivery_address?: string | null
+          delivery_complement?: string | null
           delivery_date: string
           delivery_distance?: number | null
           delivery_fee: number
@@ -119,6 +121,7 @@ export type Database = {
           created_at?: string | null
           customer_name?: string | null
           delivery_address?: string | null
+          delivery_complement?: string | null
           delivery_date?: string
           delivery_distance?: number | null
           delivery_fee?: number

@@ -39,6 +39,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [manualHouseNumber, setManualHouseNumber] = useState('');
   const [showManualNumberInput, setShowManualNumberInput] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
+  const [addressComplement, setAddressComplement] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
@@ -185,6 +186,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
           delivery_address: deliveryAddress,
+          delivery_complement: addressComplement,
           delivery_distance: distance,
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
@@ -446,6 +448,16 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                     </Button>
                   </div>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número / Complemento</Label>
+                <Input 
+                  value={addressComplement} 
+                  onChange={(e) => setAddressComplement(e.target.value)} 
+                  placeholder="Ex: Apto 302, Bloco B ou Casa 10"
+                  className="bg-muted/10 border-accent/10 text-xs h-9" 
+                />
               </div>
 
               <div className="space-y-2">
