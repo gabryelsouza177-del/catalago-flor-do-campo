@@ -27,7 +27,16 @@ export default function Admin() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [saving, setSaving] = useState(false);
-  const [logistics, setLogistics] = useState({ id: '', local_rate: 0, intermediate_rate: 0, long_distance_rate: 0 });
+  const [logistics, setLogistics] = useState({ 
+    id: '', 
+    local_rate: 0, 
+    intermediate_rate: 0, 
+    long_distance_rate: 0,
+    price_per_km: 2.50,
+    min_delivery_fee: 12.00,
+    eligible_categories: ['Buquês'],
+    fixed_delivery_fee: 20.00
+  });
   const [savingLogistics, setSavingLogistics] = useState(false);
 
   // Form state
