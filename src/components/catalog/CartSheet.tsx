@@ -396,6 +396,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   </div>
                 )}
               </div>
+
+              <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
                 <Textarea 
                   value={giftMessage} 
