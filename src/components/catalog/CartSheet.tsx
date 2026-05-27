@@ -15,7 +15,6 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { NEIGHBORHOODS } from '@/lib/constants';
 import { Search, MapPin } from 'lucide-react';
 
 const ORIGIN = { lat: -3.1281737, lon: -60.0191310 };
