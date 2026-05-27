@@ -152,7 +152,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
   const handleCheckout = async () => {
     const isFormValid = isWreathOrder 
-      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathLocation && wreathCeremonyTime)
+      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
       : (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber);
 
     if (!isFormValid) {
