@@ -49,6 +49,7 @@ export type Database = {
           intermediate_rate: number | null
           local_rate: number | null
           long_distance_rate: number | null
+          max_delivery_fee: number
           min_delivery_fee: number | null
           price_per_km: number | null
           updated_at: string | null
@@ -60,6 +61,7 @@ export type Database = {
           intermediate_rate?: number | null
           local_rate?: number | null
           long_distance_rate?: number | null
+          max_delivery_fee?: number
           min_delivery_fee?: number | null
           price_per_km?: number | null
           updated_at?: string | null
@@ -71,6 +73,7 @@ export type Database = {
           intermediate_rate?: number | null
           local_rate?: number | null
           long_distance_rate?: number | null
+          max_delivery_fee?: number
           min_delivery_fee?: number | null
           price_per_km?: number | null
           updated_at?: string | null
