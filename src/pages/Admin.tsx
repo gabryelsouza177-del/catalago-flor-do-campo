@@ -400,22 +400,27 @@ export default function Admin() {
                     <CardContent className="p-4 space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Cliente / Contato</p>
+                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Comprador / Contato</p>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium">{order.recipient_name}</p>
+                            <p className="text-sm font-bold text-accent">{order.customer_name || order.recipient_name}</p>
                             {order.customer_phone && (
                               <a 
                                 href={`https://wa.me/55${order.customer_phone.replace(/\D/g, '')}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="text-emerald hover:text-emerald/80 transition-colors"
+                                className="flex items-center gap-1 bg-emerald/10 text-emerald px-2 py-0.5 rounded-full text-[10px] font-bold hover:bg-emerald/20 transition-colors"
                               >
-                                <MessageSquare className="h-4 w-4" />
+                                <MessageSquare className="h-3 w-3" />
+                                Chamar no Zap
                               </a>
                             )}
                           </div>
                           <p className="text-xs text-muted-foreground">{order.customer_phone || 'Sem telefone'}</p>
-                          <p className="text-xs text-muted-foreground">{order.delivery_address}</p>
+                          <div className="pt-2">
+                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">Destinatário / Local</p>
+                            <p className="text-xs font-medium">{order.recipient_name}</p>
+                            <p className="text-xs text-muted-foreground leading-tight mt-1">{order.delivery_address}</p>
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Itens</p>
@@ -468,14 +473,17 @@ export default function Admin() {
                           </Select>
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            className="flex-1 sm:flex-none text-[10px] uppercase tracking-widest"
-                            onClick={() => window.open(`https://wa.me/55${order.recipient_name.replace(/\D/g, '')}`, '_blank')}
-                          >
-                            WhatsApp
-                          </Button>
+                          {order.customer_phone && (
+                            <Button 
+                              variant="outline" 
+                              size="sm" 
+                              className="flex-1 sm:flex-none text-[10px] uppercase tracking-widest border-emerald/20 text-emerald hover:bg-emerald/5"
+                              onClick={() => window.open(`https://wa.me/55${order.customer_phone.replace(/\D/g, '')}`, '_blank')}
+                            >
+                              <MessageSquare className="h-3 w-3 mr-1" />
+                              WhatsApp
+                            </Button>
+                          )}
                           {order.status !== 'Entregue' && (
                             <Button 
                               size="sm" 
@@ -483,7 +491,7 @@ export default function Admin() {
                               onClick={() => concludeOrder(order.id)}
                             >
                               <CheckCircle className="h-3 w-3 mr-1" />
-                              Concluir
+                              Concluir Pedido
                             </Button>
                           )}
                         </div>
