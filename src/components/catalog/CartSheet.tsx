@@ -3,7 +3,7 @@ import { useCart } from '@/hooks/useCart';
 import { useLogistics } from '@/hooks/useLogistics';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Button } from '@/components/ui/button';
-import { Trash2, Plus, Minus, CalendarIcon, Loader2 } from 'lucide-react';
+import { Trash2, Plus, Minus, CalendarIcon, Loader2, Truck, Store } from 'lucide-react';
 import { useState, useMemo } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -32,6 +32,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
   const [deliveryTime, setDeliveryTime] = useState<string>('');
+  const [deliveryMethod, setDeliveryMethod] = useState<'delivery' | 'pickup'>('delivery');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
   const [selectedStreet, setSelectedStreet] = useState('');
@@ -126,6 +127,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
 
   const deliveryFee = useMemo(() => {
+    if (deliveryMethod === 'pickup') return 0;
     if (!logistics) return 0;
     
     // Check if any product is in eligible categories
@@ -149,7 +151,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     }
 
     return Number(logistics.fixed_delivery_fee);
-  }, [logistics, items, distance, calculationError]);
+  }, [logistics, items, distance, calculationError, deliveryMethod]);
 
   const total = subtotal + deliveryFee;
 
@@ -169,9 +171,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       return hours >= 8 && hours < 17;
     };
 
-    const isFormValid = isWreathOrder 
-      ? (recipientName && deliveryDate && deliveryTime && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
-      : (recipientName && deliveryDate && isTimeValid() && deliveryAddress && houseNumber);
+    const isFormValid = deliveryMethod === 'pickup'
+      ? (recipientName && deliveryDate && isTimeValid() && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime) : true))
+      : (isWreathOrder 
+        ? (recipientName && deliveryDate && deliveryTime && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime)
+        : (recipientName && deliveryDate && isTimeValid() && deliveryAddress && houseNumber));
 
     if (!isFormValid) {
       const errorMsg = !isTimeValid() && deliveryTime 
@@ -196,10 +200,13 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod || (isWreathOrder ? '24h' : 'Comercial'),
           delivery_time: deliveryTime,
-          delivery_address: selectedStreet ? `${selectedStreet}, ${houseNumber}${selectedDistrict ? `, ${selectedDistrict}` : ''}` : `${deliveryAddress}, ${houseNumber}`,
-          house_number: houseNumber,
-          delivery_complement: addressComplement,
-          delivery_distance: distance,
+          delivery_method: deliveryMethod,
+          delivery_address: deliveryMethod === 'pickup' 
+            ? 'Av. Joaquim Nabuco, 1446 - Centro, Manaus'
+            : (selectedStreet ? `${selectedStreet}, ${houseNumber}${selectedDistrict ? `, ${selectedDistrict}` : ''}` : `${deliveryAddress}, ${houseNumber}`),
+          house_number: deliveryMethod === 'pickup' ? '1446' : houseNumber,
+          delivery_complement: deliveryMethod === 'pickup' ? '' : addressComplement,
+          delivery_distance: deliveryMethod === 'pickup' ? 0 : distance,
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
@@ -207,7 +214,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           payment_status: 'pending',
           wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
           wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
-          wreath_location: isWreathOrder ? (selectedStreet || deliveryAddress) : null,
+          wreath_location: isWreathOrder ? (deliveryMethod === 'pickup' ? 'Loja Física' : (selectedStreet || deliveryAddress)) : null,
           wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null
         })
         .select()
@@ -339,6 +346,35 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
               )}
 
+              <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
+                <button
+                  type="button"
+                  onClick={() => setDeliveryMethod('delivery')}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm transition-all duration-300",
+                    deliveryMethod === 'delivery' 
+                      ? "bg-accent text-background shadow-lg" 
+                      : "text-accent/40 hover:text-accent/60"
+                  )}
+                >
+                  <Truck className="h-3 w-3" />
+                  Entrega
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDeliveryMethod('pickup')}
+                  className={cn(
+                    "flex-1 flex items-center justify-center gap-2 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm transition-all duration-300",
+                    deliveryMethod === 'pickup' 
+                      ? "bg-accent text-background shadow-lg" 
+                      : "text-accent/40 hover:text-accent/60"
+                  )}
+                >
+                  <Store className="h-3 w-3" />
+                  Retirada
+                </button>
+              </div>
+
               <div className="space-y-2">
                 <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Comprador/Contato *</Label>
                 <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} className="bg-muted/10 border-accent/10 text-xs h-9" />
@@ -390,104 +426,119 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
               </div>
 
-              <div className="space-y-2 relative">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                  {isWreathOrder ? "Local do Velório / Funerária (Buscar no Mapa) *" : "Rua e Bairro (Buscar no Mapa) *"}
-                </Label>
-                <div className="relative">
-                  <Input 
-                    value={deliveryAddress} 
-                    onChange={(e) => {
-                      setDeliveryAddress(e.target.value);
-                      searchAddress(e.target.value);
-                      setDistance(null);
-                      setCalculationError(false);
-                      setSelectedStreet('');
-                      setSelectedDistrict('');
-                    }} 
-                    placeholder="Digite o nome da rua..."
-                    className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
-                  />
-                  <Search className="absolute right-2 top-2.5 h-4 w-4 text-accent/40" />
-                </div>
-                
-                {addressSuggestions.length > 0 && (
-                  <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
-                    {addressSuggestions.map((s: any) => (
-                      <button
-                        key={s.id}
-                        className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
+              {deliveryMethod === 'delivery' ? (
+                <div className="space-y-2 relative animate-in fade-in slide-in-from-top-2">
+                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">
+                    {isWreathOrder ? "Local do Velório / Funerária (Buscar no Mapa) *" : "Rua e Bairro (Buscar no Mapa) *"}
+                  </Label>
+                  <div className="relative">
+                    <Input 
+                      value={deliveryAddress} 
+                      onChange={(e) => {
+                        setDeliveryAddress(e.target.value);
+                        searchAddress(e.target.value);
+                        setDistance(null);
+                        setCalculationError(false);
+                        setSelectedStreet('');
+                        setSelectedDistrict('');
+                      }} 
+                      placeholder="Digite o nome da rua..."
+                      className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
+                    />
+                    <Search className="absolute right-2 top-2.5 h-4 w-4 text-accent/40" />
+                  </div>
+                  
+                  {addressSuggestions.length > 0 && (
+                    <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
+                      {addressSuggestions.map((s: any) => (
+                        <button
+                          key={s.id}
+                          className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
+                          onClick={() => {
+                            setDeliveryAddress(s.display_name);
+                            setSelectedStreet(s.street || '');
+                            setSelectedDistrict(s.district || '');
+                            setAddressSuggestions([]);
+                            
+                            const lat = parseFloat(s.lat);
+                            const lon = parseFloat(s.lon);
+                            setSelectedCoords({ lat, lon });
+                            calculateDistance(lat, lon);
+                          }}
+                        >
+                          <div className="flex items-start gap-2">
+                            <MapPin className="h-3 w-3 mt-0.5 text-accent/40" />
+                            <div className="flex flex-col">
+                              <span className="font-medium">{s.display_name}</span>
+                            </div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número da Residência *</Label>
+                      <div className="relative">
+                        <Input 
+                          value={houseNumber} 
+                          onChange={(e) => setHouseNumber(e.target.value)} 
+                          placeholder="Ex: 1446"
+                          className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
+                        />
+                        <Hash className="absolute right-2 top-2.5 h-3 w-3 text-accent/40" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Complemento</Label>
+                      <Input 
+                        value={addressComplement} 
+                        onChange={(e) => setAddressComplement(e.target.value)} 
+                        placeholder="Apto, Sala, etc"
+                        className="bg-muted/10 border-accent/10 text-xs h-9" 
+                      />
+                    </div>
+                  </div>
+                  
+                  {calculationError && (
+                    <div className="mt-2 p-2 bg-destructive/10 rounded-sm border border-destructive/20 flex flex-col gap-2">
+                      <div className="flex items-center gap-2 text-[9px] text-destructive uppercase tracking-widest font-bold">
+                        <AlertCircle className="h-3 w-3" />
+                        Falha no cálculo automático
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="h-7 text-[8px] uppercase tracking-widest border-destructive/20 text-destructive hover:bg-destructive/5"
                         onClick={() => {
-                          setDeliveryAddress(s.display_name);
-                          setSelectedStreet(s.street || '');
-                          setSelectedDistrict(s.district || '');
-                          setAddressSuggestions([]);
-                          
-                          const lat = parseFloat(s.lat);
-                          const lon = parseFloat(s.lon);
-                          setSelectedCoords({ lat, lon });
-                          calculateDistance(lat, lon);
+                          if (selectedCoords) {
+                            calculateDistance(selectedCoords.lat, selectedCoords.lon);
+                          } else {
+                            toast({ title: "Selecione um endereço primeiro", variant: "destructive" });
+                          }
                         }}
                       >
-                        <div className="flex items-start gap-2">
-                          <MapPin className="h-3 w-3 mt-0.5 text-accent/40" />
-                          <div className="flex flex-col">
-                            <span className="font-medium">{s.display_name}</span>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <div className="grid grid-cols-2 gap-4 mt-2">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número da Residência *</Label>
-                    <div className="relative">
-                      <Input 
-                        value={houseNumber} 
-                        onChange={(e) => setHouseNumber(e.target.value)} 
-                        placeholder="Ex: 1446"
-                        className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
-                      />
-                      <Hash className="absolute right-2 top-2.5 h-3 w-3 text-accent/40" />
+                        Tentar calcular frete manualmente
+                      </Button>
                     </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Complemento</Label>
-                    <Input 
-                      value={addressComplement} 
-                      onChange={(e) => setAddressComplement(e.target.value)} 
-                      placeholder="Apto, Sala, etc"
-                      className="bg-muted/10 border-accent/10 text-xs h-9" 
-                    />
+                  )}
+                </div>
+              ) : (
+                <div className="p-4 bg-accent/5 rounded-sm border border-dashed border-accent/20 animate-in fade-in slide-in-from-top-2">
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-4 w-4 text-accent mt-0.5" />
+                    <div className="space-y-1">
+                      <h4 className="text-[10px] font-sans font-bold uppercase tracking-widest text-accent">Endereço de Retirada</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Av. Joaquim Nabuco, 1446<br />
+                        Centro, Manaus - AM
+                      </p>
+                    </div>
                   </div>
                 </div>
-                
-                {calculationError && (
-                  <div className="mt-2 p-2 bg-destructive/10 rounded-sm border border-destructive/20 flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-[9px] text-destructive uppercase tracking-widest font-bold">
-                      <AlertCircle className="h-3 w-3" />
-                      Falha no cálculo automático
-                    </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      className="h-7 text-[8px] uppercase tracking-widest border-destructive/20 text-destructive hover:bg-destructive/5"
-                      onClick={() => {
-                        if (selectedCoords) {
-                          calculateDistance(selectedCoords.lat, selectedCoords.lon);
-                        } else {
-                          toast({ title: "Selecione um endereço primeiro", variant: "destructive" });
-                        }
-                      }}
-                    >
-                      Tentar calcular frete manualmente
-                    </Button>
-                  </div>
-                )}
-              </div>
+              )}
 
               {isGiftOrder && !isWreathOrder && (
                 <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
