@@ -459,15 +459,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
-                <Textarea 
-                  value={giftMessage} 
-                  onChange={(e) => setGiftMessage(e.target.value)} 
-                  className="bg-muted/10 border-accent/10 text-xs min-h-[80px]"
-                  placeholder="Escreva sua mensagem aqui..."
-                />
-              </div>
+              {isGiftOrder && !isWreathOrder && (
+                <div className="space-y-2 animate-in fade-in slide-in-from-top-1">
+                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
+                  <Textarea 
+                    value={giftMessage} 
+                    onChange={(e) => setGiftMessage(e.target.value)} 
+                    className="bg-muted/10 border-accent/10 text-xs min-h-[80px]"
+                    placeholder="Escreva sua mensagem aqui..."
+                  />
+                </div>
+              )}
             </div>
 
             {/* Footer / Total */}
