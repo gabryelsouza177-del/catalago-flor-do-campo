@@ -38,17 +38,53 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
-  const selectedNeighborhood = useMemo(() => 
-    NEIGHBORHOODS.find(n => n.name === deliveryNeighborhood),
-  [deliveryNeighborhood]);
+  const searchAddress = async (query: string) => {
+    if (query.length < 3) return;
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Manaus, AM')}&limit=5`);
+      const data = await response.json();
+      setAddressSuggestions(data);
+    } catch (err) {
+      console.error('Error fetching address suggestions:', err);
+    }
+  };
+
+  const calculateDistance = async (lat: number, lon: number) => {
+    setCalculatingDistance(true);
+    try {
+      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN.lon},${ORIGIN.lat};${lon},${lat}?overview=false`);
+      const data = await response.json();
+      if (data.routes && data.routes[0]) {
+        const distKm = data.routes[0].distance / 1000;
+        setDistance(distKm);
+      }
+    } catch (err) {
+      console.error('Error calculating distance:', err);
+      toast({ title: "Erro ao calcular distância", variant: "destructive" });
+    } finally {
+      setCalculatingDistance(false);
+    }
+  };
 
   const deliveryFee = useMemo(() => {
-    if (!logistics || !selectedNeighborhood) return 0;
-    if (selectedNeighborhood.type === 'local') return Number(logistics.local_rate);
-    if (selectedNeighborhood.type === 'intermediaria') return Number(logistics.intermediate_rate);
-    if (selectedNeighborhood.type === 'distancia') return Number(logistics.long_distance_rate);
+    if (!logistics) return 0;
+    
+    // Check if any product is in eligible categories
+    const hasEligibleProduct = items.some(item => 
+      logistics.eligible_categories.includes(item.category)
+    );
+
+    if (hasEligibleProduct && distance !== null) {
+      const calculatedFee = distance * Number(logistics.price_per_km);
+      return Math.max(calculatedFee, Number(logistics.min_delivery_fee));
+    }
+
+    if (!hasEligibleProduct) {
+      return Number(logistics.fixed_delivery_fee);
+    }
+
     return 0;
-  }, [logistics, selectedNeighborhood]);
+  }, [logistics, items, distance]);
 
   const total = subtotal + deliveryFee;
 
