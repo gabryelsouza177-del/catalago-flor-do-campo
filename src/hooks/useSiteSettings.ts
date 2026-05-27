@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export function useSiteSettings() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [settingsId, setSettingsId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -28,11 +29,12 @@ export function useSiteSettings() {
     try {
       const { data, error } = await supabase
         .from('site_settings')
-        .select('store_is_open')
+        .select('id, store_is_open')
         .single();
       
       if (data) {
         setIsOpen(data.store_is_open);
+        setSettingsId(data.id);
       }
     } catch (err) {
       console.error('Error fetching site settings:', err);
@@ -42,11 +44,13 @@ export function useSiteSettings() {
   };
 
   const toggleStoreStatus = async (status: boolean) => {
+    if (!settingsId) return false;
+    
     try {
       const { error } = await supabase
         .from('site_settings')
         .update({ store_is_open: status })
-        .eq('id', (await supabase.from('site_settings').select('id').single()).data?.id);
+        .eq('id', settingsId);
       
       if (error) throw error;
       setIsOpen(status);
