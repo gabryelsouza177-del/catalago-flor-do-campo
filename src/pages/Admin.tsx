@@ -333,48 +333,127 @@ export default function Admin() {
         {/* Logistics Settings */}
         <Card className="border-accent/10">
           <CardContent className="p-6">
-            <div className="flex items-center gap-2 mb-6 text-accent">
-              <Truck className="h-5 w-5" />
-              <h2 className="text-sm font-sans uppercase tracking-[0.2em] font-medium">Configurações de Logística</h2>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa de Entrega Local (R$)</Label>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  value={logistics.local_rate} 
-                  onChange={(e) => setLogistics(prev => ({ ...prev, local_rate: parseFloat(e.target.value) || 0 }))}
-                  className="bg-card/30 border-accent/10"
-                />
+            <Tabs defaultValue="neighborhoods" className="w-full">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                <div className="flex items-center gap-2 text-accent">
+                  <Truck className="h-5 w-5" />
+                  <h2 className="text-sm font-sans uppercase tracking-[0.2em] font-medium">Logística e Entrega</h2>
+                </div>
+                <TabsList className="bg-muted/10 border border-accent/5">
+                  <TabsTrigger value="neighborhoods" className="text-[10px] uppercase tracking-wider font-sans">Bairros (Legado)</TabsTrigger>
+                  <TabsTrigger value="advanced" className="text-[10px] uppercase tracking-wider font-sans">Configurações de Entrega</TabsTrigger>
+                </TabsList>
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Intermediária (R$)</Label>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  value={logistics.intermediate_rate} 
-                  onChange={(e) => setLogistics(prev => ({ ...prev, intermediate_rate: parseFloat(e.target.value) || 0 }))}
-                  className="bg-card/30 border-accent/10"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Grande Distância (R$)</Label>
-                <Input 
-                  type="number" 
-                  step="0.01" 
-                  value={logistics.long_distance_rate} 
-                  onChange={(e) => setLogistics(prev => ({ ...prev, long_distance_rate: parseFloat(e.target.value) || 0 }))}
-                  className="bg-card/30 border-accent/10"
-                />
-              </div>
-            </div>
 
-            <Button onClick={saveLogistics} disabled={savingLogistics} className="w-full md:w-auto min-w-[200px]">
-              {savingLogistics ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-              Salvar Taxas
-            </Button>
+              <TabsContent value="neighborhoods" className="space-y-6 mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Local (R$)</Label>
+                    <Input 
+                      type="number" 
+                      step="0.01" 
+                      value={logistics.local_rate} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, local_rate: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Intermediária (R$)</Label>
+                    <Input 
+                      type="number" 
+                      step="0.01" 
+                      value={logistics.intermediate_rate} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, intermediate_rate: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Grande Distância (R$)</Label>
+                    <Input 
+                      type="number" 
+                      step="0.01" 
+                      value={logistics.long_distance_rate} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, long_distance_rate: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="advanced" className="space-y-8 mt-0">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans flex items-center gap-1.5">
+                      <MapPin className="h-3 w-3" /> Valor por KM (R$)
+                    </Label>
+                    <Input 
+                      type="number" 
+                      step="0.10" 
+                      value={logistics.price_per_km} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, price_per_km: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans flex items-center gap-1.5">
+                      <Settings2 className="h-3 w-3" /> Taxa Mínima (R$)
+                    </Label>
+                    <Input 
+                      type="number" 
+                      step="1.00" 
+                      value={logistics.min_delivery_fee} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, min_delivery_fee: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Fixa Outras Categorias (R$)</Label>
+                    <Input 
+                      type="number" 
+                      step="1.00" 
+                      value={logistics.fixed_delivery_fee} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, fixed_delivery_fee: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Categorias Elegíveis para Cálculo por KM</Label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {PRODUCT_CATEGORIES.map((cat) => (
+                      <div key={cat} className="flex items-center space-x-2">
+                        <Checkbox 
+                          id={`cat-${cat}`}
+                          checked={logistics.eligible_categories.includes(cat)}
+                          onCheckedChange={(checked) => {
+                            setLogistics(prev => ({
+                              ...prev,
+                              eligible_categories: checked 
+                                ? [...prev.eligible_categories, cat]
+                                : prev.eligible_categories.filter(c => c !== cat)
+                            }));
+                          }}
+                        />
+                        <label 
+                          htmlFor={`cat-${cat}`}
+                          className="text-xs font-sans text-foreground leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                        >
+                          {cat}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <div className="pt-6 border-t border-accent/5 mt-6">
+                <Button onClick={saveLogistics} disabled={savingLogistics} className="w-full md:w-auto min-w-[200px]">
+                  {savingLogistics ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Salvar Configurações
+                </Button>
+              </div>
+            </Tabs>
           </CardContent>
         </Card>
 
