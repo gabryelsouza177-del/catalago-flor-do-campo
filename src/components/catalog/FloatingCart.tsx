@@ -1,6 +1,7 @@
 import { ShoppingCart } from "lucide-react";
 import { useCart } from "@/hooks/useCart";
 import { CartSheet } from "./CartSheet";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useState, useEffect } from "react";
 
 export function FloatingCart() {
