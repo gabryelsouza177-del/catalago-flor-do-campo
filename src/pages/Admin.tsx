@@ -384,7 +384,7 @@ export default function Admin() {
               </TabsContent>
 
               <TabsContent value="advanced" className="space-y-8 mt-0">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                   <div className="space-y-2">
                     <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans flex items-center gap-1.5">
                       <MapPin className="h-3 w-3" /> Valor por KM (R$)
@@ -410,7 +410,21 @@ export default function Admin() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Taxa Fixa Outras Categorias (R$)</Label>
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans flex items-center gap-1.5">
+                      <Settings2 className="h-3 w-3" /> Taxa Máxima (R$)
+                    </Label>
+                    <Input 
+                      type="number" 
+                      step="1.00" 
+                      value={logistics.max_delivery_fee} 
+                      onChange={(e) => setLogistics(prev => ({ ...prev, max_delivery_fee: parseFloat(e.target.value) || 0 }))}
+                      className="bg-card/30 border-accent/10"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground font-sans flex items-center gap-1.5">
+                      <Truck className="h-3 w-3" /> Taxa Fixa Padrão (R$)
+                    </Label>
                     <Input 
                       type="number" 
                       step="1.00" 
