@@ -15,6 +15,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { NEIGHBORHOODS } from '@/lib/constants';
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
@@ -25,23 +26,27 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [recipientName, setRecipientName] = useState('');
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
-  const [deliveryRegion, setDeliveryRegion] = useState<string>('');
+  const [deliveryNeighborhood, setDeliveryNeighborhood] = useState<string>('');
   const [giftMessage, setGiftMessage] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
+  const selectedNeighborhood = useMemo(() => 
+    NEIGHBORHOODS.find(n => n.name === deliveryNeighborhood),
+  [deliveryNeighborhood]);
+
   const deliveryFee = useMemo(() => {
-    if (!logistics || !deliveryRegion) return 0;
-    if (deliveryRegion === 'local') return Number(logistics.local_rate);
-    if (deliveryRegion === 'intermediaria') return Number(logistics.intermediate_rate);
-    if (deliveryRegion === 'distancia') return Number(logistics.long_distance_rate);
+    if (!logistics || !selectedNeighborhood) return 0;
+    if (selectedNeighborhood.type === 'local') return Number(logistics.local_rate);
+    if (selectedNeighborhood.type === 'intermediaria') return Number(logistics.intermediate_rate);
+    if (selectedNeighborhood.type === 'distancia') return Number(logistics.long_distance_rate);
     return 0;
-  }, [logistics, deliveryRegion]);
+  }, [logistics, selectedNeighborhood]);
 
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryRegion) {
+    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryNeighborhood) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os dados de entrega.",
@@ -59,7 +64,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           recipient_name: recipientName,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
-          delivery_region: deliveryRegion,
+          delivery_region: deliveryNeighborhood, // We save the neighborhood name here
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
@@ -204,15 +209,17 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Região de Entrega *</Label>
-                <Select value={deliveryRegion} onValueChange={setDeliveryRegion}>
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Bairro de Entrega *</Label>
+                <Select value={deliveryNeighborhood} onValueChange={setDeliveryNeighborhood}>
                   <SelectTrigger className="bg-muted/10 border-accent/10 h-9 text-xs">
-                    <SelectValue placeholder="Selecione a região" />
+                    <SelectValue placeholder="Selecione o bairro" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="local">Entrega Local (R$ {logistics?.local_rate})</SelectItem>
-                    <SelectItem value="intermediaria">Taxa Intermediária (R$ {logistics?.intermediate_rate})</SelectItem>
-                    <SelectItem value="distancia">Grande Distância (R$ {logistics?.long_distance_rate})</SelectItem>
+                  <SelectContent className="max-h-[300px]">
+                    {NEIGHBORHOODS.map((n) => (
+                      <SelectItem key={n.name} value={n.name}>
+                        {n.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -236,7 +243,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
                 </div>
                 <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span>Entrega</span>
+                  <span>Entrega {selectedNeighborhood && `(${selectedNeighborhood.name})`}</span>
                   <span>R$ {deliveryFee.toFixed(2).replace('.', ',')}</span>
                 </div>
                 <div className="flex justify-between pt-2 text-sm font-sans font-bold uppercase tracking-widest text-accent">
