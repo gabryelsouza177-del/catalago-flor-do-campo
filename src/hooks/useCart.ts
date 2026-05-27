@@ -17,12 +17,16 @@ interface CartStore {
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   total: number;
+  isModalOpen: boolean;
+  setModalOpen: (open: boolean) => void;
 }
 
 export const useCart = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      isModalOpen: false,
+      setModalOpen: (open) => set({ isModalOpen: open }),
       addItem: (product) => {
         const items = get().items;
         const existing = items.find((i) => i.id === product.id);
