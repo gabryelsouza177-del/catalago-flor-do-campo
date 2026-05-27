@@ -64,7 +64,11 @@ export default function Admin() {
         id: data.id,
         local_rate: Number(data.local_rate),
         intermediate_rate: Number(data.intermediate_rate),
-        long_distance_rate: Number(data.long_distance_rate)
+        long_distance_rate: Number(data.long_distance_rate),
+        price_per_km: Number(data.price_per_km),
+        min_delivery_fee: Number(data.min_delivery_fee),
+        eligible_categories: data.eligible_categories || [],
+        fixed_delivery_fee: Number(data.fixed_delivery_fee)
       });
     }
   };
