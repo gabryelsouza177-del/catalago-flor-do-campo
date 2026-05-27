@@ -43,24 +43,36 @@ export type Database = {
       }
       logistics_settings: {
         Row: {
+          eligible_categories: string[] | null
+          fixed_delivery_fee: number | null
           id: string
           intermediate_rate: number | null
           local_rate: number | null
           long_distance_rate: number | null
+          min_delivery_fee: number | null
+          price_per_km: number | null
           updated_at: string | null
         }
         Insert: {
+          eligible_categories?: string[] | null
+          fixed_delivery_fee?: number | null
           id?: string
           intermediate_rate?: number | null
           local_rate?: number | null
           long_distance_rate?: number | null
+          min_delivery_fee?: number | null
+          price_per_km?: number | null
           updated_at?: string | null
         }
         Update: {
+          eligible_categories?: string[] | null
+          fixed_delivery_fee?: number | null
           id?: string
           intermediate_rate?: number | null
           local_rate?: number | null
           long_distance_rate?: number | null
+          min_delivery_fee?: number | null
+          price_per_km?: number | null
           updated_at?: string | null
         }
         Relationships: []
@@ -69,10 +81,12 @@ export type Database = {
         Row: {
           created_at: string | null
           customer_name: string | null
+          delivery_address: string | null
           delivery_date: string
+          delivery_distance: number | null
           delivery_fee: number
           delivery_period: string
-          delivery_region: string
+          delivery_region: string | null
           gift_message: string | null
           id: string
           items: Json
@@ -84,10 +98,12 @@ export type Database = {
         Insert: {
           created_at?: string | null
           customer_name?: string | null
+          delivery_address?: string | null
           delivery_date: string
+          delivery_distance?: number | null
           delivery_fee: number
           delivery_period: string
-          delivery_region: string
+          delivery_region?: string | null
           gift_message?: string | null
           id?: string
           items: Json
@@ -99,10 +115,12 @@ export type Database = {
         Update: {
           created_at?: string | null
           customer_name?: string | null
+          delivery_address?: string | null
           delivery_date?: string
+          delivery_distance?: number | null
           delivery_fee?: number
           delivery_period?: string
-          delivery_region?: string
+          delivery_region?: string | null
           gift_message?: string | null
           id?: string
           items?: Json

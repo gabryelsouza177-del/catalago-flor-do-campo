@@ -15,7 +15,9 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { NEIGHBORHOODS } from '@/lib/constants';
+import { Search, MapPin } from 'lucide-react';
+
+const ORIGIN = { lat: -3.1281737, lon: -60.0191310 };
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
@@ -26,27 +28,67 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [recipientName, setRecipientName] = useState('');
   const [deliveryDate, setDeliveryDate] = useState<Date>();
   const [deliveryPeriod, setDeliveryPeriod] = useState<string>('');
-  const [deliveryNeighborhood, setDeliveryNeighborhood] = useState<string>('');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [addressSuggestions, setAddressSuggestions] = useState<any[]>([]);
+  const [selectedCoords, setSelectedCoords] = useState<{lat: number, lon: number} | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+  const [calculatingDistance, setCalculatingDistance] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
-  const selectedNeighborhood = useMemo(() => 
-    NEIGHBORHOODS.find(n => n.name === deliveryNeighborhood),
-  [deliveryNeighborhood]);
+  const searchAddress = async (query: string) => {
+    if (query.length < 3) return;
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Manaus, AM')}&limit=5`);
+      const data = await response.json();
+      setAddressSuggestions(data);
+    } catch (err) {
+      console.error('Error fetching address suggestions:', err);
+    }
+  };
+
+  const calculateDistance = async (lat: number, lon: number) => {
+    setCalculatingDistance(true);
+    try {
+      const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN.lon},${ORIGIN.lat};${lon},${lat}?overview=false`);
+      const data = await response.json();
+      if (data.routes && data.routes[0]) {
+        const distKm = data.routes[0].distance / 1000;
+        setDistance(distKm);
+      }
+    } catch (err) {
+      console.error('Error calculating distance:', err);
+      toast({ title: "Erro ao calcular distância", variant: "destructive" });
+    } finally {
+      setCalculatingDistance(false);
+    }
+  };
 
   const deliveryFee = useMemo(() => {
-    if (!logistics || !selectedNeighborhood) return 0;
-    if (selectedNeighborhood.type === 'local') return Number(logistics.local_rate);
-    if (selectedNeighborhood.type === 'intermediaria') return Number(logistics.intermediate_rate);
-    if (selectedNeighborhood.type === 'distancia') return Number(logistics.long_distance_rate);
+    if (!logistics) return 0;
+    
+    // Check if any product is in eligible categories
+    const hasEligibleProduct = items.some(item => 
+      logistics.eligible_categories.includes(item.category)
+    );
+
+    if (hasEligibleProduct && distance !== null) {
+      const calculatedFee = distance * Number(logistics.price_per_km);
+      return Math.max(calculatedFee, Number(logistics.min_delivery_fee));
+    }
+
+    if (!hasEligibleProduct) {
+      return Number(logistics.fixed_delivery_fee);
+    }
+
     return 0;
-  }, [logistics, selectedNeighborhood]);
+  }, [logistics, items, distance]);
 
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryNeighborhood) {
+    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress) {
       toast({
         title: "Campos obrigatórios",
         description: "Por favor, preencha todos os dados de entrega.",
@@ -64,7 +106,8 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
           recipient_name: recipientName,
           delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
           delivery_period: deliveryPeriod,
-          delivery_region: deliveryNeighborhood, // We save the neighborhood name here
+          delivery_address: deliveryAddress,
+          delivery_distance: distance,
           gift_message: giftMessage,
           delivery_fee: deliveryFee,
           total_amount: total,
@@ -208,20 +251,41 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Bairro de Entrega *</Label>
-                <Select value={deliveryNeighborhood} onValueChange={setDeliveryNeighborhood}>
-                  <SelectTrigger className="bg-muted/10 border-accent/10 h-9 text-xs">
-                    <SelectValue placeholder="Selecione o bairro" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-[300px]">
-                    {NEIGHBORHOODS.map((n) => (
-                      <SelectItem key={n.name} value={n.name}>
-                        {n.name}
-                      </SelectItem>
+              <div className="space-y-2 relative">
+                <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Endereço de Entrega (Manaus) *</Label>
+                <div className="relative">
+                  <Input 
+                    value={deliveryAddress} 
+                    onChange={(e) => {
+                      setDeliveryAddress(e.target.value);
+                      searchAddress(e.target.value);
+                    }} 
+                    placeholder="Rua, número, bairro..."
+                    className="bg-muted/10 border-accent/10 text-xs h-9 pr-8" 
+                  />
+                  <Search className="absolute right-2 top-2.5 h-4 w-4 text-accent/40" />
+                </div>
+                
+                {addressSuggestions.length > 0 && (
+                  <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
+                    {addressSuggestions.map((s: any) => (
+                      <button
+                        key={s.place_id}
+                        className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
+                        onClick={() => {
+                          setDeliveryAddress(s.display_name);
+                          setAddressSuggestions([]);
+                          const lat = parseFloat(s.lat);
+                          const lon = parseFloat(s.lon);
+                          setSelectedCoords({ lat, lon });
+                          calculateDistance(lat, lon);
+                        }}
+                      >
+                        {s.display_name}
+                      </button>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -242,9 +306,17 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   <span>Subtotal</span>
                   <span>R$ {subtotal.toFixed(2).replace('.', ',')}</span>
                 </div>
+                {distance !== null && (
+                  <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground animate-in fade-in slide-in-from-top-1">
+                    <span>Distância</span>
+                    <span>{distance.toFixed(1)} km</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground">
-                  <span>Entrega {selectedNeighborhood && `(${selectedNeighborhood.name})`}</span>
-                  <span>R$ {deliveryFee.toFixed(2).replace('.', ',')}</span>
+                  <span>Entrega</span>
+                  <span className={calculatingDistance ? "animate-pulse" : ""}>
+                    {calculatingDistance ? "Calculando..." : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}
+                  </span>
                 </div>
                 <div className="flex justify-between pt-2 text-sm font-sans font-bold uppercase tracking-widest text-accent">
                   <span>Total</span>

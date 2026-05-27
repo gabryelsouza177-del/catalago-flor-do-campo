@@ -6,6 +6,10 @@ export interface LogisticsSettings {
   local_rate: number;
   intermediate_rate: number;
   long_distance_rate: number;
+  price_per_km: number;
+  min_delivery_fee: number;
+  eligible_categories: string[];
+  fixed_delivery_fee: number;
 }
 
 export function useLogistics() {
