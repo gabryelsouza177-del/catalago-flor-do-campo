@@ -401,7 +401,20 @@ export default function Admin() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Cliente / Contato</p>
-                          <p className="text-sm font-medium">{order.recipient_name}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium">{order.recipient_name}</p>
+                            {order.customer_phone && (
+                              <a 
+                                href={`https://wa.me/55${order.customer_phone.replace(/\D/g, '')}`} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-emerald hover:text-emerald/80 transition-colors"
+                              >
+                                <MessageSquare className="h-4 w-4" />
+                              </a>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground">{order.customer_phone || 'Sem telefone'}</p>
                           <p className="text-xs text-muted-foreground">{order.delivery_address}</p>
                         </div>
                         <div className="space-y-2">
