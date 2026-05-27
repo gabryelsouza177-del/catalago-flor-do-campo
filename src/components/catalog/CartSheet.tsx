@@ -40,6 +40,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
+  
+  // Wreath specific fields
+  const [wreathRibbonMessage, setWreathRibbonMessage] = useState('');
+  const [wreathHonoreeName, setWreathHonoreeName] = useState('');
+  const [wreathLocation, setWreathLocation] = useState('');
+  const [wreathCeremonyTime, setWreathCeremonyTime] = useState('');
+
+  const isWreathOrder = useMemo(() => 
+    items.some(item => item.category === 'Coroas'),
+    [items]
+  );
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
@@ -135,10 +146,14 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
-    if (!recipientName || !deliveryDate || !deliveryPeriod || !deliveryAddress || !houseNumber) {
+    const isFormValid = isWreathOrder 
+      ? (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber && wreathRibbonMessage && wreathHonoreeName && wreathLocation && wreathCeremonyTime)
+      : (recipientName && deliveryDate && deliveryPeriod && deliveryAddress && houseNumber);
+
+    if (!isFormValid) {
       toast({
         title: "Campos obrigatórios",
-        description: "Por favor, preencha todos os dados de entrega.",
+        description: "Por favor, preencha todos os dados obrigatórios.",
         variant: "destructive"
       });
       return;
@@ -161,7 +176,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           delivery_fee: deliveryFee,
           total_amount: total,
           items: items as any, // Cast to any to avoid Json type mismatch
-          payment_status: 'pending'
+          payment_status: 'pending',
+          wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
+          wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
+          wreath_location: isWreathOrder ? wreathLocation : null,
+          wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null
         })
         .select()
         .single();
