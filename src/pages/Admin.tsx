@@ -82,6 +82,10 @@ export default function Admin() {
           local_rate: logistics.local_rate,
           intermediate_rate: logistics.intermediate_rate,
           long_distance_rate: logistics.long_distance_rate,
+          price_per_km: logistics.price_per_km,
+          min_delivery_fee: logistics.min_delivery_fee,
+          eligible_categories: logistics.eligible_categories,
+          fixed_delivery_fee: logistics.fixed_delivery_fee,
           updated_at: new Date().toISOString()
         })
         .eq('id', logistics.id);
