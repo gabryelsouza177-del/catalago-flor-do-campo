@@ -154,6 +154,14 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const total = subtotal + deliveryFee;
 
   const handleCheckout = async () => {
+    if (!isOpen) {
+      toast({
+        title: "Loja Fechada",
+        description: "Agradecemos a compreensão, mas não estamos aceitando pedidos no momento.",
+        variant: "destructive"
+      });
+      return;
+    }
     const isTimeValid = () => {
       if (isWreathOrder) return !!deliveryTime;
       if (!deliveryTime) return false;
