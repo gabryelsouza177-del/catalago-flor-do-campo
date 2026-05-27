@@ -19,7 +19,7 @@ import {
   Flower2, LogOut, Plus, Pencil, Trash2, Loader2, Upload, 
   Package, ToggleLeft, ToggleRight, Star, BarChart3, 
   Truck, Save, MapPin, Settings2, ShoppingBag, 
-  CheckCircle, ChevronDown, Filter, Archive
+  CheckCircle, ChevronDown, Filter, Archive, MessageSquare
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
