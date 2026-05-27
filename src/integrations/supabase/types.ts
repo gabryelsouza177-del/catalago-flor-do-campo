@@ -86,7 +86,7 @@ export type Database = {
           delivery_distance: number | null
           delivery_fee: number
           delivery_period: string
-          delivery_region: string
+          delivery_region: string | null
           gift_message: string | null
           id: string
           items: Json
@@ -103,7 +103,7 @@ export type Database = {
           delivery_distance?: number | null
           delivery_fee: number
           delivery_period: string
-          delivery_region: string
+          delivery_region?: string | null
           gift_message?: string | null
           id?: string
           items: Json
@@ -120,7 +120,7 @@ export type Database = {
           delivery_distance?: number | null
           delivery_fee?: number
           delivery_period?: string
-          delivery_region?: string
+          delivery_region?: string | null
           gift_message?: string | null
           id?: string
           items?: Json
