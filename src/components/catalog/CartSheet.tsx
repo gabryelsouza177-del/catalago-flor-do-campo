@@ -15,9 +15,10 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Search, MapPin } from 'lucide-react';
+import { Search, MapPin, AlertCircle } from 'lucide-react';
 
-const ORIGIN = { lat: -3.1281737, lon: -60.0191310 };
+const ORIGIN = { lat: -3.1287, lon: -60.0215 };
+const MANAUS_BBOX = "-60.15,-3.20,-59.85,-2.90"; // Approximate bounding box for Manaus
 
 export function CartSheet({ children }: { children: React.ReactNode }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
@@ -33,6 +34,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const [selectedCoords, setSelectedCoords] = useState<{lat: number, lon: number} | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
   const [calculatingDistance, setCalculatingDistance] = useState(false);
+  const [calculationError, setCalculationError] = useState(false);
   const [giftMessage, setGiftMessage] = useState('');
 
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
@@ -40,9 +42,26 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
   const searchAddress = async (query: string) => {
     if (query.length < 3) return;
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Manaus, AM')}&limit=5`);
+      // Using Photon API for better search results in Manaus
+      const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${ORIGIN.lat}&lon=${ORIGIN.lon}&bbox=${MANAUS_BBOX}&limit=5`;
+      const response = await fetch(url);
       const data = await response.json();
-      setAddressSuggestions(data);
+      
+      // Map Photon features to a simpler format
+      const suggestions = data.features.map((f: any) => ({
+        id: f.properties.osm_id || Math.random(),
+        display_name: [
+          f.properties.name,
+          f.properties.housenumber,
+          f.properties.street,
+          f.properties.district,
+          f.properties.city
+        ].filter(Boolean).join(', '),
+        lat: f.geometry.coordinates[1],
+        lon: f.geometry.coordinates[0]
+      }));
+      
+      setAddressSuggestions(suggestions);
     } catch (err) {
       console.error('Error fetching address suggestions:', err);
     }
@@ -50,16 +69,36 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
 
   const calculateDistance = async (lat: number, lon: number) => {
     setCalculatingDistance(true);
+    setCalculationError(false);
     try {
       const response = await fetch(`https://router.project-osrm.org/route/v1/driving/${ORIGIN.lon},${ORIGIN.lat};${lon},${lat}?overview=false`);
       const data = await response.json();
+      
       if (data.routes && data.routes[0]) {
         const distKm = data.routes[0].distance / 1000;
+        
+        // Debugging / Visual Warnings
+        if (distKm < 0.1 || distKm > 50) {
+          console.warn(`[Logística] Distância suspeita detectada: ${distKm.toFixed(2)}km. Coordenadas destino: ${lat}, ${lon}`);
+          toast({ 
+            title: "Aviso de Localização", 
+            description: "A distância calculada parece incomum. Por favor, verifique se o endereço selecionado está correto.",
+            variant: "destructive" 
+          });
+        }
+        
         setDistance(distKm);
+      } else {
+        throw new Error("Não foi possível calcular a rota");
       }
     } catch (err) {
       console.error('Error calculating distance:', err);
-      toast({ title: "Erro ao calcular distância", variant: "destructive" });
+      setCalculationError(true);
+      toast({ 
+        title: "Erro no cálculo de frete", 
+        description: "Não conseguimos calcular a distância automaticamente. Usando taxa padrão.",
+        variant: "destructive" 
+      });
     } finally {
       setCalculatingDistance(false);
     }
@@ -73,17 +112,19 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
       logistics.eligible_categories.includes(item.category)
     );
 
-    if (hasEligibleProduct && distance !== null) {
-      const calculatedFee = distance * Number(logistics.price_per_km);
-      return Math.max(calculatedFee, Number(logistics.min_delivery_fee));
+    if (hasEligibleProduct) {
+      if (distance !== null) {
+        const calculatedFee = distance * Number(logistics.price_per_km);
+        return Math.max(calculatedFee, Number(logistics.min_delivery_fee));
+      }
+      // If distance is not yet calculated but address is being searched, we don't have a fee yet
+      if (calculationError) {
+        return Number(logistics.fixed_delivery_fee);
+      }
     }
 
-    if (!hasEligibleProduct) {
-      return Number(logistics.fixed_delivery_fee);
-    }
-
-    return 0;
-  }, [logistics, items, distance]);
+    return Number(logistics.fixed_delivery_fee);
+  }, [logistics, items, distance, calculationError]);
 
   const total = subtotal + deliveryFee;
 
@@ -270,7 +311,7 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                   <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
                     {addressSuggestions.map((s: any) => (
                       <button
-                        key={s.place_id}
+                        key={s.id}
                         className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 transition-colors border-b border-accent/5 last:border-0"
                         onClick={() => {
                           setDeliveryAddress(s.display_name);
@@ -281,9 +322,35 @@ export function CartSheet({ children }: { children: React.ReactNode }) {
                           calculateDistance(lat, lon);
                         }}
                       >
-                        {s.display_name}
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-3 w-3 mt-0.5 text-accent/40" />
+                          <span>{s.display_name}</span>
+                        </div>
                       </button>
                     ))}
+                  </div>
+                )}
+                
+                {calculationError && (
+                  <div className="mt-2 p-2 bg-destructive/10 rounded-sm border border-destructive/20 flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-[9px] text-destructive uppercase tracking-widest font-bold">
+                      <AlertCircle className="h-3 w-3" />
+                      Falha no cálculo automático
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-7 text-[8px] uppercase tracking-widest border-destructive/20 text-destructive hover:bg-destructive/5"
+                      onClick={() => {
+                        if (selectedCoords) {
+                          calculateDistance(selectedCoords.lat, selectedCoords.lon);
+                        } else {
+                          toast({ title: "Selecione um endereço primeiro", variant: "destructive" });
+                        }
+                      }}
+                    >
+                      Tentar calcular frete manualmente
+                    </Button>
                   </div>
                 )}
               </div>
