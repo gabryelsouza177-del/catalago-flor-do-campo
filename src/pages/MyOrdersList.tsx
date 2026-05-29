@@ -148,7 +148,7 @@ export default function MyOrdersList() {
                   <CardHeader className="p-4 flex flex-row items-center justify-between bg-muted/10 border-b border-accent/5">
                     <div className="space-y-1">
                       <p className="text-[10px] uppercase tracking-widest text-accent font-bold">Pedido #{order.id.slice(0, 8)}</p>
-                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{new Date(order.created_at).toLocaleDateString('pt-BR')}</p>
+                      <p className="text-[9px] text-muted-foreground uppercase tracking-wider">{new Date(order.criado_em).toLocaleDateString('pt-BR')}</p>
                     </div>
                     <Badge className={cn(
                       "text-[9px] uppercase tracking-widest px-2 py-0.5",
@@ -162,7 +162,7 @@ export default function MyOrdersList() {
                       <div className="flex gap-1 flex-wrap">
                         {(() => {
                           try {
-                            const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                            const items = typeof order.itens_pedido === 'string' ? JSON.parse(order.itens_pedido) : (order.itens_pedido as any[]);
                             return items.map((item: any, i: number) => (
                               <span key={i} className="text-[10px] bg-accent/5 px-2 py-1 rounded-sm text-foreground">
                                 {item.quantity}x {item.title}
@@ -174,7 +174,7 @@ export default function MyOrdersList() {
                         })()}
 
                       </div>
-                      <p className="text-lg font-serif italic text-accent">R$ {Number(order.total_price).toFixed(2).replace('.', ',')}</p>
+                      <p className="text-lg font-serif italic text-accent">R$ {Number(order.preco_total).toFixed(2).replace('.', ',')}</p>
                     </div>
                     <ChevronRight className="h-5 w-5 text-accent/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
                   </CardContent>
