@@ -257,27 +257,30 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                       <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Quem vai receber?" className="bg-muted/10 border-accent/10 text-xs h-9" />
                     </div>
                   )}
+
+                  {isWreathOrder && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Homenageado *</Label><Input value={wreathHonoreeName} onChange={(e) => setWreathHonoreeName(e.target.value)} placeholder="Nome completo" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Dizeres da Faixa *</Label><Textarea value={wreathRibbonMessage} onChange={(e) => setWreathRibbonMessage(e.target.value)} placeholder="Saudades eternas..." className="bg-muted/10 border-accent/10 text-xs min-h-[60px]" /></div>
+                    </div>
+                  )}
                   
                   <div className="space-y-2 relative">
                     <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                      {isWreathOrder ? "Local do Velório / Cemitério *" : "Buscar Endereço *"}
+                      {isWreathOrder ? "Endereço do Velório / Cemitério *" : "Buscar Endereço *"}
                     </Label>
                     <div className="relative">
                       <Input 
-                        value={isWreathOrder ? wreathLocation : deliveryAddress} 
+                        value={deliveryAddress} 
                         onChange={(e) => { 
-                          if (isWreathOrder) {
-                            setWreathLocation(e.target.value);
-                          } else {
-                            setDeliveryAddress(e.target.value); 
-                            searchAddress(e.target.value); 
-                            setDistance(null); 
-                          }
+                          setDeliveryAddress(e.target.value); 
+                          searchAddress(e.target.value); 
+                          setDistance(null); 
                         }} 
                         placeholder={isWreathOrder ? "Nome da Funerária ou Endereço" : "Digite a rua..."} 
                         className="bg-muted/10 border-accent/10 text-xs h-9" 
                       />
-                      {!isWreathOrder && addressSuggestions.length > 0 && (
+                      {addressSuggestions.length > 0 && (
                         <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
                           {addressSuggestions.map((s) => (
                             <button key={s.id} className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 border-b border-accent/5 last:border-0" onClick={() => { setDeliveryAddress(s.display_name); setSelectedStreet(s.street || ''); setSelectedDistrict(s.district || ''); setAddressSuggestions([]); calculateDistance(s.lat, s.lon); }}>{s.display_name}</button>
@@ -287,13 +290,19 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                     </div>
                   </div>
                   
-                  {!isWreathOrder && (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número *</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
-                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Complemento</Label><Input value={addressComplement} onChange={(e) => setAddressComplement(e.target.value)} placeholder="Apto, Sala" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número *</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">{isWreathOrder ? "Ponto de Ref. / Comp." : "Complemento"}</Label><Input value={addressComplement} onChange={(e) => setAddressComplement(e.target.value)} placeholder="Apto, Sala" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                  </div>
+
+                  {isWreathOrder && (
+                    <div className="space-y-2 animate-in fade-in">
+                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário da Cerimônia *</Label>
+                      <Input type="time" value={wreathCeremonyTime} onChange={(e) => setWreathCeremonyTime(e.target.value)} className="bg-muted/10 border-accent/10 text-xs h-9" />
                     </div>
                   )}
                 </div>
+
               ) : (
                 <div className="space-y-4">
                   <div className="p-4 bg-accent/5 rounded-sm border border-dashed border-accent/20 flex items-start gap-3">
