@@ -31,10 +31,10 @@ export default function MyOrdersList() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('orders')
+        .from('pedidos')
         .select('*')
-        .eq('customer_phone', phone)
-        .order('created_at', { ascending: false });
+        .eq('whatsapp_cliente', phone)
+        .order('criado_em', { ascending: false });
 
       if (error) throw error;
       setOrders(data || []);
