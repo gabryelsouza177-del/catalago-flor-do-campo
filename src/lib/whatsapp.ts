@@ -23,25 +23,30 @@ export function formatOrderWhatsAppMessage(order: any) {
   const isWreath = itemsArray.some(i => i.category === 'Coroas');
   
   let details = '';
+  let honoreeOrRecipient = order.nome_destinatario;
+  
   if (isWreath) {
     try {
       const wreathDetails = typeof order.detalhes_coroa === 'string' ? JSON.parse(order.detalhes_coroa) : (order.detalhes_coroa || {});
-      details = `*HOMENAGEADO:* ${wreathDetails.honoree_name || 'N/A'}\n*FAIXA:* ${wreathDetails.ribbon_message || 'N/A'}\n*LOCAL:* ${wreathDetails.location || 'Não informado'}`;
+      honoreeOrRecipient = wreathDetails.honoree_name || order.nome_destinatario;
+      details = `*FAIXA:* ${wreathDetails.ribbon_message || 'N/A'}`;
     } catch (e) {
-      details = `*HOMENAGEADO:* N/A\n*FAIXA:* N/A`;
+      details = `*FAIXA:* N/A`;
     }
   } else {
-    details = `*DESTINATÁRIO:* ${order.nome_destinatario}\n*MENSAGEM:* ${order.mensagem_cartao || 'Sem mensagem'}`;
+    details = `*MENSAGEM DO CARTÃO:* ${order.mensagem_cartao || 'Sem mensagem'}`;
   }
 
   const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
-    `*COMPRADOR:* ${order.nome_cliente}\n` +
-    `*PRODUTO:* \n${itemsList}\n\n` +
-    (order.tipo_entrega === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.endereco_entrega}\n`) +
+    `👤 *CLIENTE:* ${order.nome_cliente}\n` +
+    `📱 *CONTATO:* ${order.whatsapp_cliente}\n` +
+    `🎁 *DESTINATÁRIO:* ${honoreeOrRecipient}\n\n` +
+    `📍 *ENDEREÇO:* ${order.tipo_entrega === 'pickup' ? 'RETIRADA NA LOJA' : order.endereco_entrega}\n` +
+    `📝 *OBSERVAÇÃO:* ${order.observacoes || 'Nenhuma'}\n\n` +
+    `📦 *PRODUTOS:* \n${itemsList}\n` +
     `${details}${photoLink}\n\n` +
-    (order.observacoes ? `📝 *OBSERVAÇÕES:* ${order.observacoes}\n\n` : '') +
-    (order.valor_frete > 0 ? `*FRETE:* R$ ${Number(order.valor_frete).toFixed(2).replace('.', ',')}\n` : '') +
-    `*VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
+    (order.valor_frete > 0 ? `🚚 *FRETE:* R$ ${Number(order.valor_frete).toFixed(2).replace('.', ',')}\n` : '') +
+    `💰 *VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
 
   return `https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`;
 }

@@ -398,46 +398,46 @@ export default function Admin() {
                       </Badge>
                     </CardHeader>
                     <CardContent className="p-4 space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Comprador / Contato</p>
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-accent">{order.nome_cliente || order.nome_destinatario}</p>
-                            {order.whatsapp_cliente && (
-                              <a 
-                                href={`https://wa.me/55${order.whatsapp_cliente.replace(/\D/g, '')}`} 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="flex items-center gap-1 bg-emerald/10 text-emerald px-2 py-0.5 rounded-full text-[10px] font-bold hover:bg-emerald/20 transition-colors"
-                              >
-                                <MessageSquare className="h-3 w-3" />
-                                Chamar no Zap
-                              </a>
-                            )}
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="space-y-3">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">👤 Cliente</p>
+                            <p className="text-sm font-bold text-accent">{order.nome_cliente}</p>
                           </div>
-                          <p className="text-xs text-muted-foreground">{order.whatsapp_cliente || 'Sem telefone'}</p>
-                          <div className="pt-2">
-                            <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">Destinatário / Local</p>
+                          <div>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">📱 WhatsApp do Cliente</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-mono font-bold">{order.whatsapp_cliente}</p>
+                              {order.whatsapp_cliente && (
+                                <a 
+                                  href={`https://wa.me/55${order.whatsapp_cliente.replace(/\D/g, '')}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  className="flex items-center gap-1 bg-emerald text-white px-3 py-1 rounded-sm text-[10px] font-bold hover:bg-emerald/90 transition-colors shadow-sm"
+                                >
+                                  <MessageSquare className="h-3 w-3" />
+                                  Chamar no Zap
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3 border-l border-accent/5 pl-6">
+                          <div>
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">🎁 Destinatário / Local</p>
                             <p className="text-sm font-bold text-primary">{order.nome_destinatario}</p>
                             <p className="text-xs text-muted-foreground leading-tight mt-1">{order.endereco_entrega}</p>
-                            {(() => {
-                              try {
-                                const details = order.detalhes_coroa ? JSON.parse(order.detalhes_coroa) : null;
-                                return details?.location ? (
-                                  <p className="text-[10px] text-accent font-medium mt-1">📍 {details.location}</p>
-                                ) : null;
-                              } catch (e) { return null; }
-                            })()}
-
                           </div>
                           {order.observacoes && (
-                            <div className="pt-2 p-2 bg-accent/5 border border-accent/20 rounded-sm">
-                              <p className="text-[9px] uppercase tracking-widest text-accent font-bold mb-1">📝 Observações da Entrega</p>
+                            <div className="p-2 bg-accent/5 border border-accent/20 rounded-sm">
+                              <p className="text-[9px] uppercase tracking-widest text-accent font-bold mb-1">📝 Observação da Entrega</p>
                               <p className="text-xs italic leading-tight">{order.observacoes}</p>
                             </div>
                           )}
                         </div>
-                        <div className="space-y-2">
+
+                        <div className="space-y-3 border-l border-accent/5 pl-6">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Itens</p>
                           <div className="space-y-1">
                             {(() => {
