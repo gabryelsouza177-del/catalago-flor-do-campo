@@ -81,8 +81,9 @@ export default function Admin() {
     
     // Realtime orders
     const channel = supabase
-      .channel('admin-orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => {
+      .channel('admin-pedidos-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+        console.log('Realtime update received for pedidos:', payload);
         refetchOrders();
       })
       .subscribe();
@@ -302,11 +303,21 @@ export default function Admin() {
     orderFilter === 'pending' ? o.status !== 'Entregue' : o.status === 'Entregue'
   );
 
+  useEffect(() => {
+    console.log('Admin loading state:', { authLoading, productsLoading, ordersLoading });
+  }, [authLoading, productsLoading, ordersLoading]);
+
   if (authLoading || productsLoading || ordersLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-xs uppercase tracking-widest text-muted-foreground">Carregando painel...</p>
+        <div className="text-[10px] text-muted-foreground mt-4 space-y-1 text-center">
+          <p>Status: {authLoading ? 'Verificando acesso...' : productsLoading ? 'Carregando produtos...' : 'Buscando pedidos...'}</p>
+          <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-2">
+            Se demorar, clique para recarregar
+          </Button>
+        </div>
       </div>
     );
   }
