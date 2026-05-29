@@ -156,14 +156,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
       if (orderError) throw orderError;
 
-      // Disparar notificação para o WhatsApp
-      try {
-        await supabase.functions.invoke('whatsapp-notification', {
-          body: { record: order }
-        });
-      } catch (waErr) {
-        console.error('Erro ao enviar notificação WhatsApp:', waErr);
-      }
+      // A notificação para o WhatsApp agora é disparada automaticamente via Banco de Dados (Trigger)
+      // para garantir que chegue mesmo se a conexão do cliente cair.
 
       if (paymentOption === 'pickup_payment' || order.metodo_pagamento === 'Pagar na Loja') {
         toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
