@@ -129,7 +129,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       localStorage.setItem('customer_name', customerName);
       localStorage.setItem('customer_phone', customerPhone);
 
-      const { data: order, error: orderError } = await supabase.from('orders').insert({
+      const orderData: any = {
         customer_name: customerName,
         customer_phone: customerPhone,
         recipient_name: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
@@ -144,7 +144,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         gift_message: isWreathOrder ? null : giftMessage,
         delivery_fee: deliveryMethod === 'pickup' ? 0 : deliveryFee,
         total_amount: deliveryMethod === 'pickup' ? subtotal : total,
-        items: items, // Supabase client handles array/object to jsonb conversion
+        items: JSON.stringify(items),
         payment_method: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
@@ -152,7 +152,10 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
         wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
         wreath_location: isWreathOrder ? wreathLocation : null
-      }).select().single();
+      };
+
+      const { data: order, error: orderError } = await (supabase.from('orders').insert(orderData) as any).select().single();
+
 
 
 
