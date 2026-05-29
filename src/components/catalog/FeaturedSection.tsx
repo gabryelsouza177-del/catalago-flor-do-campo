@@ -2,8 +2,10 @@ import { useState, useEffect, useCallback } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
-import { MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import { buildWhatsAppLink } from '@/lib/constants';
+import { ShoppingCart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
+import { useToast } from '@/hooks/use-toast';
+import { useSiteSettings } from '@/hooks/useSiteSettings';
 import type { Product } from '@/hooks/useProducts';
 
 interface FeaturedSectionProps {
@@ -19,6 +21,10 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
   const [current, setCurrent] = useState(0);
   const [imageOpen, setImageOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const addItem = useCart((state) => state.addItem);
+  const setModalOpen = useCart((state) => state.setModalOpen);
+  const { toast } = useToast();
+  const { isOpen } = useSiteSettings();
 
   const next = useCallback(() => setCurrent((c) => (c + 1) % products.length), [products.length]);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + products.length) % products.length), [products.length]);
@@ -32,6 +38,24 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
   if (products.length === 0) return null;
 
   const product = products[current];
+
+  const handleAddToCart = () => {
+    if (!isOpen) {
+      toast({
+        title: "Loja Fechada",
+        description: "Não estamos aceitando pedidos no momento.",
+        variant: "destructive"
+      });
+      return;
+    }
+    addItem(product);
+    setModalOpen(true);
+    toast({
+      title: "Adicionado ao carrinho",
+      description: `${product.title} foi adicionado.`,
+      className: "bg-emerald text-accent border-accent/20"
+    });
+  };
 
   return (
     <>
@@ -93,18 +117,12 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 </p>
                 {!product.sold_out && (
                   <Button
-                    variant="outline"
-                    className="border-accent/30 text-accent hover:bg-accent hover:text-accent-foreground gap-2 rounded-sm font-sans uppercase tracking-[0.15em] transition-all duration-500 w-fit text-xs bg-transparent"
-                    asChild
+                    onClick={handleAddToCart}
+                    disabled={!isOpen}
+                    className="bg-emerald/60 text-accent hover:bg-emerald/80 border-0 gap-3 px-8 py-6 rounded-sm font-sans uppercase tracking-[0.2em] transition-all duration-500 w-fit text-xs shadow-xl emerald-glow"
                   >
-                    <a
-                      href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <MessageCircle className="h-4 w-4" />
-                      Pedir via WhatsApp
-                    </a>
+                    <ShoppingCart className="h-4 w-4" />
+                    {isOpen ? 'Comprar Agora' : 'Loja Fechada'}
                   </Button>
                 )}
               </div>
