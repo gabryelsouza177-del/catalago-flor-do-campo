@@ -2,8 +2,9 @@ import { WHATSAPP_NUMBER } from './constants';
 
 function normalizeWhatsAppNumber(number: string) {
   const digits = number.replace(/\D/g, '');
-  if (digits.startsWith('55')) return digits;
   if (digits.length === 11) return `55${digits}`;
+  if (digits.length === 10) return `55${digits.slice(0, 2)}9${digits.slice(2)}`;
+  if (digits.startsWith('55')) return digits;
   return `55${digits}`;
 }
 
