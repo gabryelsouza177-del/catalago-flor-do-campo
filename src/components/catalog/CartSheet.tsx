@@ -89,7 +89,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const deliveryFee = useMemo(() => {
     if (deliveryMethod === 'pickup') return 0;
     if (!logistics) return 0;
-    const hasEligibleProduct = items.some(item => logistics.eligible_categories.includes(item.category));
+    const hasEligibleProduct = items.some(item => logistics.eligible_categories.includes(item.category) || item.category === 'Coroas');
     if (hasEligibleProduct && distance !== null) {
       const calculatedFee = distance * Number(logistics.price_per_km);
       return Math.min(Math.max(calculatedFee, Number(logistics.min_delivery_fee)), Number(logistics.max_delivery_fee));
@@ -110,8 +110,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = customerName && customerPhone && deliveryDate && isTimeValid() && (
-      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
-    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : (recipientName || customerName));
+      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber)
+    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && deliveryAddress) : (recipientName || customerName));
+
 
 
     if (!isFormValid) {
