@@ -82,7 +82,7 @@ export default function Admin() {
     // Realtime orders
     const channel = supabase
       .channel('admin-orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => {
         refetchOrders();
       })
       .subscribe();
