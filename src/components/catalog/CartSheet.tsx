@@ -43,6 +43,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
+  const [paymentOption, setPaymentOption] = useState<'online' | 'pickup_payment'>('online');
+
   
   // Wreath specific fields
   const [wreathRibbonMessage, setWreathRibbonMessage] = useState('');
@@ -107,8 +109,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = customerName && customerPhone && deliveryDate && isTimeValid() && (
-      deliveryMethod === 'pickup' ? (recipientName || true) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
-    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : recipientName);
+      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
+    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : (recipientName || customerName));
+
 
     if (!isFormValid) {
       toast({ 
@@ -142,7 +145,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         delivery_fee: deliveryFee,
         total_amount: total,
         items: items as any,
-        payment_status: 'pending',
+        payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
+        status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
+
         wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
         wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
         wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
@@ -151,11 +156,19 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
       if (orderError) throw orderError;
 
+      if (paymentOption === 'pickup_payment') {
+        clearCart();
+        toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
+        window.location.href = '/pedido-confirmado';
+        return;
+      }
+
       const { data } = await supabase.functions.invoke('mercadopago-checkout', {
         body: { orderId: order.id, items: items.map(i => ({ name: i.title, amount: Math.round(i.price * 100), quantity: i.quantity, image: i.image_url })), deliveryFee: Math.round(deliveryFee * 100) }
       });
 
       if (data?.url) window.location.href = data.url;
+
     } catch (err: any) { toast({ title: "Erro ao processar", description: err.message, variant: "destructive" });
     } finally { setLoading(false); }
   };
@@ -277,6 +290,36 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
               )}
 
+              {deliveryMethod === 'pickup' && (
+                <div className="space-y-4 pt-4 border-t border-accent/10 animate-in fade-in slide-in-from-top-2">
+                  <h3 className="text-[9px] font-sans font-bold uppercase tracking-[0.25em] text-accent/60 flex items-center gap-2">
+                    <Hash className="h-3 w-3" /> Opção de Pagamento
+                  </h3>
+                  <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
+                    <button 
+                      type="button" 
+                      onClick={() => setPaymentOption('online')} 
+                      className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm transition-all", paymentOption === 'online' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}
+                    >
+                      Online (Pix/Cartão)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setPaymentOption('pickup_payment')} 
+                      className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm transition-all", paymentOption === 'pickup_payment' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}
+                    >
+                      Na Loja
+                    </button>
+                  </div>
+                  {paymentOption === 'pickup_payment' && (
+                    <p className="text-[9px] text-accent/60 uppercase text-center font-medium italic animate-pulse">
+                      Pague na retirada (Dinheiro, Pix ou Cartão)
+                    </p>
+                  )}
+                </div>
+              )}
+
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Data *</Label>
@@ -310,7 +353,10 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground"><span>Entrega</span><span>{calculatingDistance ? "Calculando..." : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}</span></div>
                 <div className="flex justify-between pt-2 text-sm font-sans font-bold uppercase tracking-widest text-accent"><span>Total</span><span>R$ {total.toFixed(2).replace('.', ',')}</span></div>
               </div>
-              <Button onClick={handleCheckout} disabled={loading} className="w-full bg-emerald hover:bg-emerald/80 text-accent uppercase tracking-[0.2em] text-[10px] font-bold h-12">{loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Finalizar e Pagar"}</Button>
+              <Button onClick={handleCheckout} disabled={loading} className="w-full bg-emerald hover:bg-emerald/80 text-accent uppercase tracking-[0.2em] text-[10px] font-bold h-12">
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (paymentOption === 'pickup_payment' ? "Confirmar Pedido" : "Finalizar e Pagar")}
+              </Button>
+
             </div>
           </div>
         )}
