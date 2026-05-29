@@ -184,6 +184,7 @@ export type Database = {
           id: string
           itens_pedido: string | null
           mensagem_cartao: string | null
+          mercadopago_preference_id: string | null
           metodo_pagamento: string | null
           nome_cliente: string | null
           nome_destinatario: string | null
@@ -199,6 +200,7 @@ export type Database = {
           id?: string
           itens_pedido?: string | null
           mensagem_cartao?: string | null
+          mercadopago_preference_id?: string | null
           metodo_pagamento?: string | null
           nome_cliente?: string | null
           nome_destinatario?: string | null
@@ -214,6 +216,7 @@ export type Database = {
           id?: string
           itens_pedido?: string | null
           mensagem_cartao?: string | null
+          mercadopago_preference_id?: string | null
           metodo_pagamento?: string | null
           nome_cliente?: string | null
           nome_destinatario?: string | null
