@@ -64,12 +64,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   }, [onlyPickupMode, hasBouquetsOrArrangements, bouquetsDeliveryEnabled]);
 
   // Force pickup if delivery is blocked
-  useState(() => {
-    if (isDeliveryBlocked) setDeliveryMethod('pickup');
-  });
-
-  // Also update if settings change while open
-  useMemo(() => {
+  useEffect(() => {
     if (isDeliveryBlocked && deliveryMethod === 'delivery') {
       setDeliveryMethod('pickup');
     }
