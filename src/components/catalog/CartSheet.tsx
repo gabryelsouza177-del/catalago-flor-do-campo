@@ -15,6 +15,7 @@ import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { formatOrderWhatsAppMessage } from '@/lib/whatsapp';
 
 const ORIGIN = { lat: -3.1287, lon: -60.0215 };
 const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95";
@@ -156,8 +157,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
       if (orderError) throw orderError;
 
-      // A notificação para o WhatsApp agora é disparada automaticamente via Banco de Dados (Trigger)
-      // para garantir que chegue mesmo se a conexão do cliente cair.
+      // Abrir WhatsApp automaticamente após salvamento bem-sucedido
+      const whatsappLink = formatOrderWhatsAppMessage(order);
+      window.open(whatsappLink, '_blank');
 
       if (paymentOption === 'pickup_payment' || order.metodo_pagamento === 'Pagar na Loja') {
         toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
