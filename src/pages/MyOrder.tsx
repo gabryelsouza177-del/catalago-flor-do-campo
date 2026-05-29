@@ -146,13 +146,21 @@ export default function MyOrder() {
             <div className="pt-6 border-t border-accent/10 space-y-4">
               <h4 className="text-[9px] font-sans font-bold uppercase tracking-widest text-accent">Itens do Pedido</h4>
               <div className="space-y-3">
-                {(order.items as any[]).map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm font-light">
-                    <span className="text-muted-foreground">{item.quantity}x {item.title}</span>
-                    <span className="text-accent italic font-serif">R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
-                  </div>
-                ))}
+                {(() => {
+                  try {
+                    const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                    return items.map((item: any, idx: number) => (
+                      <div key={idx} className="flex justify-between text-sm font-light">
+                        <span className="text-muted-foreground">{item.quantity}x {item.title}</span>
+                        <span className="text-accent italic font-serif">R$ {(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
+                      </div>
+                    ));
+                  } catch (e) {
+                    return <p className="text-xs text-destructive">Erro ao carregar itens</p>;
+                  }
+                })()}
               </div>
+
             </div>
 
             <div className="pt-6 border-t border-accent/10 flex justify-between items-center">

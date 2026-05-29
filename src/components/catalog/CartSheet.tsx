@@ -129,7 +129,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       localStorage.setItem('customer_name', customerName);
       localStorage.setItem('customer_phone', customerPhone);
 
-      const { data: order, error: orderError } = await supabase.from('orders').insert({
+      const orderData: any = {
         customer_name: customerName,
         customer_phone: customerPhone,
         recipient_name: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
@@ -144,24 +144,29 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         gift_message: isWreathOrder ? null : giftMessage,
         delivery_fee: deliveryMethod === 'pickup' ? 0 : deliveryFee,
         total_amount: deliveryMethod === 'pickup' ? subtotal : total,
-        items: JSON.parse(JSON.stringify(items)),
+        items: JSON.stringify(items),
+        payment_method: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
         wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
         wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
         wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
         wreath_location: isWreathOrder ? wreathLocation : null
-      }).select().single();
+      };
+
+      const { data: order, error: orderError } = await (supabase.from('orders').insert(orderData) as any).select().single();
+
+
 
 
       if (orderError) throw orderError;
 
       if (paymentOption === 'pickup_payment') {
-        clearCart();
         toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
-        window.location.href = '/pedido-confirmado';
+        window.location.href = `/pedido-confirmado?order_id=${order.id}`;
         return;
       }
+
 
       const { data } = await supabase.functions.invoke('mercadopago-checkout', {
         body: { orderId: order.id, items: items.map(i => ({ name: i.title, amount: Math.round(i.price * 100), quantity: i.quantity, image: i.image_url })), deliveryFee: Math.round(deliveryFee * 100) }

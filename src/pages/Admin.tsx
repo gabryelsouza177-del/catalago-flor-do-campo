@@ -428,10 +428,18 @@ export default function Admin() {
                         <div className="space-y-2">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Itens</p>
                           <div className="space-y-1">
-                            {(order.items as any[]).map((item, idx) => (
-                              <p key={idx} className="text-xs">{item.quantity}x {item.title}</p>
-                            ))}
+                            {(() => {
+                              try {
+                                const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                                return items.map((item: any, idx: number) => (
+                                  <p key={idx} className="text-xs">{item.quantity}x {item.title}</p>
+                                ));
+                              } catch (e) {
+                                return <p className="text-xs text-destructive">Erro ao carregar itens</p>;
+                              }
+                            })()}
                           </div>
+
                         </div>
                       </div>
 
