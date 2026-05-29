@@ -4,7 +4,7 @@ import { useLogistics } from '@/hooks/useLogistics';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Minus, CalendarIcon, Loader2, Truck, Store, User, Phone, Search, MapPin, AlertCircle, Hash } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -22,7 +22,7 @@ const MANAUS_BBOX = "-60.10,-3.20,-59.85,-2.95";
 
 export function CartSheet({ children, open, onOpenChange }: { children: React.ReactNode, open?: boolean, onOpenChange?: (open: boolean) => void }) {
   const { items, removeItem, updateQuantity, clearCart } = useCart();
-  const { isOpen } = useSiteSettings();
+  const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode } = useSiteSettings();
   const { data: logistics } = useLogistics();
   const { toast } = useToast();
   
@@ -55,6 +55,21 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [wreathLocation, setWreathLocation] = useState('');
 
   const isWreathOrder = useMemo(() => items.some(item => item.category === 'Coroas'), [items]);
+  const hasBouquetsOrArrangements = useMemo(() => items.some(item => item.category !== 'Coroas'), [items]);
+  
+  const isDeliveryBlocked = useMemo(() => {
+    if (onlyPickupMode) return true;
+    if (hasBouquetsOrArrangements && !bouquetsDeliveryEnabled) return true;
+    return false;
+  }, [onlyPickupMode, hasBouquetsOrArrangements, bouquetsDeliveryEnabled]);
+
+  // Force pickup if delivery is blocked
+  useEffect(() => {
+    if (isDeliveryBlocked && deliveryMethod === 'delivery') {
+      setDeliveryMethod('pickup');
+    }
+  }, [isDeliveryBlocked, deliveryMethod]);
+
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
   const searchAddress = async (query: string) => {
@@ -246,10 +261,25 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 <Truck className="h-3 w-3" /> {deliveryMethod === 'delivery' ? 'Dados de Entrega (Destinatário)' : 'Dados da Retirada'}
               </h3>
               
-              <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
-                <button type="button" onClick={() => setDeliveryMethod('delivery')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'delivery' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Entrega</button>
-                <button type="button" onClick={() => setDeliveryMethod('pickup')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'pickup' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Retirada</button>
-              </div>
+              {!isDeliveryBlocked ? (
+                <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
+                  <button type="button" onClick={() => setDeliveryMethod('delivery')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'delivery' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Entrega</button>
+                  <button type="button" onClick={() => setDeliveryMethod('pickup')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'pickup' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Retirada</button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 p-3 bg-accent text-background rounded-sm">
+                    <Store className="h-4 w-4" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Apenas Retirada na Loja</span>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-sm flex items-start gap-2 animate-in fade-in slide-in-from-top-2">
+                    <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-[10px] text-amber-800 leading-tight uppercase font-medium">
+                      No momento, estamos aceitando apenas retirada na loja.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {deliveryMethod === 'delivery' ? (
                 <div className="space-y-4">

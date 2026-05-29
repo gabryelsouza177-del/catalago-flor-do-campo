@@ -3,6 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 
 export function useSiteSettings() {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [bouquetsDeliveryEnabled, setBouquetsDeliveryEnabled] = useState<boolean>(true);
+  const [onlyPickupMode, setOnlyPickupMode] = useState<boolean>(false);
   const [settingsId, setSettingsId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -16,6 +18,8 @@ export function useSiteSettings() {
         { event: 'UPDATE', schema: 'public', table: 'site_settings' },
         (payload) => {
           setIsOpen(payload.new.store_is_open);
+          setBouquetsDeliveryEnabled(payload.new.bouquets_delivery_enabled ?? true);
+          setOnlyPickupMode(payload.new.only_pickup_mode ?? false);
         }
       )
       .subscribe();
@@ -29,11 +33,13 @@ export function useSiteSettings() {
     try {
       const { data, error } = await supabase
         .from('site_settings')
-        .select('id, store_is_open')
+        .select('id, store_is_open, bouquets_delivery_enabled, only_pickup_mode')
         .single();
       
       if (data) {
         setIsOpen(data.store_is_open);
+        setBouquetsDeliveryEnabled(data.bouquets_delivery_enabled ?? true);
+        setOnlyPickupMode(data.only_pickup_mode ?? false);
         setSettingsId(data.id);
       }
     } catch (err) {
@@ -43,23 +49,38 @@ export function useSiteSettings() {
     }
   };
 
-  const toggleStoreStatus = async (status: boolean) => {
+  const updateSettings = async (updates: { 
+    store_is_open?: boolean, 
+    bouquets_delivery_enabled?: boolean, 
+    only_pickup_mode?: boolean 
+  }) => {
     if (!settingsId) return false;
     
     try {
       const { error } = await supabase
         .from('site_settings')
-        .update({ store_is_open: status })
+        .update(updates)
         .eq('id', settingsId);
       
       if (error) throw error;
-      setIsOpen(status);
+      
+      if (updates.store_is_open !== undefined) setIsOpen(updates.store_is_open);
+      if (updates.bouquets_delivery_enabled !== undefined) setBouquetsDeliveryEnabled(updates.bouquets_delivery_enabled);
+      if (updates.only_pickup_mode !== undefined) setOnlyPickupMode(updates.only_pickup_mode);
+      
       return true;
     } catch (err) {
-      console.error('Error toggling store status:', err);
+      console.error('Error updating site settings:', err);
       return false;
     }
   };
 
-  return { isOpen, loading, toggleStoreStatus };
+  return { 
+    isOpen, 
+    bouquetsDeliveryEnabled, 
+    onlyPickupMode, 
+    loading, 
+    updateSettings,
+    toggleStoreStatus: (status: boolean) => updateSettings({ store_is_open: status }) 
+  };
 }

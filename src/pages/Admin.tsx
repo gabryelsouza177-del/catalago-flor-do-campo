@@ -40,7 +40,7 @@ const STATUS_OPTIONS = [
 export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { isOpen, toggleStoreStatus } = useSiteSettings();
+  const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
   const { data: products, isLoading: productsLoading, refetch: refetchProducts } = useProducts();
   const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useOrders();
   const { toast } = useToast();
@@ -651,34 +651,98 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="settings" className="space-y-6">
-            {/* Store Status */}
-            <Card className={cn(
-              "border-2 transition-all duration-300",
-              isOpen ? "border-emerald/20 bg-emerald/5" : "border-destructive/20 bg-destructive/5"
-            )}>
-              <CardContent className="p-6 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={cn(
-                    "h-12 w-12 rounded-full flex items-center justify-center",
-                    isOpen ? "bg-emerald/20 text-emerald" : "bg-destructive/20 text-destructive"
-                  )}>
-                    <Settings2 className="h-6 w-6" />
+            {/* Store Status and Global Logistics Controls */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Card className={cn(
+                "border-2 transition-all duration-300",
+                isOpen ? "border-emerald/20 bg-emerald/5" : "border-destructive/20 bg-destructive/5"
+              )}>
+                <CardContent className="p-6 flex flex-col justify-between h-full gap-4">
+                  <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "h-10 w-10 rounded-full flex items-center justify-center",
+                      isOpen ? "bg-emerald/20 text-emerald" : "bg-destructive/20 text-destructive"
+                    )}>
+                      <Settings2 className="h-5 w-5" />
+                    </div>
+                    <Badge className={cn("uppercase tracking-widest text-[9px]", isOpen ? "bg-emerald" : "bg-destructive")}>
+                      {isOpen ? "Aberta" : "Fechada"}
+                    </Badge>
                   </div>
                   <div>
-                    <h2 className="text-lg font-sans font-bold uppercase tracking-wider">Status da Loja</h2>
-                    <p className="text-xs text-muted-foreground">
+                    <h3 className="text-sm font-sans font-bold uppercase tracking-wider">Status da Loja</h3>
+                    <p className="text-[10px] text-muted-foreground">
                       {isOpen ? "Recebendo pedidos normalmente" : "Vendas pausadas temporariamente"}
                     </p>
                   </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Badge className={cn("uppercase tracking-widest", isOpen ? "bg-emerald" : "bg-destructive")}>
-                    {isOpen ? "Aberta" : "Fechada"}
-                  </Badge>
-                  <Switch checked={isOpen} onCheckedChange={toggleStoreStatus} />
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="pt-2">
+                    <Switch checked={isOpen} onCheckedChange={(val) => updateSettings({ store_is_open: val })} />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className={cn(
+                "border-2 transition-all duration-300",
+                bouquetsDeliveryEnabled ? "border-accent/20 bg-accent/5" : "border-amber/20 bg-amber/5"
+              )}>
+                <CardContent className="p-6 flex flex-col justify-between h-full gap-4">
+                  <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "h-10 w-10 rounded-full flex items-center justify-center",
+                      bouquetsDeliveryEnabled ? "bg-accent/20 text-accent" : "bg-amber/20 text-amber-600"
+                    )}>
+                      <Truck className="h-5 w-5" />
+                    </div>
+                    <Badge className={cn("uppercase tracking-widest text-[9px]", bouquetsDeliveryEnabled ? "bg-accent" : "bg-amber-500")}>
+                      {bouquetsDeliveryEnabled ? "Ativo" : "Pausado"}
+                    </Badge>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-sans font-bold uppercase tracking-wider">Entregas de Buquês</h3>
+                    <p className="text-[10px] text-muted-foreground">
+                      {bouquetsDeliveryEnabled ? "Entregas liberadas para buquês" : "Somente retirada para buquês"}
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <Switch 
+                      checked={bouquetsDeliveryEnabled} 
+                      onCheckedChange={(val) => updateSettings({ bouquets_delivery_enabled: val })} 
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className={cn(
+                "border-2 transition-all duration-300",
+                !onlyPickupMode ? "border-accent/20 bg-accent/5" : "border-destructive/20 bg-destructive/5"
+              )}>
+                <CardContent className="p-6 flex flex-col justify-between h-full gap-4">
+                  <div className="flex items-center justify-between">
+                    <div className={cn(
+                      "h-10 w-10 rounded-full flex items-center justify-center",
+                      !onlyPickupMode ? "bg-accent/20 text-accent" : "bg-destructive/20 text-destructive"
+                    )}>
+                      <ShoppingBag className="h-5 w-5" />
+                    </div>
+                    <Badge className={cn("uppercase tracking-widest text-[9px]", !onlyPickupMode ? "bg-accent" : "bg-destructive")}>
+                      {!onlyPickupMode ? "Logística Normal" : "Apenas Retirada"}
+                    </Badge>
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-sans font-bold uppercase tracking-wider">Modo Somente Retirada</h3>
+                    <p className="text-[10px] text-muted-foreground">
+                      {onlyPickupMode ? "Bloqueio geral de entregas ativado" : "Logística funcionando normalmente"}
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <Switch 
+                      checked={onlyPickupMode} 
+                      onCheckedChange={(val) => updateSettings({ only_pickup_mode: val })} 
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Logistics */}
             <Card className="border-accent/10">

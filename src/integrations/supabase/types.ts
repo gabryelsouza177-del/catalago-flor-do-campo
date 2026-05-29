@@ -321,20 +321,26 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          bouquets_delivery_enabled: boolean | null
           created_at: string | null
           id: string
+          only_pickup_mode: boolean | null
           store_is_open: boolean | null
           updated_at: string | null
         }
         Insert: {
+          bouquets_delivery_enabled?: boolean | null
           created_at?: string | null
           id?: string
+          only_pickup_mode?: boolean | null
           store_is_open?: boolean | null
           updated_at?: string | null
         }
         Update: {
+          bouquets_delivery_enabled?: boolean | null
           created_at?: string | null
           id?: string
+          only_pickup_mode?: boolean | null
           store_is_open?: boolean | null
           updated_at?: string | null
         }
