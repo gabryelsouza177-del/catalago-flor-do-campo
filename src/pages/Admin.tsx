@@ -310,10 +310,10 @@ export default function Admin() {
   );
 
   useEffect(() => {
-    console.log('Admin loading state:', { authLoading, productsLoading, ordersLoading });
-  }, [authLoading, productsLoading, ordersLoading]);
+    console.log('Admin loading state:', { authLoading, productsLoading, pedidosLoading });
+  }, [authLoading, productsLoading, pedidosLoading]);
 
-  if (authLoading || productsLoading || ordersLoading) {
+  if (authLoading || productsLoading || pedidosLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -322,15 +322,15 @@ export default function Admin() {
           <div className="text-[10px] text-muted-foreground opacity-70">
             {authLoading && <p>Verificando credenciais...</p>}
             {productsLoading && <p>Carregando catálogo de produtos...</p>}
-            {ordersLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
+            {pedidosLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
           </div>
         </div>
         
-        {(productsError || ordersError) && (
+        {(productsError || pedidosError) && (
           <div className="max-w-xs p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
             <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
             <p className="text-[10px] text-muted-foreground mb-4">
-              {((productsError as any)?.message || (ordersError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
+              {((productsError as any)?.message || (pedidosError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
             </p>
             <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
               Tentar Novamente
@@ -496,7 +496,7 @@ export default function Admin() {
             </div>
 
             <div className="grid gap-4">
-              {!filteredOrders || filteredOrders.length === 0 ? (
+              {!filteredPedidos || filteredPedidos.length === 0 ? (
                 <Card className="border-dashed py-16 text-center text-muted-foreground flex flex-col items-center gap-4">
                   <div className="bg-muted/50 p-4 rounded-full">
                     <ShoppingBag className="h-8 w-8 opacity-20" />
@@ -506,7 +506,7 @@ export default function Admin() {
                     <p className="text-xs">Não há registros nesta categoria no momento.</p>
                   </div>
                   <div className="flex gap-3 pt-2">
-                    <Button variant="outline" size="sm" onClick={() => refetchOrders()} className="text-[10px] uppercase tracking-widest">
+                    <Button variant="outline" size="sm" onClick={() => refetchPedidos()} className="text-[10px] uppercase tracking-widest">
                       Atualizar
                     </Button>
                     <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[10px] uppercase tracking-widest text-destructive">
@@ -515,7 +515,7 @@ export default function Admin() {
                   </div>
                 </Card>
               ) : (
-                filteredOrders?.map((order) => (
+                filteredPedidos?.map((order) => (
                   <Card key={order.id} className="border-accent/10 overflow-hidden">
                     <CardHeader className="p-4 bg-muted/20 flex flex-row items-center justify-between space-y-0">
                       <div>
