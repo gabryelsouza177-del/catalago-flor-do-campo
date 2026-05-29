@@ -266,10 +266,25 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 <Truck className="h-3 w-3" /> {deliveryMethod === 'delivery' ? 'Dados de Entrega (Destinatário)' : 'Dados da Retirada'}
               </h3>
               
-              <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
-                <button type="button" onClick={() => setDeliveryMethod('delivery')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'delivery' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Entrega</button>
-                <button type="button" onClick={() => setDeliveryMethod('pickup')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'pickup' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Retirada</button>
-              </div>
+              {!isDeliveryBlocked ? (
+                <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
+                  <button type="button" onClick={() => setDeliveryMethod('delivery')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'delivery' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Entrega</button>
+                  <button type="button" onClick={() => setDeliveryMethod('pickup')} className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", deliveryMethod === 'pickup' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}>Retirada</button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 p-3 bg-accent text-background rounded-sm">
+                    <Store className="h-4 w-4" />
+                    <span className="text-[10px] uppercase tracking-widest font-bold">Apenas Retirada na Loja</span>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 p-3 rounded-sm flex items-start gap-2 animate-in fade-in slide-in-from-top-2">
+                    <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <p className="text-[10px] text-amber-800 leading-tight uppercase font-medium">
+                      No momento, estamos aceitando apenas retirada na loja.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {deliveryMethod === 'delivery' ? (
                 <div className="space-y-4">
