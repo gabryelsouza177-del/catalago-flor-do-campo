@@ -109,8 +109,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = customerName && customerPhone && deliveryDate && isTimeValid() && (
-      deliveryMethod === 'pickup' ? (recipientName || true) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
-    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : recipientName);
+      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
+    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : (recipientName || customerName));
+
 
     if (!isFormValid) {
       toast({ 
@@ -352,7 +353,10 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 <div className="flex justify-between text-[10px] uppercase tracking-widest text-muted-foreground"><span>Entrega</span><span>{calculatingDistance ? "Calculando..." : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}</span></div>
                 <div className="flex justify-between pt-2 text-sm font-sans font-bold uppercase tracking-widest text-accent"><span>Total</span><span>R$ {total.toFixed(2).replace('.', ',')}</span></div>
               </div>
-              <Button onClick={handleCheckout} disabled={loading} className="w-full bg-emerald hover:bg-emerald/80 text-accent uppercase tracking-[0.2em] text-[10px] font-bold h-12">{loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : "Finalizar e Pagar"}</Button>
+              <Button onClick={handleCheckout} disabled={loading} className="w-full bg-emerald hover:bg-emerald/80 text-accent uppercase tracking-[0.2em] text-[10px] font-bold h-12">
+                {loading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : (paymentOption === 'pickup_payment' ? "Confirmar Pedido" : "Finalizar e Pagar")}
+              </Button>
+
             </div>
           </div>
         )}
