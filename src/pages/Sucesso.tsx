@@ -164,10 +164,11 @@ export default function Sucesso() {
             <Badge variant="outline" className="text-[9px] uppercase tracking-widest bg-accent text-background border-none">#{order?.id?.slice(0, 8)}</Badge>
           </div>
           <CardContent className="p-6 space-y-6">
-            <Button onClick={sendWhatsApp} className="w-full bg-emerald hover:bg-emerald/80 text-white uppercase tracking-[0.2em] text-[11px] font-bold h-14 shadow-lg shadow-emerald/20 animate-pulse">
-              <MessageSquare className="mr-2 h-5 w-5" />
-              CLIQUE AQUI PARA ENVIAR O PEDIDO AO NOSSO WHATSAPP
-            </Button>
+            <div className="text-center py-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                Você receberá atualizações sobre o seu pedido em breve.
+              </p>
+            </div>
             <Button variant="ghost" onClick={() => navigate('/')} className="w-full text-[9px] uppercase tracking-widest text-muted-foreground hover:text-accent">Voltar para o Catálogo</Button>
           </CardContent>
         </Card>
