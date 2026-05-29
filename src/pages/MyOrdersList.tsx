@@ -160,11 +160,19 @@ export default function MyOrdersList() {
                   <CardContent className="p-4 flex items-center justify-between">
                     <div className="space-y-2">
                       <div className="flex gap-1 flex-wrap">
-                        {(order.items as any[]).map((item, i) => (
-                          <span key={i} className="text-[10px] bg-accent/5 px-2 py-1 rounded-sm text-foreground">
-                            {item.quantity}x {item.title}
-                          </span>
-                        ))}
+                        {(() => {
+                          try {
+                            const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                            return items.map((item: any, i: number) => (
+                              <span key={i} className="text-[10px] bg-accent/5 px-2 py-1 rounded-sm text-foreground">
+                                {item.quantity}x {item.title}
+                              </span>
+                            ));
+                          } catch (e) {
+                            return <span className="text-[10px] text-destructive">Erro ao carregar itens</span>;
+                          }
+                        })()}
+
                       </div>
                       <p className="text-lg font-serif italic text-accent">R$ {Number(order.total_amount).toFixed(2).replace('.', ',')}</p>
                     </div>
