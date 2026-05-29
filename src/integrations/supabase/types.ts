@@ -189,6 +189,7 @@ export type Database = {
           nome_cliente: string | null
           nome_destinatario: string | null
           numero_endereco: string | null
+          observacoes: string | null
           preco_total: number | null
           status: string | null
           tipo_entrega: string | null
@@ -207,6 +208,7 @@ export type Database = {
           nome_cliente?: string | null
           nome_destinatario?: string | null
           numero_endereco?: string | null
+          observacoes?: string | null
           preco_total?: number | null
           status?: string | null
           tipo_entrega?: string | null
@@ -225,6 +227,7 @@ export type Database = {
           nome_cliente?: string | null
           nome_destinatario?: string | null
           numero_endereco?: string | null
+          observacoes?: string | null
           preco_total?: number | null
           status?: string | null
           tipo_entrega?: string | null
