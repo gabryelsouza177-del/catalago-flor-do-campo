@@ -61,8 +61,10 @@ export default function Sucesso() {
               .single();
               
             setOrder(updatedOrder);
+            clearCart();
           } else {
             setOrder(orderData);
+            clearCart();
           }
         } else {
           setOrder(orderData);
