@@ -142,7 +142,7 @@ export type Database = {
           gift_message: string | null
           house_number: string | null
           id: string
-          items: Json
+          items: string
           mercadopago_preference_id: string | null
           payment_method: string | null
           payment_status: string | null
@@ -171,7 +171,7 @@ export type Database = {
           gift_message?: string | null
           house_number?: string | null
           id?: string
-          items: Json
+          items: string
           mercadopago_preference_id?: string | null
           payment_method?: string | null
           payment_status?: string | null
@@ -200,7 +200,7 @@ export type Database = {
           gift_message?: string | null
           house_number?: string | null
           id?: string
-          items?: Json
+          items?: string
           mercadopago_preference_id?: string | null
           payment_method?: string | null
           payment_status?: string | null
