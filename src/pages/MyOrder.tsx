@@ -50,7 +50,7 @@ export default function MyOrder() {
         {
           event: 'UPDATE',
           schema: 'public',
-          table: 'orders',
+          table: 'pedidos',
           filter: `id=eq.${id}`,
         },
         (payload) => {
