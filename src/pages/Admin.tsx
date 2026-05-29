@@ -451,25 +451,35 @@ export default function Admin() {
 
                       {/* Detail Fields for Wreath/Bouquet */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 bg-muted/10 p-3 rounded-sm">
-                        {order.wreath_ribbon_message && (
-                          <div className="space-y-1">
-                            <p className="text-[9px] font-bold text-accent uppercase">Faixa</p>
-                            <p className="text-xs italic">"{order.wreath_ribbon_message}"</p>
-                          </div>
-                        )}
-                        {order.wreath_honoree_name && (
-                          <div className="space-y-1">
-                            <p className="text-[9px] font-bold text-accent uppercase">Homenageado</p>
-                            <p className="text-xs">{order.wreath_honoree_name}</p>
-                          </div>
-                        )}
-                        {order.gift_message && (
+                        {(() => {
+                          try {
+                            const details = order.wreath_details ? JSON.parse(order.wreath_details) : null;
+                            return (
+                              <>
+                                {details?.ribbon_message && (
+                                  <div className="space-y-1">
+                                    <p className="text-[9px] font-bold text-accent uppercase">Faixa</p>
+                                    <p className="text-xs italic">"{details.ribbon_message}"</p>
+                                  </div>
+                                )}
+                                {details?.honoree_name && (
+                                  <div className="space-y-1">
+                                    <p className="text-[9px] font-bold text-accent uppercase">Homenageado</p>
+                                    <p className="text-xs">{details.honoree_name}</p>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          } catch (e) { return null; }
+                        })()}
+                        {order.card_message && (
                           <div className="space-y-1">
                             <p className="text-[9px] font-bold text-accent uppercase">Cartão</p>
-                            <p className="text-xs italic">"{order.gift_message}"</p>
+                            <p className="text-xs italic">"{order.card_message}"</p>
                           </div>
                         )}
                       </div>
+
 
                       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-accent/5">
                         <div className="flex items-center gap-2 w-full sm:w-auto">
