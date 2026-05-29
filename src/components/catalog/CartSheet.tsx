@@ -134,19 +134,21 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       const orderData = {
         nome_cliente: customerName,
         whatsapp_cliente: customerPhone,
-        nome_destinatario: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
+        nome_destinatario: isWreathOrder ? wreathHonoreeName : (recipientName || customerName),
         itens_pedido: JSON.stringify(items),
         preco_total: deliveryMethod === 'pickup' ? subtotal : total,
+        valor_frete: deliveryFee,
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pendente',
         metodo_pagamento: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         tipo_entrega: deliveryMethod,
-        endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
+        endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}${addressComplement ? ` - ${addressComplement}` : ''}` : `${deliveryAddress}, ${houseNumber}${addressComplement ? ` - ${addressComplement}` : ''}`),
+        numero_endereco: houseNumber,
         mensagem_cartao: isWreathOrder ? null : giftMessage,
         detalhes_coroa: isWreathOrder ? JSON.stringify({
           ribbon_message: wreathRibbonMessage,
           honoree_name: wreathHonoreeName,
           ceremony_time: wreathCeremonyTime,
-          location: wreathLocation
+          location: deliveryAddress
         }) : null
       };
 
