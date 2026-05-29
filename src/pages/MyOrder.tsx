@@ -138,8 +138,9 @@ export default function MyOrder() {
                 <p className="text-accent font-bold">{order.recipient_name}</p>
               </div>
               <div className="space-y-1 text-right">
-                <p className="text-muted-foreground">Data prevista</p>
-                <p className="text-accent font-bold">{new Date(order.delivery_date).toLocaleDateString('pt-BR')}</p>
+                <p className="text-muted-foreground">Data do Pedido</p>
+                <p className="text-accent font-bold">{new Date(order.created_at).toLocaleDateString('pt-BR')}</p>
+
               </div>
             </div>
 
