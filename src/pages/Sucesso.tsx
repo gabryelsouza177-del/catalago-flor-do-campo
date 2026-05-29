@@ -4,17 +4,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { useCart } from '@/hooks/useCart';
 import { Loader2, CheckCircle2, MessageSquare, Package, Truck, Clock, ShoppingBag } from 'lucide-react';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
+import { formatOrderWhatsAppMessage } from '@/lib/whatsapp';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-
-function normalizeWhatsAppNumber(number: string) {
-  const digits = number.replace(/\D/g, '');
-  if (digits.startsWith('55')) return digits;
-  if (digits.length === 11) return `55${digits}`;
-  return digits;
-}
 
 const statusSteps = [
   { id: 'Pagamento Pendente', label: 'Pagamento', icon: Clock },
@@ -87,38 +81,8 @@ export default function Sucesso() {
 
   const sendWhatsApp = () => {
     if (!order) return;
-
-    let itemsArray: any[] = [];
-    try {
-      itemsArray = typeof order.itens_pedido === 'string' ? JSON.parse(order.itens_pedido) : (order.itens_pedido as any[]);
-    } catch (e) {
-      console.error('Error parsing items in Success page:', e);
-    }
-
-    const itemsList = itemsArray.map(i => `${i.quantity}x ${i.title}`).join('\n');
-    const isWreath = itemsArray.some(i => i.category === 'Coroas');
-    
-    let details = '';
-    if (isWreath) {
-      try {
-        const wreathDetails = order.detalhes_coroa ? JSON.parse(order.detalhes_coroa) : {};
-        details = `*HOMENAGEADO:* ${wreathDetails.honoree_name || 'N/A'}\n*FAIXA:* ${wreathDetails.ribbon_message || 'N/A'}\n*LOCAL:* ${wreathDetails.location || 'Não informado'}`;
-      } catch (e) {
-        details = `*HOMENAGEADO:* N/A\n*FAIXA:* N/A`;
-      }
-    } else {
-      details = `*DESTINATÁRIO:* ${order.nome_destinatario}\n*MENSAGEM:* ${order.mensagem_cartao || 'Sem mensagem'}`;
-    }
-
-    const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
-      `*PRODUTO:* \n${itemsList}\n\n` +
-      (order.tipo_entrega === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.endereco_entrega}\n`) +
-      `${details}\n\n` +
-      `*VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
-
-
-    window.open(`https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`, '_blank');
-    clearCart();
+    const link = formatOrderWhatsAppMessage(order);
+    window.open(link, '_blank');
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-8 w-8 animate-spin text-accent" /></div>;
@@ -171,7 +135,24 @@ export default function Sucesso() {
                 Você receberá atualizações sobre o seu pedido em breve.
               </p>
             </div>
-            <Button variant="ghost" onClick={() => navigate('/')} className="w-full text-[9px] uppercase tracking-widest text-muted-foreground hover:text-accent">Voltar para o Catálogo</Button>
+            
+            <div className="space-y-3">
+              <Button 
+                onClick={sendWhatsApp} 
+                className="w-full bg-[#25D366] hover:bg-[#128C7E] text-white flex items-center justify-center gap-2 py-6 text-xs uppercase tracking-[0.2em] font-bold"
+              >
+                <MessageSquare className="h-4 w-4" />
+                Enviar Pedido para o WhatsApp
+              </Button>
+              
+              <Button 
+                variant="ghost" 
+                onClick={() => navigate('/')} 
+                className="w-full text-[9px] uppercase tracking-widest text-muted-foreground hover:text-accent"
+              >
+                Voltar para o Catálogo
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
