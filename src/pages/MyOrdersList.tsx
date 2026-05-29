@@ -174,7 +174,7 @@ export default function MyOrdersList() {
                         })()}
 
                       </div>
-                      <p className="text-lg font-serif italic text-accent">R$ {Number(order.total_amount).toFixed(2).replace('.', ',')}</p>
+                      <p className="text-lg font-serif italic text-accent">R$ {Number(order.total_price).toFixed(2).replace('.', ',')}</p>
                     </div>
                     <ChevronRight className="h-5 w-5 text-accent/20 group-hover:text-accent group-hover:translate-x-1 transition-all" />
                   </CardContent>

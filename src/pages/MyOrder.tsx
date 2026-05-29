@@ -138,8 +138,9 @@ export default function MyOrder() {
                 <p className="text-accent font-bold">{order.recipient_name}</p>
               </div>
               <div className="space-y-1 text-right">
-                <p className="text-muted-foreground">Data prevista</p>
-                <p className="text-accent font-bold">{new Date(order.delivery_date).toLocaleDateString('pt-BR')}</p>
+                <p className="text-muted-foreground">Data do Pedido</p>
+                <p className="text-accent font-bold">{new Date(order.created_at).toLocaleDateString('pt-BR')}</p>
+
               </div>
             </div>
 
@@ -165,8 +166,9 @@ export default function MyOrder() {
 
             <div className="pt-6 border-t border-accent/10 flex justify-between items-center">
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Valor Total</div>
-              <div className="text-xl font-serif italic text-accent">R$ {Number(order.total_amount).toFixed(2).replace('.', ',')}</div>
+              <div className="text-xl font-serif italic text-accent">R$ {Number(order.total_price).toFixed(2).replace('.', ',')}</div>
             </div>
+
 
             <Button
               onClick={() => navigate('/')}
