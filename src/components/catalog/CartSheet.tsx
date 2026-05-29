@@ -144,7 +144,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         gift_message: isWreathOrder ? null : giftMessage,
         delivery_fee: deliveryMethod === 'pickup' ? 0 : deliveryFee,
         total_amount: deliveryMethod === 'pickup' ? subtotal : total,
-        items: JSON.stringify(items),
+        items: JSON.stringify(items), // Send as string to TEXT column
         payment_method: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
@@ -154,7 +154,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         wreath_location: isWreathOrder ? wreathLocation : null
       };
 
-      const { data: order, error: orderError } = await (supabase.from('orders').insert(orderData) as any).select().single();
+      const { data: order, error: orderError } = await supabase.from('orders').insert(orderData).select().single();
+
 
 
 
