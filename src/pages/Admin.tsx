@@ -41,8 +41,8 @@ export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
-  const { data: products, isLoading: productsLoading, refetch: refetchProducts } = useProducts();
-  const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useOrders();
+  const { data: products, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
+  const { data: orders, isLoading: ordersLoading, error: ordersError, refetch: refetchOrders } = useOrders();
   const { toast } = useToast();
   
   const handleClearCache = () => {
@@ -315,15 +315,32 @@ export default function Admin() {
 
   if (authLoading || productsLoading || ordersLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Carregando painel...</p>
-        <div className="text-[10px] text-muted-foreground mt-4 space-y-1 text-center">
-          <p>Status: {authLoading ? 'Verificando acesso...' : productsLoading ? 'Carregando produtos...' : 'Buscando pedidos...'}</p>
-          <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-2">
-            Se demorar, clique para recarregar
-          </Button>
+        <div className="text-center space-y-2">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando painel...</p>
+          <div className="text-[10px] text-muted-foreground opacity-70">
+            {authLoading && <p>Verificando credenciais...</p>}
+            {productsLoading && <p>Carregando catálogo de produtos...</p>}
+            {ordersLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
+          </div>
         </div>
+        
+        {(productsError || ordersError) && (
+          <div className="max-w-xs p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
+            <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
+            <p className="text-[10px] text-muted-foreground mb-4">
+              {((productsError as any)?.message || (ordersError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
+            </p>
+            <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
+              Tentar Novamente
+            </Button>
+          </div>
+        )}
+
+        <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-4 opacity-50 hover:opacity-100">
+          Limpar Cache e Recarregar
+        </Button>
       </div>
     );
   }

@@ -13,8 +13,16 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user || !isAdmin) {
+  // Permissive check as requested: "Remover qualquer filtro de segurança"
+  if (!user) {
+    console.log('ProtectedRoute: No user found, redirecting to login');
     return <Navigate to="/login" replace />;
+  }
+
+  if (!isAdmin) {
+    console.warn('ProtectedRoute: User is not an admin, but allowing access as per request for "no security filters"');
+    // We allow access but log it. If you want to be stricter, uncomment the next line:
+    // return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
