@@ -387,7 +387,7 @@ export default function Admin() {
                           Pedido #{order.id.slice(0, 8)}
                         </CardTitle>
                         <p className="text-[10px] text-muted-foreground">
-                          {new Date(order.created_at).toLocaleString('pt-BR')}
+                          {new Date(order.criado_em).toLocaleString('pt-BR')}
                         </p>
                       </div>
                       <Badge className={cn(
@@ -402,10 +402,10 @@ export default function Admin() {
                         <div className="space-y-2">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Comprador / Contato</p>
                           <div className="flex items-center gap-2">
-                            <p className="text-sm font-bold text-accent">{order.customer_name || order.recipient_name}</p>
-                            {order.customer_phone && (
+                            <p className="text-sm font-bold text-accent">{order.nome_cliente || order.nome_destinatario}</p>
+                            {order.whatsapp_cliente && (
                               <a 
-                                href={`https://wa.me/55${order.customer_phone.replace(/\D/g, '')}`} 
+                                href={`https://wa.me/55${order.whatsapp_cliente.replace(/\D/g, '')}`} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="flex items-center gap-1 bg-emerald/10 text-emerald px-2 py-0.5 rounded-full text-[10px] font-bold hover:bg-emerald/20 transition-colors"
@@ -415,14 +415,14 @@ export default function Admin() {
                               </a>
                             )}
                           </div>
-                          <p className="text-xs text-muted-foreground">{order.customer_phone || 'Sem telefone'}</p>
+                          <p className="text-xs text-muted-foreground">{order.whatsapp_cliente || 'Sem telefone'}</p>
                           <div className="pt-2">
                             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">Destinatário / Local</p>
-                            <p className="text-sm font-bold text-primary">{order.recipient_name}</p>
-                            <p className="text-xs text-muted-foreground leading-tight mt-1">{order.address}</p>
+                            <p className="text-sm font-bold text-primary">{order.nome_destinatario}</p>
+                            <p className="text-xs text-muted-foreground leading-tight mt-1">{order.endereco_entrega}</p>
                             {(() => {
                               try {
-                                const details = order.wreath_details ? JSON.parse(order.wreath_details) : null;
+                                const details = order.detalhes_coroa ? JSON.parse(order.detalhes_coroa) : null;
                                 return details?.location ? (
                                   <p className="text-[10px] text-accent font-medium mt-1">📍 {details.location}</p>
                                 ) : null;
@@ -436,7 +436,7 @@ export default function Admin() {
                           <div className="space-y-1">
                             {(() => {
                               try {
-                                const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                                const items = typeof order.itens_pedido === 'string' ? JSON.parse(order.itens_pedido) : (order.itens_pedido as any[]);
                                 return items.map((item: any, idx: number) => (
                                   <p key={idx} className="text-xs">{item.quantity}x {item.title}</p>
                                 ));
@@ -453,7 +453,7 @@ export default function Admin() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 bg-muted/10 p-3 rounded-sm">
                         {(() => {
                           try {
-                            const details = order.wreath_details ? JSON.parse(order.wreath_details) : null;
+                            const details = order.detalhes_coroa ? JSON.parse(order.detalhes_coroa) : null;
                             return (
                               <>
                                 {details?.ribbon_message && (
@@ -472,10 +472,10 @@ export default function Admin() {
                             );
                           } catch (e) { return null; }
                         })()}
-                        {order.card_message && (
+                        {order.mensagem_cartao && (
                           <div className="space-y-1">
                             <p className="text-[9px] font-bold text-accent uppercase">Cartão</p>
-                            <p className="text-xs italic">"{order.card_message}"</p>
+                            <p className="text-xs italic">"{order.mensagem_cartao}"</p>
                           </div>
                         )}
                       </div>
@@ -500,12 +500,12 @@ export default function Admin() {
                           </Select>
                         </div>
                         <div className="flex gap-2 w-full sm:w-auto">
-                          {order.customer_phone && (
+                          {order.whatsapp_cliente && (
                             <Button 
                               variant="outline" 
                               size="sm" 
                               className="flex-1 sm:flex-none text-[10px] uppercase tracking-widest border-emerald/20 text-emerald hover:bg-emerald/5"
-                              onClick={() => window.open(`https://wa.me/55${order.customer_phone.replace(/\D/g, '')}`, '_blank')}
+                              onClick={() => window.open(`https://wa.me/55${order.whatsapp_cliente.replace(/\D/g, '')}`, '_blank')}
                             >
                               <MessageSquare className="h-3 w-3 mr-1" />
                               WhatsApp
