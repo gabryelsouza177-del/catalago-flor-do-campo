@@ -418,8 +418,11 @@ export default function Admin() {
                           <p className="text-xs text-muted-foreground">{order.customer_phone || 'Sem telefone'}</p>
                           <div className="pt-2">
                             <p className="text-[9px] uppercase tracking-widest text-muted-foreground font-bold">Destinatário / Local</p>
-                            <p className="text-xs font-medium">{order.recipient_name}</p>
+                            <p className="text-sm font-bold text-primary">{order.recipient_name}</p>
                             <p className="text-xs text-muted-foreground leading-tight mt-1">{order.delivery_address}</p>
+                            {order.wreath_location && (
+                              <p className="text-[10px] text-accent font-medium mt-1">📍 {order.wreath_location}</p>
+                            )}
                           </div>
                         </div>
                         <div className="space-y-2">
