@@ -162,11 +162,11 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       if (orderError) throw orderError;
 
       if (paymentOption === 'pickup_payment') {
-        clearCart();
         toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
-        window.location.href = '/pedido-confirmado';
+        window.location.href = `/pedido-confirmado?order_id=${order.id}`;
         return;
       }
+
 
       const { data } = await supabase.functions.invoke('mercadopago-checkout', {
         body: { orderId: order.id, items: items.map(i => ({ name: i.title, amount: Math.round(i.price * 100), quantity: i.quantity, image: i.image_url })), deliveryFee: Math.round(deliveryFee * 100) }
