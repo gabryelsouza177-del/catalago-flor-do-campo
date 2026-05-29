@@ -135,11 +135,11 @@ export default function MyOrder() {
             <div className="grid grid-cols-2 gap-8 text-[10px] uppercase tracking-widest">
               <div className="space-y-1">
                 <p className="text-muted-foreground">Destinatário</p>
-                <p className="text-accent font-bold">{order.recipient_name}</p>
+                <p className="text-accent font-bold">{order.nome_destinatario}</p>
               </div>
               <div className="space-y-1 text-right">
                 <p className="text-muted-foreground">Data do Pedido</p>
-                <p className="text-accent font-bold">{new Date(order.created_at).toLocaleDateString('pt-BR')}</p>
+                <p className="text-accent font-bold">{new Date(order.criado_em).toLocaleDateString('pt-BR')}</p>
 
               </div>
             </div>
@@ -149,7 +149,7 @@ export default function MyOrder() {
               <div className="space-y-3">
                 {(() => {
                   try {
-                    const items = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+                    const items = typeof order.itens_pedido === 'string' ? JSON.parse(order.itens_pedido) : (order.itens_pedido as any[]);
                     return items.map((item: any, idx: number) => (
                       <div key={idx} className="flex justify-between text-sm font-light">
                         <span className="text-muted-foreground">{item.quantity}x {item.title}</span>
@@ -166,7 +166,7 @@ export default function MyOrder() {
 
             <div className="pt-6 border-t border-accent/10 flex justify-between items-center">
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Valor Total</div>
-              <div className="text-xl font-serif italic text-accent">R$ {Number(order.total_price).toFixed(2).replace('.', ',')}</div>
+              <div className="text-xl font-serif italic text-accent">R$ {Number(order.preco_total).toFixed(2).replace('.', ',')}</div>
             </div>
 
 
