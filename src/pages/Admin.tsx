@@ -445,9 +445,16 @@ export default function Admin() {
                               }
                             })()}
                           </div>
-
+                          <div className="pt-2 border-t border-accent/5">
+                            <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Total do Pedido</p>
+                            {order.valor_frete > 0 && (
+                              <p className="text-xs text-muted-foreground">Frete: R$ {Number(order.valor_frete).toFixed(2).replace('.', ',')}</p>
+                            )}
+                            <p className="text-sm font-bold text-accent">R$ {Number(order.preco_total).toFixed(2).replace('.', ',')}</p>
+                          </div>
                         </div>
                       </div>
+
 
                       {/* Detail Fields for Wreath/Bouquet */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 bg-muted/10 p-3 rounded-sm">
