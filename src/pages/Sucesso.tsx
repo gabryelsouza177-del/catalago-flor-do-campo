@@ -130,7 +130,7 @@ export default function Sucesso() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald/10 text-emerald mb-4">
             <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h1 className="text-2xl font-sans font-bold uppercase tracking-[0.2em] text-accent">Obrigado, {order?.recipient_name}!</h1>
+          <h1 className="text-2xl font-sans font-bold uppercase tracking-[0.2em] text-accent">Obrigado, {order?.nome_destinatario}!</h1>
           <p className="text-sm text-muted-foreground font-light max-w-md mx-auto">
             Seu pedido foi recebido com sucesso.
           </p>
