@@ -41,10 +41,16 @@ export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
-  const { data: products, isLoading: productsLoading, refetch: refetchProducts } = useProducts();
-  const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useOrders();
+  const { data: products, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
+  const { data: pedidos, isLoading: pedidosLoading, error: pedidosError, refetch: refetchPedidos } = useOrders();
   const { toast } = useToast();
   
+  const handleClearCache = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   // UI State
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -79,11 +85,12 @@ export default function Admin() {
   useEffect(() => {
     fetchLogistics();
     
-    // Realtime orders
+    // Realtime pedidos
     const channel = supabase
-      .channel('admin-orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, () => {
-        refetchOrders();
+      .channel('admin-pedidos-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
+        console.log('Realtime update received for pedidos:', payload);
+        refetchPedidos();
       })
       .subscribe();
       
@@ -146,7 +153,7 @@ export default function Admin() {
       toast({ title: 'Erro ao atualizar status', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Status atualizado com sucesso!' });
-      refetchOrders();
+      refetchPedidos();
     }
   };
 
@@ -160,7 +167,7 @@ export default function Admin() {
       toast({ title: 'Erro ao concluir pedido', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Pedido entregue e arquivado!' });
-      refetchOrders();
+      refetchPedidos();
     }
   };
 
@@ -298,24 +305,45 @@ export default function Admin() {
     }
   };
 
-  const filteredOrders = orders?.filter(o => 
+  const filteredPedidos = pedidos?.filter(o => 
     orderFilter === 'pending' ? o.status !== 'Entregue' : o.status === 'Entregue'
   );
 
+  useEffect(() => {
+    console.log('Admin loading state:', { authLoading, productsLoading, ordersLoading });
+  }, [authLoading, productsLoading, ordersLoading]);
+
   if (authLoading || productsLoading || ordersLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-xs uppercase tracking-widest text-muted-foreground">Carregando painel...</p>
+        <div className="text-center space-y-2">
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando painel...</p>
+          <div className="text-[10px] text-muted-foreground opacity-70">
+            {authLoading && <p>Verificando credenciais...</p>}
+            {productsLoading && <p>Carregando catálogo de produtos...</p>}
+            {ordersLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
+          </div>
+        </div>
+        
+        {(productsError || ordersError) && (
+          <div className="max-w-xs p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
+            <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
+            <p className="text-[10px] text-muted-foreground mb-4">
+              {((productsError as any)?.message || (ordersError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
+            </p>
+            <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
+              Tentar Novamente
+            </Button>
+          </div>
+        )}
+
+        <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-4 opacity-50 hover:opacity-100">
+          Limpar Cache e Recarregar
+        </Button>
       </div>
     );
   }
-
-  const handleClearCache = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.reload();
-  };
 
   return (
     <div className="min-h-screen bg-background">
