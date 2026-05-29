@@ -286,7 +286,37 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                     <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Quem vai retirar? (Se não for você)</Label>
                     <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Nome de quem vai buscar" className="bg-muted/10 border-accent/10 text-xs h-9" />
                   </div>
+              </div>
+
+              {deliveryMethod === 'pickup' && (
+                <div className="space-y-4 pt-4 border-t border-accent/10">
+                  <h3 className="text-[9px] font-sans font-bold uppercase tracking-[0.25em] text-accent/60 flex items-center gap-2">
+                    <Hash className="h-3 w-3" /> Opção de Pagamento
+                  </h3>
+                  <div className="flex gap-2 p-1 bg-muted/10 rounded-sm border border-accent/10">
+                    <button 
+                      type="button" 
+                      onClick={() => setPaymentOption('online')} 
+                      className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", paymentOption === 'online' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}
+                    >
+                      Online (Pix/Cartão)
+                    </button>
+                    <button 
+                      type="button" 
+                      onClick={() => setPaymentOption('pickup_payment')} 
+                      className={cn("flex-1 py-2 text-[10px] uppercase tracking-widest font-bold rounded-sm", paymentOption === 'pickup_payment' ? "bg-accent text-background shadow-lg" : "text-accent/40 hover:text-accent/60")}
+                    >
+                      Na Loja
+                    </button>
+                  </div>
+                  {paymentOption === 'pickup_payment' && (
+                    <p className="text-[9px] text-accent/60 uppercase text-center font-medium italic">
+                      Pague na retirada (Dinheiro, Pix ou Cartão)
+                    </p>
+                  )}
                 </div>
+              )}
+
               )}
 
               <div className="grid grid-cols-2 gap-4">
