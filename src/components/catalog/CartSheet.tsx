@@ -4,7 +4,7 @@ import { useLogistics } from '@/hooks/useLogistics';
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Minus, CalendarIcon, Loader2, Truck, Store, User, Phone, Search, MapPin, AlertCircle, Hash } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
