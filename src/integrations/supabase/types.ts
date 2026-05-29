@@ -135,6 +135,7 @@ export type Database = {
           delivery_type: string | null
           id: string
           items: string | null
+          mercadopago_preference_id: string | null
           payment_method: string | null
           recipient_name: string | null
           status: string | null
@@ -150,6 +151,7 @@ export type Database = {
           delivery_type?: string | null
           id?: string
           items?: string | null
+          mercadopago_preference_id?: string | null
           payment_method?: string | null
           recipient_name?: string | null
           status?: string | null
@@ -165,6 +167,7 @@ export type Database = {
           delivery_type?: string | null
           id?: string
           items?: string | null
+          mercadopago_preference_id?: string | null
           payment_method?: string | null
           recipient_name?: string | null
           status?: string | null
