@@ -43,6 +43,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
+  const [paymentOption, setPaymentOption] = useState<'online' | 'pickup_payment'>('online');
+
   
   // Wreath specific fields
   const [wreathRibbonMessage, setWreathRibbonMessage] = useState('');
@@ -142,7 +144,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         delivery_fee: deliveryFee,
         total_amount: total,
         items: items as any,
-        payment_status: 'pending',
+        payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
+        status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
+
         wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
         wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
         wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
@@ -151,11 +155,19 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
 
       if (orderError) throw orderError;
 
+      if (paymentOption === 'pickup_payment') {
+        clearCart();
+        toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
+        window.location.href = '/pedido-confirmado';
+        return;
+      }
+
       const { data } = await supabase.functions.invoke('mercadopago-checkout', {
         body: { orderId: order.id, items: items.map(i => ({ name: i.title, amount: Math.round(i.price * 100), quantity: i.quantity, image: i.image_url })), deliveryFee: Math.round(deliveryFee * 100) }
       });
 
       if (data?.url) window.location.href = data.url;
+
     } catch (err: any) { toast({ title: "Erro ao processar", description: err.message, variant: "destructive" });
     } finally { setLoading(false); }
   };
