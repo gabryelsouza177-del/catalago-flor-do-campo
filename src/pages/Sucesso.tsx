@@ -86,12 +86,20 @@ export default function Sucesso() {
   const sendWhatsApp = () => {
     if (!order) return;
 
-    const itemsList = (order.items as any[]).map(i => `${i.quantity}x ${i.title}`).join('\n');
-    const isWreath = (order.items as any[]).some(i => i.category === 'Coroas');
+    let itemsArray: any[] = [];
+    try {
+      itemsArray = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+    } catch (e) {
+      console.error('Error parsing items in Success page:', e);
+    }
+
+    const itemsList = itemsArray.map(i => `${i.quantity}x ${i.title}`).join('\n');
+    const isWreath = itemsArray.some(i => i.category === 'Coroas');
     
     const details = isWreath 
       ? `*HOMENAGEADO:* ${order.wreath_honoree_name}\n*FAIXA:* ${order.wreath_ribbon_message}\n*LOCAL:* ${order.wreath_location || 'Não informado'}`
       : `*DESTINATÁRIO:* ${order.recipient_name}\n*MENSAGEM:* ${order.gift_message || 'Sem mensagem'}`;
+
 
     const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
       `*PRODUTO:* \n${itemsList}\n\n` +
