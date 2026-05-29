@@ -138,7 +138,7 @@ export default function Admin() {
 
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     const { error } = await supabase
-      .from('orders')
+      .from('pedidos')
       .update({ status: newStatus })
       .eq('id', orderId);
       
@@ -152,7 +152,7 @@ export default function Admin() {
 
   const concludeOrder = async (orderId: string) => {
     const { error } = await supabase
-      .from('orders')
+      .from('pedidos')
       .update({ status: 'Entregue' })
       .eq('id', orderId);
       
