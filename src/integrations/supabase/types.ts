@@ -127,91 +127,49 @@ export type Database = {
       }
       orders: {
         Row: {
+          address: string | null
+          card_message: string | null
           created_at: string | null
           customer_name: string | null
           customer_phone: string | null
-          delivery_address: string | null
-          delivery_complement: string | null
-          delivery_date: string
-          delivery_distance: number | null
-          delivery_fee: number
-          delivery_method: string | null
-          delivery_period: string
-          delivery_region: string | null
-          delivery_time: string | null
-          gift_message: string | null
-          house_number: string | null
+          delivery_type: string | null
           id: string
-          items: string
-          mercadopago_preference_id: string | null
+          items: string | null
           payment_method: string | null
-          payment_status: string | null
-          recipient_name: string
+          recipient_name: string | null
           status: string | null
-          stripe_session_id: string | null
-          total_amount: number
-          wreath_ceremony_time: string | null
-          wreath_honoree_name: string | null
-          wreath_location: string | null
-          wreath_ribbon_message: string | null
+          total_price: number | null
+          wreath_details: string | null
         }
         Insert: {
+          address?: string | null
+          card_message?: string | null
           created_at?: string | null
           customer_name?: string | null
           customer_phone?: string | null
-          delivery_address?: string | null
-          delivery_complement?: string | null
-          delivery_date: string
-          delivery_distance?: number | null
-          delivery_fee: number
-          delivery_method?: string | null
-          delivery_period: string
-          delivery_region?: string | null
-          delivery_time?: string | null
-          gift_message?: string | null
-          house_number?: string | null
+          delivery_type?: string | null
           id?: string
-          items: string
-          mercadopago_preference_id?: string | null
+          items?: string | null
           payment_method?: string | null
-          payment_status?: string | null
-          recipient_name: string
+          recipient_name?: string | null
           status?: string | null
-          stripe_session_id?: string | null
-          total_amount: number
-          wreath_ceremony_time?: string | null
-          wreath_honoree_name?: string | null
-          wreath_location?: string | null
-          wreath_ribbon_message?: string | null
+          total_price?: number | null
+          wreath_details?: string | null
         }
         Update: {
+          address?: string | null
+          card_message?: string | null
           created_at?: string | null
           customer_name?: string | null
           customer_phone?: string | null
-          delivery_address?: string | null
-          delivery_complement?: string | null
-          delivery_date?: string
-          delivery_distance?: number | null
-          delivery_fee?: number
-          delivery_method?: string | null
-          delivery_period?: string
-          delivery_region?: string | null
-          delivery_time?: string | null
-          gift_message?: string | null
-          house_number?: string | null
+          delivery_type?: string | null
           id?: string
-          items?: string
-          mercadopago_preference_id?: string | null
+          items?: string | null
           payment_method?: string | null
-          payment_status?: string | null
-          recipient_name?: string
+          recipient_name?: string | null
           status?: string | null
-          stripe_session_id?: string | null
-          total_amount?: number
-          wreath_ceremony_time?: string | null
-          wreath_honoree_name?: string | null
-          wreath_location?: string | null
-          wreath_ribbon_message?: string | null
+          total_price?: number | null
+          wreath_details?: string | null
         }
         Relationships: []
       }
