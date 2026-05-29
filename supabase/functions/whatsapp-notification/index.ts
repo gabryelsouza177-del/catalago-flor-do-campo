@@ -44,13 +44,15 @@ serve(async (req) => {
 
     let items = [];
     try {
-      items = typeof record.items === 'string' ? JSON.parse(record.items) : (record.items || []);
+      const itemsData = record.itens_pedido || record.items || [];
+      items = typeof itemsData === 'string' ? JSON.parse(itemsData) : itemsData;
     } catch (e) {
       console.error('Error parsing items string:', e);
     }
 
     const firstItem = items[0] || {};
-    const isWreath = record.delivery_type === 'wreath' || items.some((i: any) => i.category === 'Coroas');
+    const deliveryType = record.tipo_entrega || record.delivery_type;
+    const isWreath = deliveryType === 'wreath' || items.some((i: any) => i.category === 'Coroas');
     
     let messageBody = `*NOVO PEDIDO RECEBIDO!* 🌸\n\n`;
     messageBody += `*RESUMO:* ${firstItem.title || 'Produtos Diversos'}${items.length > 1 ? ` (+${items.length - 1} itens)` : ''}\n`;
@@ -58,7 +60,8 @@ serve(async (req) => {
     
     if (isWreath) {
       try {
-        const details = typeof record.wreath_details === 'string' ? JSON.parse(record.wreath_details) : (record.wreath_details || {});
+        const detailsData = record.detalhes_coroa || record.wreath_details || {};
+        const details = typeof detailsData === 'string' ? JSON.parse(detailsData) : detailsData;
         messageBody += `*DADOS DA FAIXA:* ${details.ribbon_message || 'N/A'}\n`;
         messageBody += `*HOMENAGEADO:* ${details.honoree_name || 'N/A'}\n`;
         messageBody += `*LOCAL:* ${details.location || 'N/A'}\n`;
@@ -66,14 +69,14 @@ serve(async (req) => {
         messageBody += `*DADOS:* Ver detalhes no painel\n`;
       }
     } else {
-      messageBody += `*MENSAGEM DO CARTÃO:* ${record.card_message || 'Sem mensagem'}\n`;
-      messageBody += `*DESTINATÁRIO:* ${record.recipient_name || 'N/A'}\n`;
+      messageBody += `*MENSAGEM DO CARTÃO:* ${record.mensagem_cartao || record.card_message || 'Sem mensagem'}\n`;
+      messageBody += `*DESTINATÁRIO:* ${record.nome_destinatario || record.recipient_name || 'N/A'}\n`;
     }
 
-    messageBody += `\n*CLIENTE:* ${record.customer_name}\n`;
-    messageBody += `*WHATSAPP:* ${record.customer_phone}\n`;
-    messageBody += `*ENTREGA:* ${record.address || 'N/A'}\n`;
-    messageBody += `*VALOR:* R$ ${Number(record.total_price).toFixed(2).replace('.', ',')}\n`;
+    messageBody += `\n*CLIENTE:* ${record.nome_cliente || record.customer_name}\n`;
+    messageBody += `*WHATSAPP:* ${record.whatsapp_cliente || record.customer_phone}\n`;
+    messageBody += `*ENTREGA:* ${record.endereco_entrega || record.address || 'N/A'}\n`;
+    messageBody += `*VALOR:* R$ ${Number(record.preco_total || record.total_price).toFixed(2).replace('.', ',')}\n`;
     messageBody += `*PAGAMENTO:* ${record.status || 'Pendente'}\n`;
 
     // Send text message

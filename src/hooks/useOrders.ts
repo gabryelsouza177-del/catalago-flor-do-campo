@@ -6,9 +6,9 @@ export const useOrders = () => {
     queryKey: ['orders'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('orders')
+        .from('pedidos')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('criado_em', { ascending: false });
       
       if (error) throw error;
       return data;

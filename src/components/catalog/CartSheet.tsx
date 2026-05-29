@@ -129,18 +129,18 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       localStorage.setItem('customer_name', customerName);
       localStorage.setItem('customer_phone', customerPhone);
 
-      const orderData: any = {
-        customer_name: customerName,
-        customer_phone: customerPhone,
-        recipient_name: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
-        items: JSON.stringify(items),
-        total_price: deliveryMethod === 'pickup' ? subtotal : total,
+      const orderData = {
+        nome_cliente: customerName,
+        whatsapp_cliente: customerPhone,
+        nome_destinatario: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
+        itens_pedido: JSON.stringify(items),
+        preco_total: deliveryMethod === 'pickup' ? subtotal : total,
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pendente',
-        payment_method: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
-        delivery_type: deliveryMethod,
-        address: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
-        card_message: isWreathOrder ? null : giftMessage,
-        wreath_details: isWreathOrder ? JSON.stringify({
+        metodo_pagamento: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
+        tipo_entrega: deliveryMethod,
+        endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
+        mensagem_cartao: isWreathOrder ? null : giftMessage,
+        detalhes_coroa: isWreathOrder ? JSON.stringify({
           ribbon_message: wreathRibbonMessage,
           honoree_name: wreathHonoreeName,
           ceremony_time: wreathCeremonyTime,
@@ -148,24 +148,40 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         }) : null
       };
 
-      const { data: order, error: orderError } = await (supabase.from('orders').insert(orderData) as any).select().single();
-
-
-
-
-
+      const { data: order, error: orderError } = await supabase
+        .from('pedidos')
+        .insert(orderData)
+        .select()
+        .single();
 
       if (orderError) throw orderError;
 
-      if (paymentOption === 'pickup_payment') {
+      // Disparar notificação para o WhatsApp
+      try {
+        await supabase.functions.invoke('whatsapp-notification', {
+          body: { record: order }
+        });
+      } catch (waErr) {
+        console.error('Erro ao enviar notificação WhatsApp:', waErr);
+      }
+
+      if (paymentOption === 'pickup_payment' || order.metodo_pagamento === 'Pagar na Loja') {
         toast({ title: "Pedido Confirmado!", description: "Seu pedido foi recebido. Pague ao retirar na loja." });
         window.location.href = `/pedido-confirmado?order_id=${order.id}`;
         return;
       }
 
-
       const { data } = await supabase.functions.invoke('mercadopago-checkout', {
-        body: { orderId: order.id, items: items.map(i => ({ name: i.title, amount: Math.round(i.price * 100), quantity: i.quantity, image: i.image_url })), deliveryFee: Math.round(deliveryFee * 100) }
+        body: { 
+          orderId: order.id, 
+          items: items.map(i => ({ 
+            name: i.title, 
+            amount: Math.round(i.price * 100), 
+            quantity: i.quantity, 
+            image: i.image_url 
+          })), 
+          deliveryFee: Math.round(deliveryFee * 100) 
+        }
       });
 
       if (data?.url) window.location.href = data.url;

@@ -41,7 +41,7 @@ export default function Sucesso() {
 
     const fetchOrder = async () => {
       const { data: orderData } = await supabase
-        .from('orders')
+        .from('pedidos')
         .select('*')
         .eq('id', orderId)
         .single();
@@ -50,12 +50,12 @@ export default function Sucesso() {
         if (paymentStatus === 'approved' || !paymentStatus) {
           if (orderData.status === 'Pendente') {
             await (supabase
-              .from('orders')
+              .from('pedidos')
               .update({ status: 'Pedido Confirmado' } as any)
               .eq('id', orderId) as any);
             
             const { data: updatedOrder } = await supabase
-              .from('orders')
+              .from('pedidos')
               .select('*')
               .eq('id', orderId)
               .single();
@@ -75,7 +75,7 @@ export default function Sucesso() {
 
     const channel = supabase
       .channel(`order-${orderId}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` }, (payload) => {
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: `id=eq.${orderId}` }, (payload) => {
         setOrder(payload.new);
       })
       .subscribe();
@@ -88,7 +88,7 @@ export default function Sucesso() {
 
     let itemsArray: any[] = [];
     try {
-      itemsArray = typeof order.items === 'string' ? JSON.parse(order.items) : (order.items as any[]);
+      itemsArray = typeof order.itens_pedido === 'string' ? JSON.parse(order.itens_pedido) : (order.itens_pedido as any[]);
     } catch (e) {
       console.error('Error parsing items in Success page:', e);
     }
@@ -99,20 +99,20 @@ export default function Sucesso() {
     let details = '';
     if (isWreath) {
       try {
-        const wreathDetails = order.wreath_details ? JSON.parse(order.wreath_details) : {};
+        const wreathDetails = order.detalhes_coroa ? JSON.parse(order.detalhes_coroa) : {};
         details = `*HOMENAGEADO:* ${wreathDetails.honoree_name || 'N/A'}\n*FAIXA:* ${wreathDetails.ribbon_message || 'N/A'}\n*LOCAL:* ${wreathDetails.location || 'Não informado'}`;
       } catch (e) {
         details = `*HOMENAGEADO:* N/A\n*FAIXA:* N/A`;
       }
     } else {
-      details = `*DESTINATÁRIO:* ${order.recipient_name}\n*MENSAGEM:* ${order.card_message || 'Sem mensagem'}`;
+      details = `*DESTINATÁRIO:* ${order.nome_destinatario}\n*MENSAGEM:* ${order.mensagem_cartao || 'Sem mensagem'}`;
     }
 
     const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
       `*PRODUTO:* \n${itemsList}\n\n` +
-      (order.delivery_type === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.address}\n`) +
+      (order.tipo_entrega === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.endereco_entrega}\n`) +
       `${details}\n\n` +
-      `*VALOR TOTAL:* R$ ${Number(order.total_price).toFixed(2).replace('.', ',')}`;
+      `*VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
 
 
     window.open(`https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`, '_blank');
@@ -130,7 +130,7 @@ export default function Sucesso() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald/10 text-emerald mb-4">
             <CheckCircle2 className="h-10 w-10" />
           </div>
-          <h1 className="text-2xl font-sans font-bold uppercase tracking-[0.2em] text-accent">Obrigado, {order?.recipient_name}!</h1>
+          <h1 className="text-2xl font-sans font-bold uppercase tracking-[0.2em] text-accent">Obrigado, {order?.nome_destinatario}!</h1>
           <p className="text-sm text-muted-foreground font-light max-w-md mx-auto">
             Seu pedido foi recebido com sucesso.
           </p>

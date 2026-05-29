@@ -176,6 +176,57 @@ export type Database = {
         }
         Relationships: []
       }
+      pedidos: {
+        Row: {
+          criado_em: string | null
+          detalhes_coroa: string | null
+          endereco_entrega: string | null
+          id: string
+          itens_pedido: string | null
+          mensagem_cartao: string | null
+          mercadopago_preference_id: string | null
+          metodo_pagamento: string | null
+          nome_cliente: string | null
+          nome_destinatario: string | null
+          preco_total: number | null
+          status: string | null
+          tipo_entrega: string | null
+          whatsapp_cliente: string | null
+        }
+        Insert: {
+          criado_em?: string | null
+          detalhes_coroa?: string | null
+          endereco_entrega?: string | null
+          id?: string
+          itens_pedido?: string | null
+          mensagem_cartao?: string | null
+          mercadopago_preference_id?: string | null
+          metodo_pagamento?: string | null
+          nome_cliente?: string | null
+          nome_destinatario?: string | null
+          preco_total?: number | null
+          status?: string | null
+          tipo_entrega?: string | null
+          whatsapp_cliente?: string | null
+        }
+        Update: {
+          criado_em?: string | null
+          detalhes_coroa?: string | null
+          endereco_entrega?: string | null
+          id?: string
+          itens_pedido?: string | null
+          mensagem_cartao?: string | null
+          mercadopago_preference_id?: string | null
+          metodo_pagamento?: string | null
+          nome_cliente?: string | null
+          nome_destinatario?: string | null
+          preco_total?: number | null
+          status?: string | null
+          tipo_entrega?: string | null
+          whatsapp_cliente?: string | null
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           active: boolean
