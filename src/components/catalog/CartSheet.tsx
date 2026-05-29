@@ -55,6 +55,26 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [wreathLocation, setWreathLocation] = useState('');
 
   const isWreathOrder = useMemo(() => items.some(item => item.category === 'Coroas'), [items]);
+  const hasBouquetsOrArrangements = useMemo(() => items.some(item => item.category !== 'Coroas'), [items]);
+  
+  const isDeliveryBlocked = useMemo(() => {
+    if (onlyPickupMode) return true;
+    if (hasBouquetsOrArrangements && !bouquetsDeliveryEnabled) return true;
+    return false;
+  }, [onlyPickupMode, hasBouquetsOrArrangements, bouquetsDeliveryEnabled]);
+
+  // Force pickup if delivery is blocked
+  useState(() => {
+    if (isDeliveryBlocked) setDeliveryMethod('pickup');
+  });
+
+  // Also update if settings change while open
+  useMemo(() => {
+    if (isDeliveryBlocked && deliveryMethod === 'delivery') {
+      setDeliveryMethod('pickup');
+    }
+  }, [isDeliveryBlocked, deliveryMethod]);
+
   const subtotal = useCart((state) => state.items.reduce((acc, item) => acc + item.price * item.quantity, 0));
 
   const searchAddress = async (query: string) => {
