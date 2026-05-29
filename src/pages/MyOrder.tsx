@@ -29,7 +29,7 @@ export default function MyOrder() {
 
     const fetchOrder = async () => {
       const { data, error } = await supabase
-        .from('orders')
+        .from('pedidos')
         .select('*')
         .eq('id', id)
         .single();
