@@ -41,7 +41,7 @@ export default function Sucesso() {
 
     const fetchOrder = async () => {
       const { data: orderData } = await supabase
-        .from('orders')
+        .from('pedidos')
         .select('*')
         .eq('id', orderId)
         .single();
@@ -50,12 +50,12 @@ export default function Sucesso() {
         if (paymentStatus === 'approved' || !paymentStatus) {
           if (orderData.status === 'Pendente') {
             await (supabase
-              .from('orders')
+              .from('pedidos')
               .update({ status: 'Pedido Confirmado' } as any)
               .eq('id', orderId) as any);
             
             const { data: updatedOrder } = await supabase
-              .from('orders')
+              .from('pedidos')
               .select('*')
               .eq('id', orderId)
               .single();
@@ -75,7 +75,7 @@ export default function Sucesso() {
 
     const channel = supabase
       .channel(`order-${orderId}`)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders', filter: `id=eq.${orderId}` }, (payload) => {
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'pedidos', filter: `id=eq.${orderId}` }, (payload) => {
         setOrder(payload.new);
       })
       .subscribe();
