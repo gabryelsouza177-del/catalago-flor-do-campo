@@ -73,7 +73,7 @@ serve(async (req) => {
 
     // Update order with preference ID
     await supabase
-      .from('orders')
+      .from('pedidos')
       .update({ mercadopago_preference_id: preference.id })
       .eq('id', orderId);
 
