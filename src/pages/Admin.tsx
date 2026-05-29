@@ -40,7 +40,7 @@ const STATUS_OPTIONS = [
 export default function Admin() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { isOpen, toggleStoreStatus } = useSiteSettings();
+  const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
   const { data: products, isLoading: productsLoading, refetch: refetchProducts } = useProducts();
   const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useOrders();
   const { toast } = useToast();
