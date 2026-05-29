@@ -42,7 +42,7 @@ export default function Admin() {
   const navigate = useNavigate();
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
   const { data: products, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
-  const { data: orders, isLoading: ordersLoading, error: ordersError, refetch: refetchOrders } = useOrders();
+  const { data: pedidos, isLoading: pedidosLoading, error: pedidosError, refetch: refetchPedidos } = useOrders();
   const { toast } = useToast();
   
   const handleClearCache = () => {
@@ -85,12 +85,12 @@ export default function Admin() {
   useEffect(() => {
     fetchLogistics();
     
-    // Realtime orders
+    // Realtime pedidos
     const channel = supabase
       .channel('admin-pedidos-realtime')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos' }, (payload) => {
         console.log('Realtime update received for pedidos:', payload);
-        refetchOrders();
+        refetchPedidos();
       })
       .subscribe();
       
@@ -153,7 +153,7 @@ export default function Admin() {
       toast({ title: 'Erro ao atualizar status', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Status atualizado com sucesso!' });
-      refetchOrders();
+      refetchPedidos();
     }
   };
 
@@ -167,7 +167,7 @@ export default function Admin() {
       toast({ title: 'Erro ao concluir pedido', description: error.message, variant: 'destructive' });
     } else {
       toast({ title: 'Pedido entregue e arquivado!' });
-      refetchOrders();
+      refetchPedidos();
     }
   };
 
@@ -305,7 +305,7 @@ export default function Admin() {
     }
   };
 
-  const filteredOrders = orders?.filter(o => 
+  const filteredPedidos = pedidos?.filter(o => 
     orderFilter === 'pending' ? o.status !== 'Entregue' : o.status === 'Entregue'
   );
 
