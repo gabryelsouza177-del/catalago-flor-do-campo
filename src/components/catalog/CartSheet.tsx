@@ -44,6 +44,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const [houseNumber, setHouseNumber] = useState('');
   const [giftMessage, setGiftMessage] = useState('');
   const [addressComplement, setAddressComplement] = useState('');
+  const [deliveryObservations, setDeliveryObservations] = useState('');
   const [paymentOption, setPaymentOption] = useState<'online' | 'pickup_payment'>('online');
 
   
@@ -110,7 +111,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = customerName && customerPhone && deliveryDate && isTimeValid() && (
-      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber)
+      deliveryMethod === 'pickup' ? (recipientName || customerName) : deliveryAddress
     ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && deliveryAddress) : (recipientName || customerName));
 
 
@@ -144,6 +145,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}${addressComplement ? ` - ${addressComplement}` : ''}` : `${deliveryAddress}, ${houseNumber}${addressComplement ? ` - ${addressComplement}` : ''}`),
         numero_endereco: houseNumber,
         mensagem_cartao: isWreathOrder ? null : giftMessage,
+        observacoes: deliveryObservations,
         detalhes_coroa: isWreathOrder ? JSON.stringify({
           ribbon_message: wreathRibbonMessage,
           honoree_name: wreathHonoreeName,
@@ -291,8 +293,18 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número *</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número (Opcional)</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
                     <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">{isWreathOrder ? "Ponto de Ref. / Comp." : "Complemento"}</Label><Input value={addressComplement} onChange={(e) => setAddressComplement(e.target.value)} placeholder="Apto, Sala" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Observações da Entrega</Label>
+                    <Textarea 
+                      value={deliveryObservations} 
+                      onChange={(e) => setDeliveryObservations(e.target.value)} 
+                      placeholder="Ex: Entregar para a recepcionista, local de difícil acesso..." 
+                      className="bg-muted/10 border-accent/10 text-xs min-h-[80px]" 
+                    />
                   </div>
 
                   {isWreathOrder && (

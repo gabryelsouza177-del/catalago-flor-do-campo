@@ -430,6 +430,12 @@ export default function Admin() {
                             })()}
 
                           </div>
+                          {order.observacoes && (
+                            <div className="pt-2 p-2 bg-accent/5 border border-accent/20 rounded-sm">
+                              <p className="text-[9px] uppercase tracking-widest text-accent font-bold mb-1">📝 Observações da Entrega</p>
+                              <p className="text-xs italic leading-tight">{order.observacoes}</p>
+                            </div>
+                          )}
                         </div>
                         <div className="space-y-2">
                           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Itens</p>
