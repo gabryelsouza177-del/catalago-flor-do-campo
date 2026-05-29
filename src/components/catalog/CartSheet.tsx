@@ -89,7 +89,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
   const deliveryFee = useMemo(() => {
     if (deliveryMethod === 'pickup') return 0;
     if (!logistics) return 0;
-    const hasEligibleProduct = items.some(item => logistics.eligible_categories.includes(item.category));
+    const hasEligibleProduct = items.some(item => logistics.eligible_categories.includes(item.category) || item.category === 'Coroas');
     if (hasEligibleProduct && distance !== null) {
       const calculatedFee = distance * Number(logistics.price_per_km);
       return Math.min(Math.max(calculatedFee, Number(logistics.min_delivery_fee)), Number(logistics.max_delivery_fee));
@@ -110,8 +110,9 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
     };
 
     const isFormValid = customerName && customerPhone && deliveryDate && isTimeValid() && (
-      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber && (isWreathOrder ? wreathLocation : recipientName))
-    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && wreathLocation) : (recipientName || customerName));
+      deliveryMethod === 'pickup' ? (recipientName || customerName) : (deliveryAddress && houseNumber)
+    ) && (isWreathOrder ? (wreathRibbonMessage && wreathHonoreeName && wreathCeremonyTime && deliveryAddress) : (recipientName || customerName));
+
 
 
     if (!isFormValid) {
@@ -133,19 +134,21 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       const orderData = {
         nome_cliente: customerName,
         whatsapp_cliente: customerPhone,
-        nome_destinatario: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
+        nome_destinatario: isWreathOrder ? wreathHonoreeName : (recipientName || customerName),
         itens_pedido: JSON.stringify(items),
         preco_total: deliveryMethod === 'pickup' ? subtotal : total,
+        valor_frete: deliveryFee,
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pendente',
         metodo_pagamento: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         tipo_entrega: deliveryMethod,
-        endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
+        endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}${addressComplement ? ` - ${addressComplement}` : ''}` : `${deliveryAddress}, ${houseNumber}${addressComplement ? ` - ${addressComplement}` : ''}`),
+        numero_endereco: houseNumber,
         mensagem_cartao: isWreathOrder ? null : giftMessage,
         detalhes_coroa: isWreathOrder ? JSON.stringify({
           ribbon_message: wreathRibbonMessage,
           honoree_name: wreathHonoreeName,
           ceremony_time: wreathCeremonyTime,
-          location: wreathLocation
+          location: deliveryAddress
         }) : null
       };
 
@@ -254,27 +257,30 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                       <Input value={recipientName} onChange={(e) => setRecipientName(e.target.value)} placeholder="Quem vai receber?" className="bg-muted/10 border-accent/10 text-xs h-9" />
                     </div>
                   )}
+
+                  {isWreathOrder && (
+                    <div className="space-y-4 animate-in fade-in slide-in-from-top-2">
+                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Homenageado *</Label><Input value={wreathHonoreeName} onChange={(e) => setWreathHonoreeName(e.target.value)} placeholder="Nome completo" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Dizeres da Faixa *</Label><Textarea value={wreathRibbonMessage} onChange={(e) => setWreathRibbonMessage(e.target.value)} placeholder="Saudades eternas..." className="bg-muted/10 border-accent/10 text-xs min-h-[60px]" /></div>
+                    </div>
+                  )}
                   
                   <div className="space-y-2 relative">
                     <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">
-                      {isWreathOrder ? "Local do Velório / Cemitério *" : "Buscar Endereço *"}
+                      {isWreathOrder ? "Endereço do Velório / Cemitério *" : "Buscar Endereço *"}
                     </Label>
                     <div className="relative">
                       <Input 
-                        value={isWreathOrder ? wreathLocation : deliveryAddress} 
+                        value={deliveryAddress} 
                         onChange={(e) => { 
-                          if (isWreathOrder) {
-                            setWreathLocation(e.target.value);
-                          } else {
-                            setDeliveryAddress(e.target.value); 
-                            searchAddress(e.target.value); 
-                            setDistance(null); 
-                          }
+                          setDeliveryAddress(e.target.value); 
+                          searchAddress(e.target.value); 
+                          setDistance(null); 
                         }} 
                         placeholder={isWreathOrder ? "Nome da Funerária ou Endereço" : "Digite a rua..."} 
                         className="bg-muted/10 border-accent/10 text-xs h-9" 
                       />
-                      {!isWreathOrder && addressSuggestions.length > 0 && (
+                      {addressSuggestions.length > 0 && (
                         <div className="absolute z-50 w-full bg-background border border-accent/10 rounded-sm shadow-xl mt-1 max-h-40 overflow-y-auto">
                           {addressSuggestions.map((s) => (
                             <button key={s.id} className="w-full text-left px-3 py-2 text-[10px] hover:bg-muted/20 border-b border-accent/5 last:border-0" onClick={() => { setDeliveryAddress(s.display_name); setSelectedStreet(s.street || ''); setSelectedDistrict(s.district || ''); setAddressSuggestions([]); calculateDistance(s.lat, s.lon); }}>{s.display_name}</button>
@@ -284,13 +290,19 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                     </div>
                   </div>
                   
-                  {!isWreathOrder && (
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número *</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
-                      <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Complemento</Label><Input value={addressComplement} onChange={(e) => setAddressComplement(e.target.value)} placeholder="Apto, Sala" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Número *</Label><Input value={houseNumber} onChange={(e) => setHouseNumber(e.target.value)} placeholder="123" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                    <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">{isWreathOrder ? "Ponto de Ref. / Comp." : "Complemento"}</Label><Input value={addressComplement} onChange={(e) => setAddressComplement(e.target.value)} placeholder="Apto, Sala" className="bg-muted/10 border-accent/10 text-xs h-9" /></div>
+                  </div>
+
+                  {isWreathOrder && (
+                    <div className="space-y-2 animate-in fade-in">
+                      <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário da Cerimônia *</Label>
+                      <Input type="time" value={wreathCeremonyTime} onChange={(e) => setWreathCeremonyTime(e.target.value)} className="bg-muted/10 border-accent/10 text-xs h-9" />
                     </div>
                   )}
                 </div>
+
               ) : (
                 <div className="space-y-4">
                   <div className="p-4 bg-accent/5 rounded-sm border border-dashed border-accent/20 flex items-start gap-3">
@@ -345,14 +357,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
               </div>
 
-              {isWreathOrder ? (
-                <div className="space-y-4 p-3 bg-accent/5 rounded-sm border border-accent/10 animate-in fade-in">
-                  <h4 className="text-[8px] font-sans font-bold uppercase tracking-[0.2em] text-accent/80 mb-2">Detalhes da Homenagem</h4>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Homenageado *</Label><Input value={wreathHonoreeName} onChange={(e) => setWreathHonoreeName(e.target.value)} placeholder="Nome completo" className="bg-background border-accent/10 text-xs h-9" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Dizeres da Faixa *</Label><Textarea value={wreathRibbonMessage} onChange={(e) => setWreathRibbonMessage(e.target.value)} placeholder="Saudades eternas..." className="bg-background border-accent/10 text-xs min-h-[60px]" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário da Cerimônia *</Label><Input type="time" value={wreathCeremonyTime} onChange={(e) => setWreathCeremonyTime(e.target.value)} className="bg-background border-accent/10 text-xs h-9" /></div>
-                </div>
-              ) : (
+              {!isWreathOrder && (
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
                   <Textarea value={giftMessage} onChange={(e) => setGiftMessage(e.target.value)} className="bg-muted/10 border-accent/10 text-xs min-h-[80px]" placeholder="Sua mensagem aqui..." />

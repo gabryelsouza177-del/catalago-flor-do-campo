@@ -188,9 +188,11 @@ export type Database = {
           metodo_pagamento: string | null
           nome_cliente: string | null
           nome_destinatario: string | null
+          numero_endereco: string | null
           preco_total: number | null
           status: string | null
           tipo_entrega: string | null
+          valor_frete: number | null
           whatsapp_cliente: string | null
         }
         Insert: {
@@ -204,9 +206,11 @@ export type Database = {
           metodo_pagamento?: string | null
           nome_cliente?: string | null
           nome_destinatario?: string | null
+          numero_endereco?: string | null
           preco_total?: number | null
           status?: string | null
           tipo_entrega?: string | null
+          valor_frete?: number | null
           whatsapp_cliente?: string | null
         }
         Update: {
@@ -220,9 +224,11 @@ export type Database = {
           metodo_pagamento?: string | null
           nome_cliente?: string | null
           nome_destinatario?: string | null
+          numero_endereco?: string | null
           preco_total?: number | null
           status?: string | null
           tipo_entrega?: string | null
+          valor_frete?: number | null
           whatsapp_cliente?: string | null
         }
         Relationships: []

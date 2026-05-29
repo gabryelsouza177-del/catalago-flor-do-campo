@@ -39,6 +39,7 @@ export function formatOrderWhatsAppMessage(order: any) {
     `*PRODUTO:* \n${itemsList}\n\n` +
     (order.tipo_entrega === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.endereco_entrega}\n`) +
     `${details}${photoLink}\n\n` +
+    (order.valor_frete > 0 ? `*FRETE:* R$ ${Number(order.valor_frete).toFixed(2).replace('.', ',')}\n` : '') +
     `*VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
 
   return `https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`;
