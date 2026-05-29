@@ -357,14 +357,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
                 </div>
               </div>
 
-              {isWreathOrder ? (
-                <div className="space-y-4 p-3 bg-accent/5 rounded-sm border border-accent/10 animate-in fade-in">
-                  <h4 className="text-[8px] font-sans font-bold uppercase tracking-[0.2em] text-accent/80 mb-2">Detalhes da Homenagem</h4>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Nome do Homenageado *</Label><Input value={wreathHonoreeName} onChange={(e) => setWreathHonoreeName(e.target.value)} placeholder="Nome completo" className="bg-background border-accent/10 text-xs h-9" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Dizeres da Faixa *</Label><Textarea value={wreathRibbonMessage} onChange={(e) => setWreathRibbonMessage(e.target.value)} placeholder="Saudades eternas..." className="bg-background border-accent/10 text-xs min-h-[60px]" /></div>
-                  <div className="space-y-2"><Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Horário da Cerimônia *</Label><Input type="time" value={wreathCeremonyTime} onChange={(e) => setWreathCeremonyTime(e.target.value)} className="bg-background border-accent/10 text-xs h-9" /></div>
-                </div>
-              ) : (
+              {!isWreathOrder && (
                 <div className="space-y-2">
                   <Label className="text-[10px] uppercase tracking-widest text-muted-foreground">Mensagem para o Cartão</Label>
                   <Textarea value={giftMessage} onChange={(e) => setGiftMessage(e.target.value)} className="bg-muted/10 border-accent/10 text-xs min-h-[80px]" placeholder="Sua mensagem aqui..." />
