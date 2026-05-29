@@ -48,11 +48,11 @@ export default function Sucesso() {
 
       if (orderData) {
         if (paymentStatus === 'approved' || !paymentStatus) {
-          if (orderData.payment_status === 'pending') {
-            await supabase
+          if (orderData.status === 'Pendente') {
+            await (supabase
               .from('orders')
-              .update({ payment_status: 'paid', status: 'Pedido Confirmado' })
-              .eq('id', orderId);
+              .update({ status: 'Pedido Confirmado' } as any)
+              .eq('id', orderId) as any);
             
             const { data: updatedOrder } = await supabase
               .from('orders')
@@ -96,17 +96,24 @@ export default function Sucesso() {
     const itemsList = itemsArray.map(i => `${i.quantity}x ${i.title}`).join('\n');
     const isWreath = itemsArray.some(i => i.category === 'Coroas');
     
-    const details = isWreath 
-      ? `*HOMENAGEADO:* ${order.wreath_honoree_name}\n*FAIXA:* ${order.wreath_ribbon_message}\n*LOCAL:* ${order.wreath_location || 'Não informado'}`
-      : `*DESTINATÁRIO:* ${order.recipient_name}\n*MENSAGEM:* ${order.gift_message || 'Sem mensagem'}`;
-
+    let details = '';
+    if (isWreath) {
+      try {
+        const wreathDetails = order.wreath_details ? JSON.parse(order.wreath_details) : {};
+        details = `*HOMENAGEADO:* ${wreathDetails.honoree_name || 'N/A'}\n*FAIXA:* ${wreathDetails.ribbon_message || 'N/A'}\n*LOCAL:* ${wreathDetails.location || 'Não informado'}`;
+      } catch (e) {
+        details = `*HOMENAGEADO:* N/A\n*FAIXA:* N/A`;
+      }
+    } else {
+      details = `*DESTINATÁRIO:* ${order.recipient_name}\n*MENSAGEM:* ${order.card_message || 'Sem mensagem'}`;
+    }
 
     const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
       `*PRODUTO:* \n${itemsList}\n\n` +
-      (order.delivery_method === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n`) +
+      (order.delivery_type === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.address}\n`) +
       `${details}\n\n` +
-      `*HORÁRIO:* ${order.delivery_time || order.delivery_period}\n` +
-      `*VALOR TOTAL:* R$ ${Number(order.total_amount).toFixed(2).replace('.', ',')}`;
+      `*VALOR TOTAL:* R$ ${Number(order.total_price).toFixed(2).replace('.', ',')}`;
+
 
     window.open(`https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`, '_blank');
     clearCart();
