@@ -45,6 +45,12 @@ export default function Admin() {
   const { data: orders, isLoading: ordersLoading, refetch: refetchOrders } = useOrders();
   const { toast } = useToast();
   
+  const handleClearCache = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.reload();
+  };
+
   // UI State
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -321,12 +327,6 @@ export default function Admin() {
       </div>
     );
   }
-
-  const handleClearCache = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.reload();
-  };
 
   return (
     <div className="min-h-screen bg-background">
