@@ -133,28 +133,23 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         customer_name: customerName,
         customer_phone: customerPhone,
         recipient_name: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
-        delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
-        delivery_period: isWreathOrder ? '24h' : 'Comercial',
-        delivery_time: deliveryTime,
-        delivery_method: deliveryMethod,
-        delivery_address: deliveryMethod === 'pickup' ? 'Av. Joaquim Nabuco, 1446 - Centro, Manaus' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
-        house_number: deliveryMethod === 'pickup' ? '1446' : houseNumber,
-        delivery_complement: addressComplement,
-        delivery_distance: distance,
-        gift_message: isWreathOrder ? null : giftMessage,
-        delivery_fee: deliveryMethod === 'pickup' ? 0 : deliveryFee,
-        total_amount: deliveryMethod === 'pickup' ? subtotal : total,
-        items: JSON.stringify(items), // Send as string to TEXT column
+        items: JSON.stringify(items),
+        total_price: deliveryMethod === 'pickup' ? subtotal : total,
+        status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pendente',
         payment_method: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
-        payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
-        status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
-        wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
-        wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
-        wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
-        wreath_location: isWreathOrder ? wreathLocation : null
+        delivery_type: deliveryMethod,
+        address: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}, ${houseNumber}, ${selectedDistrict}` : `${deliveryAddress}, ${houseNumber}`),
+        card_message: isWreathOrder ? null : giftMessage,
+        wreath_details: isWreathOrder ? JSON.stringify({
+          ribbon_message: wreathRibbonMessage,
+          honoree_name: wreathHonoreeName,
+          ceremony_time: wreathCeremonyTime,
+          location: wreathLocation
+        }) : null
       };
 
-      const { data: order, error: orderError } = await supabase.from('orders').insert(orderData).select().single();
+      const { data: order, error: orderError } = await (supabase.from('orders').insert(orderData) as any).select().single();
+
 
 
 
