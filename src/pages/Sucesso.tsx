@@ -90,13 +90,13 @@ export default function Sucesso() {
     const isWreath = (order.items as any[]).some(i => i.category === 'Coroas');
     
     const details = isWreath 
-      ? `*HOMENAGEADO:* ${order.wreath_honoree_name}\n*FAIXA:* ${order.wreath_ribbon_message}`
-      : `*MENSAGEM:* ${order.gift_message || 'Sem mensagem'}`;
+      ? `*HOMENAGEADO:* ${order.wreath_honoree_name}\n*FAIXA:* ${order.wreath_ribbon_message}\n*LOCAL:* ${order.wreath_location || 'Não informado'}`
+      : `*DESTINATÁRIO:* ${order.recipient_name}\n*MENSAGEM:* ${order.gift_message || 'Sem mensagem'}`;
 
     const text = `✨ *NOVO PEDIDO: ${order.id.slice(0, 8)}* ✨\n\n` +
       `*PRODUTO:* \n${itemsList}\n\n` +
-      (order.delivery_method === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n\n` : `*ENTREGA:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n`) +
-      `*DETALHES:* ${details}\n` +
+      (order.delivery_method === 'pickup' ? `*MÉTODO: RETIRADA NA LOJA*\n` : `*ENTREGA:* ${order.delivery_address}${order.delivery_complement ? ` - ${order.delivery_complement}` : ''}\n`) +
+      `${details}\n\n` +
       `*HORÁRIO:* ${order.delivery_time || order.delivery_period}\n` +
       `*VALOR TOTAL:* R$ ${Number(order.total_amount).toFixed(2).replace('.', ',')}`;
 
