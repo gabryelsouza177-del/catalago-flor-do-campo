@@ -302,7 +302,7 @@ export default function Admin() {
     orderFilter === 'pending' ? o.status !== 'Entregue' : o.status === 'Entregue'
   );
 
-  if (productsLoading || ordersLoading) {
+  if (authLoading || productsLoading || ordersLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
