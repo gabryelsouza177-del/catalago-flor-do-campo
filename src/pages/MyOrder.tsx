@@ -165,8 +165,9 @@ export default function MyOrder() {
 
             <div className="pt-6 border-t border-accent/10 flex justify-between items-center">
               <div className="text-[10px] uppercase tracking-widest text-muted-foreground">Valor Total</div>
-              <div className="text-xl font-serif italic text-accent">R$ {Number(order.total_amount).toFixed(2).replace('.', ',')}</div>
+              <div className="text-xl font-serif italic text-accent">R$ {Number(order.total_price).toFixed(2).replace('.', ',')}</div>
             </div>
+
 
             <Button
               onClick={() => navigate('/')}
