@@ -15,18 +15,48 @@ serve(async (req) => {
   }
 
   try {
-    const { record } = await req.json();
-    console.log('New order received:', record.id);
+    const body = await req.json();
+    console.log('Incoming request body:', JSON.stringify(body));
+
+    // Handle potential stringification from different trigger methods
+    let record = body.record;
+    if (typeof record === 'string') {
+      try {
+        record = JSON.parse(record);
+      } catch (e) {
+        console.error('Error parsing record string:', e);
+      }
+    }
+
+    if (!record || !record.id) {
+      console.error('No record found in body');
+      return new Response(JSON.stringify({ error: 'Registro não encontrado' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400,
+      });
+    }
+
+    console.log('Processing order:', record.id);
 
     if (!WHATSAPP_ACCESS_TOKEN || !WHATSAPP_PHONE_NUMBER_ID || !OWNER_PHONE_NUMBER) {
-      console.error('WhatsApp configuration missing (WHATSAPP_ACCESS_TOKEN, WHATSAPP_PHONE_NUMBER_ID, OWNER_PHONE_NUMBER)');
+      console.error('WhatsApp configuration missing');
       return new Response(JSON.stringify({ error: 'Configuração do WhatsApp ausente' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
       });
     }
 
-    const items = record.items || [];
+    // Handle items which might be a string or array
+    let items = record.items || [];
+    if (typeof items === 'string') {
+      try {
+        items = JSON.parse(items);
+      } catch (e) {
+        console.error('Error parsing items string:', e);
+        items = [];
+      }
+    }
+
     const firstItem = items[0] || {};
     const isWreath = items.some((i: any) => i.category === 'Coroas');
     
@@ -47,7 +77,7 @@ serve(async (req) => {
     messageBody += `*WHATSAPP:* ${record.customer_phone}\n`;
     messageBody += `*ENTREGA:* ${record.delivery_method === 'pickup' ? 'RETIRADA NA LOJA' : record.delivery_address}\n`;
     messageBody += `*VALOR:* R$ ${Number(record.total_amount).toFixed(2).replace('.', ',')}\n`;
-    messageBody += `*PAGAMENTO:* ${record.status === 'Pagamento na Retirada' ? 'PAGAR NA RETIRADA' : 'Mercado Pago (Pendente)'}\n`;
+    messageBody += `*PAGAMENTO:* ${record.status || 'Pendente'}\n`;
 
     // Send text message
     const response = await fetch(
@@ -68,11 +98,11 @@ serve(async (req) => {
     );
 
     const result = await response.json();
-    console.log('WhatsApp API response:', result);
+    console.log('WhatsApp Text API response:', result);
 
-    // If there's an image, send it separately (or as a template if configured, but text + image is simpler as two messages)
+    // If there's an image, send it separately
     if (firstItem.image_url) {
-      await fetch(
+      const imgResponse = await fetch(
         `https://graph.facebook.com/v17.0/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
         {
           method: 'POST',
@@ -88,6 +118,8 @@ serve(async (req) => {
           }),
         }
       );
+      const imgResult = await imgResponse.json();
+      console.log('WhatsApp Image API response:', imgResult);
     }
 
     return new Response(JSON.stringify({ success: true }), {

@@ -132,7 +132,7 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
       const { data: order, error: orderError } = await supabase.from('orders').insert({
         customer_name: customerName,
         customer_phone: customerPhone,
-        recipient_name: isWreathOrder ? wreathHonoreeName : (recipientName || customerName),
+        recipient_name: isWreathOrder ? (wreathHonoreeName || recipientName) : (recipientName || customerName),
         delivery_date: format(deliveryDate, 'yyyy-MM-dd'),
         delivery_period: isWreathOrder ? '24h' : 'Comercial',
         delivery_time: deliveryTime,
@@ -142,17 +142,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         delivery_complement: addressComplement,
         delivery_distance: distance,
         gift_message: isWreathOrder ? null : giftMessage,
-        delivery_fee: deliveryFee,
-        total_amount: total,
-        items: items as any,
+        delivery_fee: deliveryMethod === 'pickup' ? 0 : deliveryFee,
+        total_amount: deliveryMethod === 'pickup' ? subtotal : total,
+        items: JSON.parse(JSON.stringify(items)),
         payment_status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'pending',
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pagamento Pendente',
-
         wreath_ribbon_message: isWreathOrder ? wreathRibbonMessage : null,
         wreath_honoree_name: isWreathOrder ? wreathHonoreeName : null,
         wreath_ceremony_time: isWreathOrder ? wreathCeremonyTime : null,
         wreath_location: isWreathOrder ? wreathLocation : null
       }).select().single();
+
 
       if (orderError) throw orderError;
 
