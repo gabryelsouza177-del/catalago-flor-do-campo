@@ -144,6 +144,7 @@ export type Database = {
           id: string
           items: Json
           mercadopago_preference_id: string | null
+          payment_method: string | null
           payment_status: string | null
           recipient_name: string
           status: string | null
@@ -172,6 +173,7 @@ export type Database = {
           id?: string
           items: Json
           mercadopago_preference_id?: string | null
+          payment_method?: string | null
           payment_status?: string | null
           recipient_name: string
           status?: string | null
@@ -200,6 +202,7 @@ export type Database = {
           id?: string
           items?: Json
           mercadopago_preference_id?: string | null
+          payment_method?: string | null
           payment_status?: string | null
           recipient_name?: string
           status?: string | null
