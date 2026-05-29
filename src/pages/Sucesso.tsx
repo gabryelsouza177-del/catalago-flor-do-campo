@@ -6,6 +6,9 @@ import { Loader2, CheckCircle2, MessageSquare, Package, Truck, Clock, ShoppingBa
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { formatOrderWhatsAppMessage } from '@/lib/whatsapp';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const statusSteps = [
   { id: 'Pagamento Pendente', label: 'Pagamento', icon: Clock },
