@@ -54,7 +54,7 @@ export default function Index() {
         {!isLoading && <FeaturedSection products={featured} />}
       </main>
 
-      <section className="bg-muted/30 py-16 md:py-24">
+      <section className="py-16 md:py-24">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <ProductGrid products={filtered} loading={isLoading} />
         </div>
