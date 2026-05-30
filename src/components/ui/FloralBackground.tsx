@@ -11,13 +11,13 @@ const FloralSVG = ({ className, style }: { className?: string, style?: React.CSS
     <path 
       d="M200 600C200 400 150 300 100 200C50 100 150 50 200 150C250 250 350 150 300 50C250 -50 200 50 200 150M200 150C220 100 280 80 320 120M200 300C160 250 100 240 70 280M200 450C240 400 300 410 330 370" 
       stroke="#D4AF37" 
-      strokeWidth="0.5" 
+      strokeWidth="0.8" 
       strokeLinecap="round"
-      opacity="0.15"
+      opacity="0.3"
     />
-    <circle cx="100" cy="200" r="2" fill="#D4AF37" opacity="0.1" />
-    <circle cx="320" cy="120" r="1.5" fill="#D4AF37" opacity="0.1" />
-    <circle cx="70" cy="280" r="1.5" fill="#D4AF37" opacity="0.1" />
+    <circle cx="100" cy="200" r="2.5" fill="#D4AF37" opacity="0.2" />
+    <circle cx="320" cy="120" r="2" fill="#D4AF37" opacity="0.2" />
+    <circle cx="70" cy="280" r="2" fill="#D4AF37" opacity="0.2" />
   </svg>
 );
 
@@ -32,9 +32,9 @@ const LeafSVG = ({ className, style }: { className?: string, style?: React.CSSPr
     <path 
       d="M50 350C100 300 150 150 100 50C200 100 250 250 200 350M125 200C160 180 200 190 220 220M115 280C140 270 170 280 185 305" 
       stroke="#D4AF37" 
-      strokeWidth="0.5" 
+      strokeWidth="0.8" 
       strokeLinecap="round"
-      opacity="0.12"
+      opacity="0.25"
     />
   </svg>
 );
@@ -51,29 +51,29 @@ export const FloralBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-50">
+    <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
       {/* Top Left */}
       <FloralSVG 
-        className="absolute -left-20 -top-20 w-[400px] h-auto"
-        style={{ transform: `translateY(${offset * 0.1}px) rotate(-15deg)` }}
+        className="absolute -left-32 -top-20 w-[500px] h-auto opacity-70"
+        style={{ transform: `translateY(${offset * 0.12}px) rotate(-15deg)` }}
       />
       
       {/* Bottom Right */}
       <LeafSVG 
-        className="absolute -right-10 bottom-20 w-[300px] h-auto"
-        style={{ transform: `translateY(${-offset * 0.15}px) rotate(15deg)` }}
+        className="absolute -right-20 bottom-0 w-[450px] h-auto opacity-60"
+        style={{ transform: `translateY(${-offset * 0.18}px) rotate(15deg)` }}
       />
 
       {/* Mid Left */}
       <LeafSVG 
-        className="absolute -left-10 top-1/2 w-[250px] h-auto"
-        style={{ transform: `translateY(${offset * 0.05}px) rotate(45deg)` }}
+        className="absolute -left-20 top-[60%] w-[400px] h-auto opacity-50"
+        style={{ transform: `translateY(${offset * 0.07}px) rotate(45deg)` }}
       />
 
       {/* Top Right */}
       <FloralSVG 
-        className="absolute -right-20 top-40 w-[350px] h-auto"
-        style={{ transform: `translateY(${offset * 0.08}px) scaleX(-1) rotate(10deg)` }}
+        className="absolute -right-32 top-10 w-[550px] h-auto opacity-60"
+        style={{ transform: `translateY(${offset * 0.1}px) scaleX(-1) rotate(10deg)` }}
       />
     </div>
   );

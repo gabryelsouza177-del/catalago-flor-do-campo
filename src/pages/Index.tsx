@@ -32,7 +32,7 @@ export default function Index() {
   }, [products, search, category]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent relative z-10">
       {!isOpen && (
         <div className="bg-destructive text-white py-3 px-4 text-center sticky top-0 z-[60] shadow-lg animate-in slide-in-from-top duration-500">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">

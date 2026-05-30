@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background px-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-transparent px-4 relative overflow-hidden z-10">
       {/* Background Decorativo */}
       <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
       <div className="absolute bottom-[-10%] left-[-10%] w-64 h-64 bg-gold/10 rounded-full blur-3xl" />
