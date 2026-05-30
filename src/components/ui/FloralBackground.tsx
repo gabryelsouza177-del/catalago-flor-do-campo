@@ -1,43 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-const FloralSVG = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
-  <svg 
-    viewBox="0 0 400 600" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={className}
-    style={style}
-  >
-    <path 
-      d="M200 600C200 400 150 300 100 200C50 100 150 50 200 150C250 250 350 150 300 50C250 -50 200 50 200 150M200 150C220 100 280 80 320 120M200 300C160 250 100 240 70 280M200 450C240 400 300 410 330 370" 
-      stroke="#D4AF37" 
-      strokeWidth="0.8" 
-      strokeLinecap="round"
-      opacity="0.3"
-    />
-    <circle cx="100" cy="200" r="2.5" fill="#D4AF37" opacity="0.2" />
-    <circle cx="320" cy="120" r="2" fill="#D4AF37" opacity="0.2" />
-    <circle cx="70" cy="280" r="2" fill="#D4AF37" opacity="0.2" />
-  </svg>
-);
-
-const LeafSVG = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
-  <svg 
-    viewBox="0 0 300 400" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg" 
-    className={className}
-    style={style}
-  >
-    <path 
-      d="M50 350C100 300 150 150 100 50C200 100 250 250 200 350M125 200C160 180 200 190 220 220M115 280C140 270 170 280 185 305" 
-      stroke="#D4AF37" 
-      strokeWidth="0.8" 
-      strokeLinecap="round"
-      opacity="0.25"
-    />
-  </svg>
-);
+import { Flower, Flower2, Leaf, Sprout } from 'lucide-react';
 
 export const FloralBackground = () => {
   const [offset, setOffset] = useState(0);
@@ -52,29 +14,45 @@ export const FloralBackground = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[1] overflow-hidden">
-      {/* Top Left */}
-      <FloralSVG 
-        className="absolute -left-32 -top-20 w-[500px] h-auto opacity-70"
-        style={{ transform: `translateY(${offset * 0.12}px) rotate(-15deg)` }}
-      />
+      {/* Top Left - Large Elegant Flower */}
+      <div 
+        className="absolute -left-20 -top-20 opacity-[0.08] blur-[2px]"
+        style={{ transform: `translateY(${offset * 0.1}px) rotate(-15deg)` }}
+      >
+        <Flower2 size={450} strokeWidth={0.5} color="#D4AF37" />
+      </div>
       
-      {/* Bottom Right */}
-      <LeafSVG 
-        className="absolute -right-20 bottom-0 w-[450px] h-auto opacity-60"
-        style={{ transform: `translateY(${-offset * 0.18}px) rotate(15deg)` }}
-      />
+      {/* Bottom Right - Cascading Leaves */}
+      <div 
+        className="absolute -right-20 bottom-10 opacity-[0.07] blur-[3px]"
+        style={{ transform: `translateY(${-offset * 0.15}px) rotate(160deg)` }}
+      >
+        <Leaf size={400} strokeWidth={0.5} color="#D4AF37" />
+      </div>
 
-      {/* Mid Left */}
-      <LeafSVG 
-        className="absolute -left-20 top-[60%] w-[400px] h-auto opacity-50"
-        style={{ transform: `translateY(${offset * 0.07}px) rotate(45deg)` }}
-      />
+      {/* Mid Left - Subtle Sprout */}
+      <div 
+        className="absolute -left-32 top-1/2 opacity-[0.06] blur-[4px]"
+        style={{ transform: `translateY(${offset * 0.05}px) rotate(45deg)` }}
+      >
+        <Sprout size={350} strokeWidth={0.5} color="#D4AF37" />
+      </div>
 
-      {/* Top Right */}
-      <FloralSVG 
-        className="absolute -right-32 top-10 w-[550px] h-auto opacity-60"
-        style={{ transform: `translateY(${offset * 0.1}px) scaleX(-1) rotate(10deg)` }}
-      />
+      {/* Top Right - Another Flower Variant */}
+      <div 
+        className="absolute -right-24 top-40 opacity-[0.08] blur-[2px]"
+        style={{ transform: `translateY(${offset * 0.08}px) rotate(25deg)` }}
+      >
+        <Flower size={500} strokeWidth={0.5} color="#D4AF37" />
+      </div>
+
+      {/* Extra Detail - Mid Right Leaf */}
+      <div 
+        className="absolute right-[10%] bottom-[30%] opacity-[0.05] blur-[5px]"
+        style={{ transform: `translateY(${-offset * 0.12}px) rotate(-30deg)` }}
+      >
+        <Leaf size={300} strokeWidth={0.5} color="#D4AF37" />
+      </div>
     </div>
   );
 };
