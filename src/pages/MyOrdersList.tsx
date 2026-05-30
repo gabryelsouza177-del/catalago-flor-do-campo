@@ -113,7 +113,7 @@ export default function MyOrdersList() {
   }
 
   return (
-    <div className="min-h-screen bg-background py-12 px-6">
+    <div className="min-h-screen bg-transparent py-12 px-6 relative z-10">
       <div className="max-w-4xl mx-auto space-y-8">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

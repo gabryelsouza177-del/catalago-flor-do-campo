@@ -86,7 +86,7 @@ export default function MyOrder() {
   const currentStatusIndex = statusSteps.findIndex(s => s.id === (order.status || 'Pagamento Pendente'));
 
   return (
-    <div className="min-h-screen bg-background py-12 px-6">
+    <div className="min-h-screen bg-transparent py-12 px-6 relative z-10">
       <div className="max-w-2xl mx-auto space-y-8">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-sans font-bold uppercase tracking-[0.2em] text-accent">Status do Pedido</h1>
