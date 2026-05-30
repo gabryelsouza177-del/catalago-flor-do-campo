@@ -131,7 +131,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 <Button
                   onClick={handleAddToCart}
                   disabled={!isOpen}
-                  className={`relative gold-shine inline-flex items-center gap-1.5 px-5 py-5 rounded-full ${!isOpen ? 'bg-muted/20 text-muted-foreground' : 'bg-primary text-white'} text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.12em] font-bold hover:bg-primary/90 transition-all duration-300 h-auto border-0 ${isAnimating ? 'scale-95' : ''}`}
+                  className={`relative gold-shine inline-flex items-center gap-1.5 px-5 py-5 rounded-full ${!isOpen ? 'bg-muted/20 text-muted-foreground' : 'bg-primary text-primary-foreground'} text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.12em] font-bold hover:bg-primary/90 transition-all duration-300 h-auto border-0 ${isAnimating ? 'scale-95' : ''}`}
                 >
                   <ShoppingCart className={`h-3 w-3 ${isAnimating ? 'animate-bounce' : ''}`} />
                   {isOpen ? 'Carrinho' : 'Fechada'}

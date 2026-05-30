@@ -124,7 +124,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                   <Button
                     onClick={handleAddToCart}
                     disabled={!isOpen}
-                    className="bg-primary text-white hover:bg-primary/90 gold-shine border-0 gap-3 px-10 py-7 rounded-full font-sans uppercase tracking-[0.2em] font-bold transition-all duration-500 w-full md:w-fit text-[11px] sm:text-xs shadow-2xl"
+                    className="bg-primary text-primary-foreground hover:bg-primary/90 gold-shine border-0 gap-3 px-10 py-7 rounded-full font-sans uppercase tracking-[0.2em] font-bold transition-all duration-500 w-full md:w-fit text-[11px] sm:text-xs shadow-2xl"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     {isOpen ? 'Comprar Agora' : 'Loja Fechada'}
