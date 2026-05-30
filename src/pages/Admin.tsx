@@ -752,7 +752,7 @@ export default function Admin() {
                   </div>
                 </DialogContent>
               </Dialog>
-            </div>
+            {renderLoadingOrError(productsError)}
 
             <div className="grid gap-3">
               {products?.map((product) => (
