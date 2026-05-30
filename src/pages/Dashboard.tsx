@@ -27,7 +27,7 @@ function formatCurrency(v: number) {
 }
 
 export default function Dashboard() {
-  const { user, loading: authLoading } = useAuth();
+  // Autenticação gerenciada pelo ProtectedRoute e admin_session localStorage
   const navigate = useNavigate();
   const { toast } = useToast();
   const { data: sales, isLoading: salesLoading, refetch: refetchSales } = useSales();
