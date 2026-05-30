@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import { useOrders } from '@/hooks/useOrders';
@@ -38,11 +38,37 @@ const STATUS_OPTIONS = [
 ];
 
 export default function Admin() {
-  // Autenticação desativada temporariamente conforme solicitado
-  const user = { id: 'admin' };
-  const authLoading = false;
-  const signOut = () => navigate('/');
   const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const sessionStr = localStorage.getItem('admin_session');
+      if (!sessionStr) {
+        navigate('/login');
+        return;
+      }
+      try {
+        const session = JSON.parse(sessionStr);
+        if (session.authenticated && session.email === 'Gabryel.souza177@gmail.com') {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem('admin_session');
+          navigate('/login');
+        }
+      } catch (e) {
+        localStorage.removeItem('admin_session');
+        navigate('/login');
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
+
+  const signOut = () => {
+    localStorage.removeItem('admin_session');
+    navigate('/login');
+  };
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
   const { data: products, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
   const { data: pedidos, isLoading: pedidosLoading, error: pedidosError, refetch: refetchPedidos } = useOrders();
@@ -316,12 +342,16 @@ export default function Admin() {
     console.log('Admin loading data state:', { productsLoading, pedidosLoading });
   }, [productsLoading, pedidosLoading]);
 
-  // Verificação de credenciais removida para acesso imediato
-  /* 
-  if (authLoading) {
-    ... 
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Verificando Acesso...</p>
+        </div>
+      </div>
+    );
   }
-  */
 
   // Se houver erro ou estiver carregando outros dados, ainda tentamos renderizar o layout básico
   const isLoadingData = productsLoading || pedidosLoading;

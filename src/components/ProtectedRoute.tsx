@@ -1,11 +1,34 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
 import { Loader2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading, isAdmin } = useAuth();
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
-  if (loading) {
+  useEffect(() => {
+    const checkAuth = () => {
+      const sessionStr = localStorage.getItem('admin_session');
+      if (!sessionStr) {
+        setIsAuthenticated(false);
+        return;
+      }
+      try {
+        const session = JSON.parse(sessionStr);
+        // Validar com as credenciais oficiais
+        if (session.authenticated && session.email === 'Gabryel.souza177@gmail.com') {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (e) {
+        setIsAuthenticated(false);
+      }
+    };
+    
+    checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -13,16 +36,8 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Permissive check as requested: "Remover qualquer filtro de segurança"
-  if (!user) {
-    console.log('ProtectedRoute: No user found, redirecting to login');
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (!isAdmin) {
-    console.warn('ProtectedRoute: User is not an admin, but allowing access as per request for "no security filters"');
-    // We allow access but log it. If you want to be stricter, uncomment the next line:
-    // return <Navigate to="/login" replace />;
   }
 
   return <>{children}</>;
