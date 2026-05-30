@@ -25,6 +25,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <FloralBackground />
         <FloatingCart />
         <AddToCartModal />
         <Routes>
