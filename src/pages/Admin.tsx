@@ -323,36 +323,33 @@ export default function Admin() {
   }
 
   // Se houver erro ou estiver carregando outros dados, ainda tentamos renderizar o layout básico
-  // conforme pedido: "use um try/catch para que a página abra mesmo que a lista de pedidos falhe"
   const isLoadingData = productsLoading || pedidosLoading;
   const hasError = !!(productsError || pedidosError);
 
-  const renderContent = () => {
-    try {
-      if (isLoadingData && !hasError) {
-        return (
-          <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando dados...</p>
-          </div>
-        );
-      }
-      
+  // Helper function to render loading or error inside a tab
+  const renderLoadingOrError = (error: any) => {
+    if (isLoadingData && !hasError) {
       return (
-        <Tabs defaultValue="pedidos" className="w-full">
-          {/* O conteúdo das abas viria aqui - vou manter a estrutura original abaixo */}
-          {/* ... */}
-        </Tabs>
-      );
-    } catch (e) {
-      console.error("Erro crítico na renderização do Admin:", e);
-      return (
-        <div className="p-10 text-center">
-          <p className="text-destructive font-bold">Erro crítico ao renderizar o painel.</p>
-          <Button onClick={() => window.location.reload()} className="mt-4">Recarregar Página</Button>
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando dados...</p>
         </div>
       );
     }
+    if (error) {
+      return (
+        <div className="max-w-xs mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
+          <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
+          <p className="text-[10px] text-muted-foreground mb-4">
+            {(error as any)?.message || 'Não foi possível conectar ao banco de dados.'}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
+            Tentar Novamente
+          </Button>
+        </div>
+      );
+    }
+    return null;
   };
 
   return (
@@ -466,9 +463,9 @@ export default function Admin() {
           </Card>
         </div>
 
-        <Tabs defaultValue="orders" className="space-y-6">
+        <Tabs defaultValue="pedidos" className="space-y-6">
           <TabsList className="bg-muted/50 w-full justify-start p-1 h-auto">
-            <TabsTrigger value="orders" className="flex-1 py-3 text-xs uppercase tracking-widest font-bold">
+            <TabsTrigger value="pedidos" className="flex-1 py-3 text-xs uppercase tracking-widest font-bold">
               <ShoppingBag className="h-4 w-4 mr-2" />
               Pedidos
             </TabsTrigger>
@@ -482,7 +479,7 @@ export default function Admin() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="orders" className="space-y-6">
+          <TabsContent value="pedidos" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-sans font-bold uppercase tracking-wider text-accent">Gerenciar Pedidos</h2>
               <div className="flex gap-2">
@@ -505,8 +502,10 @@ export default function Admin() {
               </div>
             </div>
 
+            {renderLoadingOrError(pedidosError)}
+
             <div className="grid gap-4">
-              {!filteredPedidos || filteredPedidos.length === 0 ? (
+              {!pedidosLoading && !pedidosError && (!filteredPedidos || filteredPedidos.length === 0) ? (
                 <Card className="border-dashed py-16 text-center text-muted-foreground flex flex-col items-center gap-4">
                   <div className="bg-muted/50 p-4 rounded-full">
                     <ShoppingBag className="h-8 w-8 opacity-20" />
