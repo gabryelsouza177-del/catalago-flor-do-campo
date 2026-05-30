@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+
 import { useSiteSettings } from '@/hooks/useSiteSettings';
 import { useProducts, useRealtimeProducts } from '@/hooks/useProducts';
 import { useOrders } from '@/hooks/useOrders';
