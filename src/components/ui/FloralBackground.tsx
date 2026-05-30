@@ -51,7 +51,7 @@ export const FloralBackground = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden opacity-50">
       {/* Top Left */}
       <FloralSVG 
         className="absolute -left-20 -top-20 w-[400px] h-auto"
