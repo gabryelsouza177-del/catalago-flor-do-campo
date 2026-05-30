@@ -50,12 +50,12 @@ export default function Index() {
         onCategoryChange={setCategory}
       />
 
-      <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
+      <main className="max-w-7xl mx-auto px-6 md:px-8 py-8 md:py-12">
         {!isLoading && <FeaturedSection products={featured} />}
       </main>
 
       <section className="py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="max-w-7xl mx-auto px-6 md:px-8">
           <ProductGrid products={filtered} loading={isLoading} />
         </div>
       </section>
