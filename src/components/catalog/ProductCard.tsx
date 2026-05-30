@@ -60,7 +60,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
   return (
     <>
       <div
-        className={`group overflow-hidden rounded-sm bg-card/40 border-t border-accent/15 transition-colors duration-200 hover:bg-card/60 ${product.sold_out ? 'opacity-50' : ''}`}
+        className={`group overflow-hidden rounded-xl bg-white border border-accent/5 premium-shadow premium-shadow-hover ${product.sold_out ? 'opacity-60' : ''}`}
         style={{ animationDelay: `${index * 40}ms` }}
       >
         {/* Image */}
@@ -77,7 +77,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             <img
               src={product.image_url}
               alt={product.title}
-              className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.03]"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
               loading="lazy"
             />
           ) : (
@@ -110,7 +110,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             </p>
           )}
           <div className="flex items-center justify-between pt-2 border-t border-accent/8">
-            <span className="font-serif italic text-accent text-sm md:text-base tracking-wide">
+            <span className="font-sans font-bold text-primary text-base md:text-lg tracking-tight">
               {formatPrice(Number(product.price))}
             </span>
             {product.sold_out ? (
@@ -131,7 +131,7 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                 <Button
                   onClick={handleAddToCart}
                   disabled={!isOpen}
-                  className={`relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm ${!isOpen ? 'bg-muted/20 text-muted-foreground' : 'bg-emerald/60 text-accent'} text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-emerald/80 transition-all duration-300 h-auto border-0 ${isAnimating ? 'emerald-glow-strong scale-95' : ''}`}
+                  className={`relative gold-shine inline-flex items-center gap-1.5 px-5 py-5 rounded-full ${!isOpen ? 'bg-muted/20 text-muted-foreground' : 'bg-primary text-white'} text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.12em] font-bold hover:bg-primary/90 transition-all duration-300 h-auto border-0 ${isAnimating ? 'scale-95' : ''}`}
                 >
                   <ShoppingCart className={`h-3 w-3 ${isAnimating ? 'animate-bounce' : ''}`} />
                   {isOpen ? 'Carrinho' : 'Fechada'}

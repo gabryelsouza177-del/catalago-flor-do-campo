@@ -52,8 +52,14 @@ export default function Index() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         {!isLoading && <FeaturedSection products={featured} />}
-        <ProductGrid products={filtered} loading={isLoading} />
       </main>
+
+      <section className="bg-muted/30 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
+          <ProductGrid products={filtered} loading={isLoading} />
+        </div>
+      </section>
+
 
       <footer className="border-t border-accent/8 py-10 text-center">
         <p className="text-[9px] text-muted-foreground tracking-[0.25em] uppercase font-sans font-light">

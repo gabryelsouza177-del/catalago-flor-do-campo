@@ -214,6 +214,17 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
           <SheetTitle className="text-accent tracking-[0.2em] uppercase text-sm font-sans">Seu Carrinho</SheetTitle>
           <SheetDescription className="text-[10px] uppercase tracking-wider">Finalize seu pedido com segurança</SheetDescription>
         </SheetHeader>
+        <div className="px-4 py-4 space-y-2 sticky top-0 bg-background z-20 border-b border-accent/5">
+          <div className="flex justify-between text-[9px] uppercase tracking-[0.15em] font-bold text-accent">
+            <span>Identificação</span>
+            <span>Entrega</span>
+            <span>Pagamento</span>
+          </div>
+          <div className="h-1 w-full bg-muted/20 rounded-full overflow-hidden">
+            <div className="h-full bg-primary transition-all duration-500" style={{ width: `${(items.length > 0 ? (customerName && customerPhone ? (deliveryAddress || deliveryMethod === 'pickup' ? 100 : 66) : 33) : 0)}%` }} />
+          </div>
+        </div>
+
 
         {items.length === 0 ? (
           <div className="py-20 text-center"><span className="text-4xl block">🌸</span><p className="text-[10px] text-muted-foreground uppercase tracking-widest mt-4">Vazio</p></div>

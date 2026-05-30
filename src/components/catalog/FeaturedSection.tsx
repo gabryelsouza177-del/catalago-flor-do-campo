@@ -68,8 +68,8 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-accent/15 to-transparent" />
         </div>
 
-        <div className="relative group">
-          <div className="overflow-hidden rounded-lg gold-border glass-card emerald-glow">
+        <div className="relative group premium-shadow">
+          <div className="overflow-hidden rounded-2xl border border-accent/10 bg-white">
             <div className="md:flex">
               {/* Image */}
               <div
@@ -88,13 +88,15 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                 {/* Coleção Exclusiva badge */}
 
                 {product.image_url ? (
-                  <img
-                    key={product.id}
-                    src={product.image_url}
-                    alt={product.title}
-                    className="w-full h-full object-cover animate-luxury-fade-in img-warm"
-                    loading="lazy"
-                  />
+                  <div className="w-full h-full overflow-hidden">
+                    <img
+                      key={product.id}
+                      src={product.image_url}
+                      alt={product.title}
+                      className="w-full h-full object-cover animate-ken-burns img-warm"
+                      loading="lazy"
+                    />
+                  </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                     <span className="text-6xl">🌸</span>
@@ -104,22 +106,25 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
               {/* Info */}
               <div className="md:w-1/2 p-8 md:p-14 flex flex-col justify-center space-y-6">
-                <h3 className="text-2xl md:text-3xl font-serif italic font-medium text-accent tracking-[0.08em]">
+                <h3 className="text-3xl md:text-5xl font-serif italic font-medium text-primary tracking-tight leading-tight">
                   {product.title}
                 </h3>
+                <p className="text-accent font-sans uppercase tracking-[0.2em] text-[10px] font-bold">
+                  Flores que abraçam momentos
+                </p>
                 {product.description && (
-                  <p className="text-sm text-muted-foreground font-light leading-relaxed line-clamp-3">
+                  <p className="text-base text-muted-foreground font-light leading-relaxed line-clamp-3">
                     {product.description}
                   </p>
                 )}
-                <p className="text-2xl font-semibold text-accent font-sans tracking-wide">
+                <p className="text-3xl font-bold text-primary font-sans tracking-tight">
                   {formatPrice(Number(product.price))}
                 </p>
                 {!product.sold_out && (
                   <Button
                     onClick={handleAddToCart}
                     disabled={!isOpen}
-                    className="bg-emerald/60 text-accent hover:bg-emerald/80 border-0 gap-3 px-8 py-6 rounded-sm font-sans uppercase tracking-[0.2em] transition-all duration-500 w-fit text-xs shadow-xl emerald-glow"
+                    className="bg-primary text-white hover:bg-primary/90 gold-shine border-0 gap-3 px-10 py-7 rounded-full font-sans uppercase tracking-[0.2em] font-bold transition-all duration-500 w-full md:w-fit text-[11px] sm:text-xs shadow-2xl"
                   >
                     <ShoppingCart className="h-4 w-4" />
                     {isOpen ? 'Comprar Agora' : 'Loja Fechada'}
