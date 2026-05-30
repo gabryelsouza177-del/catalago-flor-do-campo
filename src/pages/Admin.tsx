@@ -313,37 +313,47 @@ export default function Admin() {
     console.log('Admin loading state:', { authLoading, productsLoading, pedidosLoading });
   }, [authLoading, productsLoading, pedidosLoading]);
 
-  if (authLoading || productsLoading || pedidosLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <div className="text-center space-y-2">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando painel...</p>
-          <div className="text-[10px] text-muted-foreground opacity-70">
-            {authLoading && <p>Verificando credenciais...</p>}
-            {productsLoading && <p>Carregando catálogo de produtos...</p>}
-            {pedidosLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
-          </div>
-        </div>
-        
-        {(productsError || pedidosError) && (
-          <div className="max-w-xs p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
-            <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
-            <p className="text-[10px] text-muted-foreground mb-4">
-              {((productsError as any)?.message || (pedidosError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
-              Tentar Novamente
-            </Button>
-          </div>
-        )}
-
-        <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-4 opacity-50 hover:opacity-100">
-          Limpar Cache e Recarregar
-        </Button>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Verificando credenciais...</p>
       </div>
     );
   }
+
+  // Se houver erro ou estiver carregando outros dados, ainda tentamos renderizar o layout básico
+  // conforme pedido: "use um try/catch para que a página abra mesmo que a lista de pedidos falhe"
+  const isLoadingData = productsLoading || pedidosLoading;
+  const hasError = !!(productsError || pedidosError);
+
+  const renderContent = () => {
+    try {
+      if (isLoadingData && !hasError) {
+        return (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando dados...</p>
+          </div>
+        );
+      }
+      
+      return (
+        <Tabs defaultValue="pedidos" className="w-full">
+          {/* O conteúdo das abas viria aqui - vou manter a estrutura original abaixo */}
+          {/* ... */}
+        </Tabs>
+      );
+    } catch (e) {
+      console.error("Erro crítico na renderização do Admin:", e);
+      return (
+        <div className="p-10 text-center">
+          <p className="text-destructive font-bold">Erro crítico ao renderizar o painel.</p>
+          <Button onClick={() => window.location.reload()} className="mt-4">Recarregar Página</Button>
+        </div>
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">

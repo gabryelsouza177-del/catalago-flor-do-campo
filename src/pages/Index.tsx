@@ -59,9 +59,9 @@ export default function Index() {
         <p className="text-[9px] text-muted-foreground tracking-[0.25em] uppercase font-sans font-light">
           © 2026 Floricultura Flor do Campo
         </p>
-        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-[9px] text-accent/20 hover:text-accent/50 transition-colors duration-200 uppercase tracking-[0.25em] font-sans">
+        <Link to="/admin" className="inline-flex items-center gap-1.5 mt-3 text-[10px] text-accent/40 hover:text-accent/80 transition-all duration-200 uppercase tracking-[0.25em] font-sans font-bold border border-accent/10 px-3 py-1 rounded-full">
           <Settings className="h-3 w-3" />
-          Painel
+          Acesso Admin
         </Link>
       </footer>
     </div>
