@@ -14,6 +14,8 @@ import NotFound from "./pages/NotFound";
 import { FloatingCart } from "./components/catalog/FloatingCart";
 import { AddToCartModal } from "./components/catalog/AddToCartModal";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { FloralBackground } from "./components/ui/FloralBackground";
+
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <FloralBackground />
         <FloatingCart />
         <AddToCartModal />
         <Routes>
