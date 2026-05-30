@@ -19,7 +19,7 @@ export default function Login() {
     setLoading(true);
 
     // Verificação direta solicitada (Hardcoded)
-    if (email === 'Gabryel.souza177@gmail.com' && password === '13102001m') {
+    if (email.trim() === 'Gabryel.souza177@gmail.com' && password === '13102001m') {
       // Salvar Sessão no localStorage
       localStorage.setItem('admin_session', JSON.stringify({
         email: email,
