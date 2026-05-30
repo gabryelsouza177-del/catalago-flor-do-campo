@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
+// useAuth removido para usar login hardcoded conforme solicitado
 import { useSales, useExpenses, useDashboardMetrics, type Sale, type Expense } from '@/hooks/useDashboard';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +27,7 @@ function formatCurrency(v: number) {
 }
 
 export default function Dashboard() {
-  const { user, loading: authLoading } = useAuth();
+  // Autenticação gerenciada pelo ProtectedRoute e admin_session localStorage
   const navigate = useNavigate();
   const { toast } = useToast();
   const { data: sales, isLoading: salesLoading, refetch: refetchSales } = useSales();
