@@ -38,7 +38,10 @@ const STATUS_OPTIONS = [
 ];
 
 export default function Admin() {
-  const { user, loading: authLoading, signOut } = useAuth();
+  // Autenticação desativada temporariamente conforme solicitado
+  const user = { id: 'admin' };
+  const authLoading = false;
+  const signOut = () => navigate('/');
   const navigate = useNavigate();
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
   const { data: products, isLoading: productsLoading, error: productsError, refetch: refetchProducts } = useProducts();
@@ -310,17 +313,15 @@ export default function Admin() {
   );
 
   useEffect(() => {
-    console.log('Admin loading state:', { authLoading, productsLoading, pedidosLoading });
-  }, [authLoading, productsLoading, pedidosLoading]);
+    console.log('Admin loading data state:', { productsLoading, pedidosLoading });
+  }, [productsLoading, pedidosLoading]);
 
+  // Verificação de credenciais removida para acesso imediato
+  /* 
   if (authLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Verificando credenciais...</p>
-      </div>
-    );
+    ... 
   }
+  */
 
   // Se houver erro ou estiver carregando outros dados, ainda tentamos renderizar o layout básico
   const isLoadingData = productsLoading || pedidosLoading;
