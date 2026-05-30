@@ -18,36 +18,30 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    // Credenciais oficiais fornecidas pelo usuário
-    const OFFICIAL_EMAIL = 'Gabryel.souza177@gmail.com';
-    const OFFICIAL_PASSWORD = '13102001m';
+    // Verificação direta solicitada (Hardcoded)
+    if (email === 'Gabryel.souza177@gmail.com' && password === '13102001m') {
+      // Salvar Sessão no localStorage
+      localStorage.setItem('admin_session', JSON.stringify({
+        email: email,
+        authenticated: true,
+        loginDate: new Date().toISOString()
+      }));
 
-    // Simulação de delay para uma experiência melhor
-    setTimeout(() => {
-      if (email === OFFICIAL_EMAIL && password === OFFICIAL_PASSWORD) {
-        // Persistência de login solicitada (Lembrar Login)
-        localStorage.setItem('admin_session', JSON.stringify({
-          email: OFFICIAL_EMAIL,
-          authenticated: true,
-          loginDate: new Date().toISOString()
-        }));
-
-        toast({
-          title: 'Acesso Autorizado',
-          description: 'Bem-vindo de volta, Gabryel!',
-          className: 'bg-emerald text-white border-none',
-        });
-        
-        navigate('/admin');
-      } else {
-        toast({
-          title: 'Credenciais incorretas',
-          description: 'Tente novamente.',
-          variant: 'destructive',
-        });
-      }
-      setLoading(false);
-    }, 800);
+      toast({
+        title: 'Acesso Autorizado',
+        description: 'Bem-vindo de volta!',
+        className: 'bg-emerald text-white border-none',
+      });
+      
+      navigate('/admin');
+    } else {
+      toast({
+        title: 'Erro de Acesso',
+        description: 'Acesso negado para Flor do Campo',
+        variant: 'destructive',
+      });
+    }
+    setLoading(false);
   };
 
   return (
