@@ -52,7 +52,9 @@ export default function Index() {
 
       <main className="max-w-7xl mx-auto px-4 md:px-6 py-8 md:py-12">
         {!isLoading && <FeaturedSection products={featured} />}
-        <ProductGrid products={filtered} loading={isLoading} />
+        <div className="my-20">
+          <ProductGrid products={filtered} loading={isLoading} />
+        </div>
       </main>
 
       <footer className="border-t border-accent/8 py-10 text-center">
