@@ -313,37 +313,44 @@ export default function Admin() {
     console.log('Admin loading state:', { authLoading, productsLoading, pedidosLoading });
   }, [authLoading, productsLoading, pedidosLoading]);
 
-  if (authLoading || productsLoading || pedidosLoading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <div className="text-center space-y-2">
-          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando painel...</p>
-          <div className="text-[10px] text-muted-foreground opacity-70">
-            {authLoading && <p>Verificando credenciais...</p>}
-            {productsLoading && <p>Carregando catálogo de produtos...</p>}
-            {pedidosLoading && <p>Buscando pedidos na tabela 'pedidos'...</p>}
-          </div>
-        </div>
-        
-        {(productsError || pedidosError) && (
-          <div className="max-w-xs p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
-            <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
-            <p className="text-[10px] text-muted-foreground mb-4">
-              {((productsError as any)?.message || (pedidosError as any)?.message || 'Não foi possível conectar ao banco de dados.')}
-            </p>
-            <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
-              Tentar Novamente
-            </Button>
-          </div>
-        )}
-
-        <Button variant="ghost" size="sm" onClick={handleClearCache} className="text-[9px] uppercase mt-4 opacity-50 hover:opacity-100">
-          Limpar Cache e Recarregar
-        </Button>
+        <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Verificando credenciais...</p>
       </div>
     );
   }
+
+  // Se houver erro ou estiver carregando outros dados, ainda tentamos renderizar o layout básico
+  const isLoadingData = productsLoading || pedidosLoading;
+  const hasError = !!(productsError || pedidosError);
+
+  // Helper function to render loading or error inside a tab
+  const renderLoadingOrError = (error: any) => {
+    if (isLoadingData && !hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-xs uppercase tracking-widest text-muted-foreground font-bold">Carregando dados...</p>
+        </div>
+      );
+    }
+    if (error) {
+      return (
+        <div className="max-w-xs mx-auto p-4 bg-destructive/10 border border-destructive/20 rounded-sm mt-4 text-center">
+          <p className="text-[10px] text-destructive uppercase font-bold mb-2">Erro de Conexão</p>
+          <p className="text-[10px] text-muted-foreground mb-4">
+            {(error as any)?.message || 'Não foi possível conectar ao banco de dados.'}
+          </p>
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="text-[9px] uppercase">
+            Tentar Novamente
+          </Button>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -456,9 +463,9 @@ export default function Admin() {
           </Card>
         </div>
 
-        <Tabs defaultValue="orders" className="space-y-6">
+        <Tabs defaultValue="pedidos" className="space-y-6">
           <TabsList className="bg-muted/50 w-full justify-start p-1 h-auto">
-            <TabsTrigger value="orders" className="flex-1 py-3 text-xs uppercase tracking-widest font-bold">
+            <TabsTrigger value="pedidos" className="flex-1 py-3 text-xs uppercase tracking-widest font-bold">
               <ShoppingBag className="h-4 w-4 mr-2" />
               Pedidos
             </TabsTrigger>
@@ -472,7 +479,7 @@ export default function Admin() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="orders" className="space-y-6">
+          <TabsContent value="pedidos" className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-sans font-bold uppercase tracking-wider text-accent">Gerenciar Pedidos</h2>
               <div className="flex gap-2">
@@ -495,8 +502,10 @@ export default function Admin() {
               </div>
             </div>
 
+            {renderLoadingOrError(pedidosError)}
+
             <div className="grid gap-4">
-              {!filteredPedidos || filteredPedidos.length === 0 ? (
+              {!pedidosLoading && !pedidosError && (!filteredPedidos || filteredPedidos.length === 0) ? (
                 <Card className="border-dashed py-16 text-center text-muted-foreground flex flex-col items-center gap-4">
                   <div className="bg-muted/50 p-4 rounded-full">
                     <ShoppingBag className="h-8 w-8 opacity-20" />
@@ -744,6 +753,8 @@ export default function Admin() {
                 </DialogContent>
               </Dialog>
             </div>
+
+            {renderLoadingOrError(productsError)}
 
             <div className="grid gap-3">
               {products?.map((product) => (
