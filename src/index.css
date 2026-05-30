@@ -86,17 +86,6 @@ aside:has(a[href*="lovable.dev"]) {
     position: relative;
   }
 
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M200 100c-15-40-60-40-75 0-40 15-40 60 0 75 15 40 60 40 75 0 40-15 40-60 0-75z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.1'/%3E%3Cpath d='M300 250c-10-30-50-30-60 0-30 10-30 50 0 60 10 30 50 30 60 0 30-10 30-50 0-60z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.08'/%3E%3Cpath d='M100 300c-8-20-40-20-48 0-20 8-20 40 0 48 8 20 40 20 48 0 20-8 20-40 0-48z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.05'/%3E%3C/svg%3E");
-    background-size: 600px 600px;
-    opacity: 0.6;
-    pointer-events: none;
-  }
-
   h1, h2, h3, h4 {
     font-family: 'Cormorant Garamond', serif;
   }
