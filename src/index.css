@@ -15,49 +15,49 @@ aside:has(a[href*="lovable.dev"]) {
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 158 60% 8%;
+    --background: 158 60% 5%;
+    --foreground: 43 67% 95%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 158 60% 8%;
+    --card: 158 40% 8%;
+    --card-foreground: 43 67% 95%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 158 60% 8%;
+    --popover: 158 40% 8%;
+    --popover-foreground: 43 67% 95%;
 
-    --primary: 158 60% 12%;
-    --primary-foreground: 43 67% 95%;
+    --primary: 43 67% 52%; /* Solid Gold */
+    --primary-foreground: 158 60% 5%;
 
-    --secondary: 40 35% 95%;
-    --secondary-foreground: 158 60% 15%;
+    --secondary: 158 30% 12%;
+    --secondary-foreground: 43 67% 90%;
 
-    --muted: 0 0% 98%;
-    --muted-foreground: 158 20% 40%;
+    --muted: 158 30% 10%;
+    --muted-foreground: 43 20% 70%;
 
-    --accent: 43 67% 52%; /* #D4AF37 - Soft Gold */
+    --accent: 43 67% 52%;
     --accent-foreground: 158 60% 5%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 158 20% 90%;
-    --input: 158 20% 95%;
+    --border: 43 67% 52% / 0.15;
+    --input: 158 30% 12%;
     --ring: 43 67% 52%;
 
     --radius: 0.75rem;
 
     --gold: 43 67% 52%;
     --gold-foreground: 158 60% 5%;
-    --gold-muted: 43 30% 85%;
+    --gold-muted: 43 30% 28%;
     --emerald: 158 60% 12%;
     --emerald-foreground: 43 67% 95%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 158 60% 12%;
-    --sidebar-primary: 158 60% 12%;
-    --sidebar-primary-foreground: 43 67% 95%;
-    --sidebar-accent: 43 67% 52%;
-    --sidebar-accent-foreground: 158 60% 5%;
-    --sidebar-border: 158 20% 90%;
+    --sidebar-background: 158 60% 3%;
+    --sidebar-foreground: 43 67% 95%;
+    --sidebar-primary: 43 67% 52%;
+    --sidebar-primary-foreground: 158 60% 5%;
+    --sidebar-accent: 158 30% 12%;
+    --sidebar-accent-foreground: 43 67% 95%;
+    --sidebar-border: 43 67% 52% / 0.1;
     --sidebar-ring: 43 67% 52%;
 
     --floral: 340 45% 62%;
@@ -75,13 +75,26 @@ aside:has(a[href*="lovable.dev"]) {
   body {
     @apply bg-background text-foreground;
     font-family: 'Montserrat', sans-serif;
-    background-color: #ffffff;
+    background-color: #020d0a;
     background-image: radial-gradient(
-      ellipse at 50% 0%,
-      #f8f9f8 0%,
-      #ffffff 75%
+      circle at 50% 50%,
+      rgba(6, 38, 29, 0.8) 0%,
+      rgba(4, 26, 20, 0.95) 40%,
+      rgba(2, 13, 10, 1) 100%
     );
     background-attachment: fixed;
+    position: relative;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-image: url("data:image/svg+xml,%3Csvg width='400' height='400' viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M200 100c-15-40-60-40-75 0-40 15-40 60 0 75 15 40 60 40 75 0 40-15 40-60 0-75z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.1'/%3E%3Cpath d='M300 250c-10-30-50-30-60 0-30 10-30 50 0 60 10 30 50 30 60 0 30-10 30-50 0-60z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.08'/%3E%3Cpath d='M100 300c-8-20-40-20-48 0-20 8-20 40 0 48 8 20 40 20 48 0 20-8 20-40 0-48z' fill='none' stroke='%23D4AF37' stroke-width='0.5' opacity='0.05'/%3E%3C/svg%3E");
+    background-size: 600px 600px;
+    opacity: 0.6;
+    pointer-events: none;
   }
 
   h1, h2, h3, h4 {
@@ -104,16 +117,17 @@ aside:has(a[href*="lovable.dev"]) {
   }
 
   .glass {
-    background: rgba(255, 255, 255, 0.82);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+    background: rgba(2, 13, 10, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.15);
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.45);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 175, 55, 0.1);
   }
 
   .gold-border {

@@ -69,7 +69,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
         </div>
 
         <div className="relative group premium-shadow">
-          <div className="overflow-hidden rounded-2xl border border-accent/10 bg-white">
+          <div className="overflow-hidden rounded-2xl border border-accent/10 glass-card">
             <div className="md:flex">
               {/* Image */}
               <div
@@ -106,7 +106,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
 
               {/* Info */}
               <div className="md:w-1/2 p-8 md:p-14 flex flex-col justify-center space-y-6">
-                <h3 className="text-3xl md:text-5xl font-serif italic font-medium text-primary tracking-tight leading-tight">
+                <h3 className="text-3xl md:text-5xl font-serif italic font-medium text-accent tracking-tight leading-tight">
                   {product.title}
                 </h3>
                 <p className="text-accent font-sans uppercase tracking-[0.2em] text-[10px] font-bold">
@@ -117,7 +117,7 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                     {product.description}
                   </p>
                 )}
-                <p className="text-3xl font-bold text-primary font-sans tracking-tight">
+                <p className="text-3xl font-bold text-accent font-sans tracking-tight">
                   {formatPrice(Number(product.price))}
                 </p>
                 {!product.sold_out && (
