@@ -30,10 +30,10 @@ export function CatalogHeader({ search, onSearchChange, activeCategory, onCatego
                 <img src={logo} alt="Floricultura Flor do Campo" className="h-10 w-10 rounded-full object-cover" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-base md:text-lg font-medium text-accent tracking-[0.3em] uppercase font-sans">
+                <h1 className="text-base md:text-lg font-bold text-primary tracking-[0.3em] uppercase font-sans">
                   Flor do Campo
                 </h1>
-                <p className="text-[8px] tracking-[0.3em] uppercase text-muted-foreground font-sans font-light">
+                <p className="text-[8px] tracking-[0.3em] uppercase text-accent font-sans font-bold">
                   Floricultura &amp; Presentes
                 </p>
               </div>
@@ -69,7 +69,7 @@ export function CatalogHeader({ search, onSearchChange, activeCategory, onCatego
                 <button className="relative p-2 text-accent/60 hover:text-accent transition-colors duration-200">
                   <ShoppingBag className="h-5 w-5" />
                   {itemCount > 0 && (
-                    <span className="absolute top-0 right-0 h-4 w-4 bg-emerald text-[9px] text-accent font-bold flex items-center justify-center rounded-full border border-background">
+                    <span className="absolute top-0 right-0 h-4 w-4 bg-primary text-[9px] text-white font-bold flex items-center justify-center rounded-full border border-white">
                       {itemCount}
                     </span>
                   )}
@@ -93,15 +93,15 @@ export function CatalogHeader({ search, onSearchChange, activeCategory, onCatego
         </div>
 
         {/* Category nav */}
-        <nav className="flex gap-1 overflow-x-auto scrollbar-hide pb-3 -mt-1">
+        <nav className="flex gap-2 overflow-x-auto scrollbar-hide py-4 -mt-1 items-center">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => onCategoryChange(cat)}
-              className={`whitespace-nowrap px-3 py-1.5 text-[9px] font-sans font-medium uppercase tracking-[0.15em] transition-colors duration-150 min-h-[28px] border-b-2 ${
+              className={`whitespace-nowrap px-4 py-2 text-[9px] font-sans font-bold uppercase tracking-[0.15em] transition-all duration-300 rounded-full ${
                 activeCategory === cat
-                  ? 'text-accent border-accent/60'
-                  : 'text-muted-foreground border-transparent hover:text-foreground'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'text-muted-foreground hover:bg-muted/30 hover:text-primary'
               }`}
             >
               {cat}
