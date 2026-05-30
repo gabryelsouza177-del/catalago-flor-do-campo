@@ -109,27 +109,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               {product.description}
             </p>
           )}
-          <div className=\"flex flex-col gap-3 pt-2 border-t border-accent/8\">
-            <div className=\"flex items-center justify-between\">
-              <span className=\"font-sans font-bold text-accent text-base md:text-lg tracking-tight\">
+          <div className="flex flex-col gap-3 pt-2 border-t border-accent/8">
+            <div className="flex items-center justify-between">
+              <span className="font-sans font-bold text-accent text-base md:text-lg tracking-tight">
                 {formatPrice(Number(product.price))}
               </span>
               {product.sold_out && (
-                <span className=\"text-[9px] text-muted-foreground uppercase tracking-wider font-sans\">
+                <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-sans">
                   Indisponível
                 </span>
               )}
             </div>
             {!product.sold_out && (
-              <div className=\"flex flex-wrap gap-1.5 sm:gap-2\">
+              <div className="flex flex-wrap gap-1.5 sm:gap-2">
                 <a
                   href={buildWhatsAppLink(product.title, Number(product.price), product.image_url, product.description)}
-                  target=\"_blank\"
-                  rel=\"noopener noreferrer\"
-                  className=\"flex-1 inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-sm bg-accent/5 text-accent/60 text-[8px] sm:text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-accent/10 transition-colors duration-200 min-w-0\"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-1 inline-flex items-center justify-center gap-1.5 px-2 sm:px-3 py-2 rounded-sm bg-accent/5 text-accent/60 text-[8px] sm:text-[9px] font-sans uppercase tracking-[0.12em] font-medium hover:bg-accent/10 transition-colors duration-200 min-w-0"
                 >
-                  <MessageCircle className=\"h-3 w-3 shrink-0\" />
-                  <span className=\"truncate\">Dúvida</span>
+                  <MessageCircle className="h-3 w-3 shrink-0" />
+                  <span className="truncate">Dúvida</span>
                 </a>
                 <Button
                   onClick={handleAddToCart}
@@ -137,10 +137,10 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
                   className={`flex-1 relative gold-shine inline-flex items-center justify-center gap-1.5 px-2 sm:px-5 py-5 rounded-full ${!isOpen ? 'bg-muted/20 text-muted-foreground' : 'bg-primary text-primary-foreground'} text-[9px] sm:text-[10px] md:text-[11px] font-sans uppercase tracking-[0.12em] font-bold hover:bg-primary/90 transition-all duration-300 h-auto border-0 ${isAnimating ? 'scale-95' : ''} min-w-0`}
                 >
                   <ShoppingCart className={`h-3 w-3 shrink-0 ${isAnimating ? 'animate-bounce' : ''}`} />
-                  <span className=\"truncate\">{isOpen ? (window.innerWidth < 640 ? 'Add' : 'Carrinho') : 'Fechada'}</span>
+                  <span className="truncate">{isOpen ? (window.innerWidth < 640 ? 'Add' : 'Carrinho') : 'Fechada'}</span>
                   {isAnimating && (
-                    <div className=\"absolute inset-0 flex items-center justify-center pointer-events-none\">
-                      <div className=\"h-4 w-4 bg-accent rounded-full animate-fly\" />
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="h-4 w-4 bg-accent rounded-full animate-fly" />
                     </div>
                   )}
                 </Button>
