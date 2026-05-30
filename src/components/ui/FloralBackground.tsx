@@ -44,7 +44,7 @@ export const FloralBackground = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setOffset(window.pageYOffset);
+      setOffset(window.scrollY);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
