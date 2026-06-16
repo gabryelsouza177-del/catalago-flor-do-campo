@@ -157,6 +157,8 @@ export function CartSheet({ children, open, onOpenChange }: { children: React.Re
         status: paymentOption === 'pickup_payment' ? 'Pagamento na Retirada' : 'Pendente',
         metodo_pagamento: paymentOption === 'pickup_payment' ? 'Pagar na Loja' : 'Mercado Pago',
         tipo_entrega: deliveryMethod,
+        data_entrega: deliveryDate ? format(deliveryDate, 'yyyy-MM-dd') : null,
+        horario_entrega: isWreathOrder ? wreathCeremonyTime : deliveryTime,
         endereco_entrega: deliveryMethod === 'pickup' ? 'Retirada na Loja' : (selectedStreet ? `${selectedStreet}${houseNumber ? `, ${houseNumber}` : ''}, ${selectedDistrict}${addressComplement ? ` - ${addressComplement}` : ''}` : `${deliveryAddress}${houseNumber ? `, ${houseNumber}` : ''}${addressComplement ? ` - ${addressComplement}` : ''}`),
         numero_endereco: houseNumber,
         mensagem_cartao: isWreathOrder ? null : giftMessage,
