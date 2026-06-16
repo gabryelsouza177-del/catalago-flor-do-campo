@@ -561,8 +561,14 @@ export default function Admin() {
                           Pedido #{order.id.slice(0, 8)}
                         </CardTitle>
                         <p className="text-[10px] text-muted-foreground">
-                          {new Date(order.criado_em).toLocaleString('pt-BR')}
+                          🛒 Pedido feito: {new Date(order.criado_em).toLocaleString('pt-BR')}
                         </p>
+                        {(order.data_entrega || order.horario_entrega) && (
+                          <p className="text-[10px] font-bold text-accent mt-0.5">
+                            🚚 Entregar em: {order.data_entrega ? new Date(order.data_entrega + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' }) : '—'}
+                            {order.horario_entrega ? ` às ${order.horario_entrega}` : ''}
+                          </p>
+                        )}
                       </div>
                       <Badge className={cn(
                         "text-[9px] uppercase tracking-widest",
