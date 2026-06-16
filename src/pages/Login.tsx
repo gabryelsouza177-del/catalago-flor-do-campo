@@ -22,8 +22,9 @@ export default function Login() {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      // Tenta login. Se a conta ainda não existe (primeira vez), cria.
-      let { error } = await supabase.auth.signInWithPassword({
+      // Verifica se o e-mail está cadastrado como admin (consulta via RPC pública)
+      // Login direto — admin é validado após autenticação.
+      let { data: signInData, error } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
         password,
       });
@@ -34,7 +35,7 @@ export default function Login() {
           password,
         });
         if (!signUpError) {
-          ({ error } = await supabase.auth.signInWithPassword({
+          ({ data: signInData, error } = await supabase.auth.signInWithPassword({
             email: normalizedEmail,
             password,
           }));
@@ -53,12 +54,29 @@ export default function Login() {
         return;
       }
 
-      // Agora autenticado: confirma que é admin
-      const { data: adminRow } = await supabase
-        .from('admin_users')
-        .select('email')
-        .ilike('email', normalizedEmail)
-        .maybeSingle();
+      // Agora autenticado: confirma que o user_id é admin
+      const userId = signInData?.user?.id;
+      let adminRow: { id: string } | null = null;
+      if (userId) {
+        const { data } = await supabase
+          .from('admin_users')
+          .select('id')
+          .eq('user_id', userId)
+          .maybeSingle();
+        adminRow = data;
+
+        // Primeira vez: se o e-mail está em admin_users sem user_id, vincula
+        if (!adminRow) {
+          const { data: linked } = await supabase
+            .from('admin_users')
+            .update({ user_id: userId })
+            .ilike('email', normalizedEmail)
+            .is('user_id', null)
+            .select('id')
+            .maybeSingle();
+          adminRow = linked;
+        }
+      }
 
       if (!adminRow) {
         await supabase.auth.signOut();

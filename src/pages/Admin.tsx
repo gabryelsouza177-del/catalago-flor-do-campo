@@ -44,14 +44,14 @@ export default function Admin() {
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.email) {
+      if (!session?.user?.id) {
         navigate('/login');
         return;
       }
       const { data } = await supabase
         .from('admin_users')
-        .select('email')
-        .ilike('email', session.user.email)
+        .select('id')
+        .eq('user_id', session.user.id)
         .maybeSingle();
       if (data) {
         setIsAuthenticated(true);
