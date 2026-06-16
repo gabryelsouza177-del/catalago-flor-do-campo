@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loader2, Flower2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -18,30 +19,72 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
 
-    // Verificação direta solicitada (Hardcoded)
-    if (email.trim() === 'Gabryel.souza177@gmail.com' && password === '13102001m') {
-      // Salvar Sessão no localStorage
-      localStorage.setItem('admin_session', JSON.stringify({
-        email: email,
-        authenticated: true,
-        loginDate: new Date().toISOString()
-      }));
+    const normalizedEmail = email.trim().toLowerCase();
+
+    try {
+      // Verifica se o e-mail é de um administrador autorizado
+      const { data: adminRow } = await supabase
+        .from('admin_users')
+        .select('email')
+        .ilike('email', normalizedEmail)
+        .maybeSingle();
+
+      if (!adminRow) {
+        toast({
+          title: 'Erro de Acesso',
+          description: 'Acesso negado para Flor do Campo',
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Tenta login. Se a conta ainda não existe (primeira vez), cria.
+      let { error } = await supabase.auth.signInWithPassword({
+        email: normalizedEmail,
+        password,
+      });
+
+      if (error && /invalid login credentials/i.test(error.message)) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email: normalizedEmail,
+          password,
+        });
+        if (!signUpError) {
+          ({ error } = await supabase.auth.signInWithPassword({
+            email: normalizedEmail,
+            password,
+          }));
+        } else {
+          error = signUpError;
+        }
+      }
+
+      if (error) {
+        toast({
+          title: 'Erro de Acesso',
+          description: error.message,
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
 
       toast({
         title: 'Acesso Autorizado',
         description: 'Bem-vindo de volta!',
         className: 'bg-emerald text-white border-none',
       });
-      
       navigate('/admin');
-    } else {
+    } catch (err: any) {
       toast({
-        title: 'Erro de Acesso',
-        description: 'Acesso negado para Flor do Campo',
+        title: 'Erro',
+        description: err?.message ?? 'Falha no login',
         variant: 'destructive',
       });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

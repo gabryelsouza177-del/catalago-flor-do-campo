@@ -1,31 +1,29 @@
 import { Navigate } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const sessionStr = localStorage.getItem('admin_session');
-      if (!sessionStr) {
-        setIsAuthenticated(false);
+    let active = true;
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.email) {
+        if (active) setIsAuthenticated(false);
         return;
       }
-      try {
-        const session = JSON.parse(sessionStr);
-        // Validar com as credenciais oficiais
-        if (session.authenticated && session.email === 'Gabryel.souza177@gmail.com') {
-          setIsAuthenticated(true);
-        } else {
-          setIsAuthenticated(false);
-        }
-      } catch (e) {
-        setIsAuthenticated(false);
-      }
+      const { data } = await supabase
+        .from('admin_users')
+        .select('email')
+        .ilike('email', session.user.email)
+        .maybeSingle();
+      if (active) setIsAuthenticated(!!data);
     };
-    
     checkAuth();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => checkAuth());
+    return () => { active = false; subscription.unsubscribe(); };
   }, []);
 
   if (isAuthenticated === null) {

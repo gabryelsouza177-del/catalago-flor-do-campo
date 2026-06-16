@@ -42,31 +42,29 @@ export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const sessionStr = localStorage.getItem('admin_session');
-      if (!sessionStr) {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user?.email) {
         navigate('/login');
         return;
       }
-      try {
-        const session = JSON.parse(sessionStr);
-        if (session.authenticated && session.email === 'Gabryel.souza177@gmail.com') {
-          setIsAuthenticated(true);
-        } else {
-          localStorage.removeItem('admin_session');
-          navigate('/login');
-        }
-      } catch (e) {
-        localStorage.removeItem('admin_session');
+      const { data } = await supabase
+        .from('admin_users')
+        .select('email')
+        .ilike('email', session.user.email)
+        .maybeSingle();
+      if (data) {
+        setIsAuthenticated(true);
+      } else {
+        await supabase.auth.signOut();
         navigate('/login');
       }
     };
-    
     checkAuth();
   }, [navigate]);
 
-  const signOut = () => {
-    localStorage.removeItem('admin_session');
+  const signOut = async () => {
+    await supabase.auth.signOut();
     navigate('/login');
   };
   const { isOpen, bouquetsDeliveryEnabled, onlyPickupMode, updateSettings } = useSiteSettings();
