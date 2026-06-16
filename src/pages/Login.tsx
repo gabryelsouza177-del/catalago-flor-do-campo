@@ -22,23 +22,6 @@ export default function Login() {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      // Verifica se o e-mail é de um administrador autorizado
-      const { data: adminRow } = await supabase
-        .from('admin_users')
-        .select('email')
-        .ilike('email', normalizedEmail)
-        .maybeSingle();
-
-      if (!adminRow) {
-        toast({
-          title: 'Erro de Acesso',
-          description: 'Acesso negado para Flor do Campo',
-          variant: 'destructive',
-        });
-        setLoading(false);
-        return;
-      }
-
       // Tenta login. Se a conta ainda não existe (primeira vez), cria.
       let { error } = await supabase.auth.signInWithPassword({
         email: normalizedEmail,
@@ -64,6 +47,24 @@ export default function Login() {
         toast({
           title: 'Erro de Acesso',
           description: error.message,
+          variant: 'destructive',
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Agora autenticado: confirma que é admin
+      const { data: adminRow } = await supabase
+        .from('admin_users')
+        .select('email')
+        .ilike('email', normalizedEmail)
+        .maybeSingle();
+
+      if (!adminRow) {
+        await supabase.auth.signOut();
+        toast({
+          title: 'Erro de Acesso',
+          description: 'Acesso negado para Flor do Campo',
           variant: 'destructive',
         });
         setLoading(false);
