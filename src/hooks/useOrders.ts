@@ -8,7 +8,7 @@ export const useOrders = () => {
       console.log('Fetching pedidos...');
       const { data, error } = await supabase
         .from('pedidos')
-        .select('id, criado_em, nome_cliente, whatsapp_cliente, nome_destinatario, itens_pedido, preco_total, status, endereco_entrega, mensagem_cartao, detalhes_coroa, valor_frete, numero_endereco, observacoes')
+        .select('id, criado_em, nome_cliente, whatsapp_cliente, nome_destinatario, itens_pedido, preco_total, status, metodo_pagamento, endereco_entrega, mensagem_cartao, detalhes_coroa, valor_frete, numero_endereco, observacoes, data_entrega, horario_entrega, tipo_entrega')
         .order('criado_em', { ascending: false });
       
       if (error) {
