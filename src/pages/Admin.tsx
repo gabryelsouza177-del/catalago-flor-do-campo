@@ -603,6 +603,24 @@ export default function Admin() {
                             <p className="text-sm font-bold text-primary">{order.nome_destinatario}</p>
                             <p className="text-xs text-muted-foreground leading-tight mt-1">{order.endereco_entrega}</p>
                           </div>
+                          {(order.data_entrega || order.horario_entrega) && (
+                            <div>
+                              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">📅 Data / Horário</p>
+                              <p className="text-xs font-bold">
+                                {order.data_entrega ? new Date(order.data_entrega + 'T12:00:00').toLocaleDateString('pt-BR') : '—'}
+                                {order.horario_entrega ? ` às ${order.horario_entrega}` : ''}
+                              </p>
+                            </div>
+                          )}
+                          {order.metodo_pagamento && (
+                            <div>
+                              <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1">💳 Pagamento</p>
+                              <p className="text-xs font-bold">
+                                {order.metodo_pagamento}
+                                {order.status === 'Pendente' && <span className="text-destructive"> (Pendente)</span>}
+                              </p>
+                            </div>
+                          )}
                           {order.observacoes && (
                             <div className="p-2 bg-accent/5 border border-accent/20 rounded-sm">
                               <p className="text-[9px] uppercase tracking-widest text-accent font-bold mb-1">📝 Observação da Entrega</p>
