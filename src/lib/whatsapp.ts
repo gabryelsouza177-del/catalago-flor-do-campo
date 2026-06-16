@@ -42,11 +42,14 @@ export function formatOrderWhatsAppMessage(order: any) {
     `📱 *CONTATO:* ${order.whatsapp_cliente}\n` +
     `🎁 *DESTINATÁRIO:* ${honoreeOrRecipient}\n\n` +
     `📍 *ENDEREÇO:* ${order.tipo_entrega === 'pickup' ? 'RETIRADA NA LOJA' : order.endereco_entrega}\n` +
+    (order.data_entrega ? `📅 *DATA ENTREGA:* ${new Date(order.data_entrega + 'T12:00:00').toLocaleDateString('pt-BR')}\n` : '') +
+    (order.horario_entrega ? `⏰ *HORÁRIO:* ${order.horario_entrega}\n` : '') +
     `📝 *OBSERVAÇÃO:* ${order.observacoes || 'Nenhuma'}\n\n` +
     `📦 *PRODUTOS:* \n${itemsList}\n` +
     `${details}${photoLink}\n\n` +
     (order.valor_frete > 0 ? `🚚 *FRETE:* R$ ${Number(order.valor_frete).toFixed(2).replace('.', ',')}\n` : '') +
-    `💰 *VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}`;
+    `💰 *VALOR TOTAL:* R$ ${Number(order.preco_total).toFixed(2).replace('.', ',')}\n` +
+    `💳 *PAGAMENTO:* ${order.status === 'Pendente' ? '⚠️ PENDENTE DE PAGAMENTO' : (order.metodo_pagamento || order.status || 'N/A')}`;
 
   return `https://wa.me/${normalizeWhatsAppNumber(WHATSAPP_NUMBER)}?text=${encodeURIComponent(text)}`;
 }
