@@ -38,7 +38,7 @@ export default function Index() {
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             <Info className="h-4 w-4" />
             <p className="text-[10px] sm:text-xs font-sans font-bold uppercase tracking-[0.15em]">
-              Nossa loja está temporariamente fechada para manutenção ou logística. Agradecemos a compreensão!
+              No momento estamos fechados. Você pode navegar pelos produtos, mas a finalização de pedidos está temporariamente pausada.
             </p>
           </div>
         </div>
