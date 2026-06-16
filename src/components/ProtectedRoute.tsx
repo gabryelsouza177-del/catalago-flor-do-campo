@@ -10,14 +10,14 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
     let active = true;
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user?.email) {
+      if (!session?.user?.id) {
         if (active) setIsAuthenticated(false);
         return;
       }
       const { data } = await supabase
         .from('admin_users')
-        .select('email')
-        .ilike('email', session.user.email)
+        .select('id')
+        .eq('user_id', session.user.id)
         .maybeSingle();
       if (active) setIsAuthenticated(!!data);
     };
