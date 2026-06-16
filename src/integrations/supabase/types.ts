@@ -182,8 +182,10 @@ export type Database = {
       pedidos: {
         Row: {
           criado_em: string | null
+          data_entrega: string | null
           detalhes_coroa: string | null
           endereco_entrega: string | null
+          horario_entrega: string | null
           id: string
           itens_pedido: string | null
           mensagem_cartao: string | null
@@ -201,8 +203,10 @@ export type Database = {
         }
         Insert: {
           criado_em?: string | null
+          data_entrega?: string | null
           detalhes_coroa?: string | null
           endereco_entrega?: string | null
+          horario_entrega?: string | null
           id?: string
           itens_pedido?: string | null
           mensagem_cartao?: string | null
@@ -220,8 +224,10 @@ export type Database = {
         }
         Update: {
           criado_em?: string | null
+          data_entrega?: string | null
           detalhes_coroa?: string | null
           endereco_entrega?: string | null
+          horario_entrega?: string | null
           id?: string
           itens_pedido?: string | null
           mensagem_cartao?: string | null
