@@ -78,7 +78,9 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               src={product.image_url}
               alt={product.title}
               className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-              loading="lazy"
+              loading={index < 4 ? 'eager' : 'lazy'}
+              decoding="async"
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-muted-foreground">

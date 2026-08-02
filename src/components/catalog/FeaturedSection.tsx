@@ -94,7 +94,9 @@ export function FeaturedSection({ products }: FeaturedSectionProps) {
                       src={product.image_url}
                       alt={product.title}
                       className="w-full h-full object-cover animate-ken-burns img-warm"
-                      loading="lazy"
+                      loading="eager"
+                      decoding="async"
+                      sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   </div>
                 ) : (
